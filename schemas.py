@@ -2,6 +2,15 @@ from pydantic import BaseModel
 from geoalchemy2 import WKTElement
 from typing import List, Dict
 
+
+class Chemical(BaseModel):
+    unit: str
+    total: float
+
+    class Config:
+        orm_mode = True
+
+
 class SiteSchema(BaseModel):
     site_id: str
     name: str
@@ -13,7 +22,7 @@ class SiteSchema(BaseModel):
     longitude: float
     sector: str
     carcinogen: bool
-    chemicals: dict
+    chemicals: Dict[str, Chemical]
     release_types: list
     total_releases: float
 

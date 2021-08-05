@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query as FQ
+from fastapi import FastAPI, Query as fastapi_Query
 from sqlalchemy.orm import sessionmaker, Query
 from typing import Optional, List
 from table_models import Site
@@ -18,11 +18,11 @@ Session = sessionmaker(engine)
 async def query(
         lat: float,
         lon: float,
+        radius: int,
         release_type: Optional[str] = None,
         carcinogen: Optional[bool] = None,
-        sectors: Optional[list] = FQ([]),
-        radius: int = 5,
-):
+        sectors: Optional[List[str]] = fastapi_Query(None),
+) -> List[SiteSchema]:
 
     query_point = WKTElement(f"POINT({lon} {lat})", srid=4269)
 
@@ -35,39 +35,25 @@ async def query(
     if carcinogen:
         query_sql = query_sql.filter(Site.carcinogen == True)
 
+    if sectors:
+        query_sql = query_sql.filter(Site.sector.in_(sectors))
+
     with Session() as s:
         with s.begin():
             print('send')
             res = query_sql.with_session(s).all()
 
         candidates = [SiteSchema.from_orm(site) for site in res]
-    ic()
-    ic(sectors)
 
     if not release_type:
-        if not sectors:
-            return candidates
+        return candidates
 
-    ic()
-    if release_type:
+    elif release_type:
         for site in candidates:
             types = site.release_types
             if release_type not in types:
                 candidates.remove(site)
-    ic()
-    if sectors:
-        counter = 0
-        ic(sectors)
-        for this_sector in sectors:
-            for site in candidates:
-                site_sector = site.sector
-                if this_sector == site_sector:
-                    counter += 1
-                    ic(this_sector, site_sector)
-                    candidates.remove(site)
 
-    ic(len(candidates))
-    ic(counter)
     return candidates
 
 
