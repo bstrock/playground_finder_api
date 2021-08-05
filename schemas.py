@@ -1,6 +1,5 @@
 from pydantic import BaseModel
-from geoalchemy2 import WKTElement
-from typing import List, Dict
+from typing import Dict
 
 
 class Chemical(BaseModel):
