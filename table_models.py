@@ -66,7 +66,7 @@ class Report(Base):
     message = Column(String(240), nullable=True)
     report_type = Column(enums.make(kind="report_types"), nullable=False)  # enumeration creation from values in enum.py
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
-    site = relationship("Site", backref="sites", lazy=False)
+    site = relationship("Site", backref="reports", lazy=False)
 
 
 class EmissionReports(Base):

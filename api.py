@@ -87,9 +87,7 @@ async def query(
             logging.info("QUERY: Submitted")
         logging.info("TRANSACTION: CLOSED\n")
 
-        res = res.scalars().all()  # decode results
-        for site in res:
-            ic(await site.sites)
+        res = res.scalars().all()  # decode results)
 
     logging.info("SESSION: returned connection to the pool")
 
