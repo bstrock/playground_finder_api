@@ -217,6 +217,7 @@ def test_query_compound_carcinogen_and_release_type_and_sectors(sectors: List[st
 
     if len(sectors) == 2:
         if carcinogen:
+            ic(total_results)
             assert (df.carcinogen.unique()) == [True]  # TEST: ensure all results are carcinogen
             assert total_results == CARCINOGEN_CHEMICAL_AIR_RELEASE_SITES_MN + CARCINOGEN_FOOD_AIR_RELEASE_SITES_MN
         else:

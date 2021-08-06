@@ -15,6 +15,8 @@ Base = declarative_base()
 # user table
 class Site(Base):
     __tablename__ = "sites"
+    __mapper_args__ = {"eager_defaults": True}
+
     site_id = Column(String, primary_key=True)
     name = Column(String(100), nullable=False)
     address = Column(String(100), nullable=False)
@@ -30,6 +32,7 @@ class Site(Base):
     release_types = Column(ARRAY(String), nullable=False)
     total_releases = Column(Float, nullable=False)
     geom = Column(Geometry("POINT", srid=4269))
+
 
     def __init__(self, site_id, name, address, city, county, state, zip, latitude, longitude, sector, carcinogen, chemicals, release_types, total_releases, geom):
         self.site_id = site_id
@@ -52,6 +55,7 @@ class Site(Base):
 # report table
 class Report(Base):
     __tablename__ = "reports"
+    __mapper_args__ = {"eager_defaults": True}
 
     report_id = Column(
                 BigInteger,
@@ -62,28 +66,31 @@ class Report(Base):
     message = Column(String(240), nullable=True)
     report_type = Column(enums.make(kind="report_types"), nullable=False)  # enumeration creation from values in enum.py
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
-    site = relationship("Site", backref="sites", lazy=True)
+    site = relationship("Site", backref="sites", lazy=False)
 
 
 class EmissionReports(Base):
     __tablename__ = "emission_reports"
+    __mapper_args__ = {"eager_defaults": True}
 
     report_id = Column(BigInteger, ForeignKey("reports.report_id", name="emissions_key"), primary_key=True)
     emission_type = Column(enums.make('emission_types'), nullable=False)
-    report = relationship("Report", backref="emission_reports", lazy=True)
+    report = relationship("Report", backref="emission_reports", lazy=False)
 
 
 class ActivityReports(Base):
     __tablename__ = "activity_reports"
+    __mapper_args__ = {"eager_defaults": True}
 
     report_id = Column(BigInteger, ForeignKey("reports.report_id", name="request_key"), primary_key=True)
     activity_type = Column(enums.make('activity_types'), nullable=False)
-    report = relationship("Report", backref="activity_reports", lazy=True)
+    report = relationship("Report", backref="activity_reports", lazy=False)
 
 
 class UnusedReports(Base):
     __tablename__ = "unused_reports"
+    __mapper_args__ = {"eager_defaults": True}
 
     report_id = Column(BigInteger, ForeignKey("reports.report_id", name="damage_key"), primary_key=True)
     unused_type = Column(enums.make('unused_types'), nullable=False)
-    report = relationship("Report", backref="damage_report", lazy=True)
+    report = relationship("Report", backref="damage_report", lazy=False)

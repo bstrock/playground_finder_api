@@ -1,6 +1,8 @@
 from sqlalchemy import create_engine, text, MetaData
 from sqlalchemy.engine import URL
+from sqlalchemy.ext.asyncio import create_async_engine
 from table_models import Base
+import asyncpg
 import os
 
 class SpatialDB:
@@ -10,7 +12,7 @@ class SpatialDB:
     password = os.environ.get("PASSWORD")
 
     url = URL.create(
-        drivername="postgresql+psycopg2",
+        drivername="postgresql+asyncpg",
         username=username,
         password=password,
         host="localhost",
@@ -22,7 +24,7 @@ class SpatialDB:
     @staticmethod
     def init():
         # use to create engine for SQLAlchemy connection or Session
-        return create_engine(url=SpatialDB.url, echo=False, future=True)
+        return create_async_engine(url=SpatialDB.url, echo=False, future=True)
 
     @staticmethod
     def make_db(engine):
