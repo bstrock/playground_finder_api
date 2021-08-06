@@ -49,12 +49,17 @@ async def query(
         return candidates
 
     elif release_type:
+        resp = []
         for site in candidates:
             types = site.release_types
-            if release_type not in types:
-                candidates.remove(site)
+            keep_flag = 0
+            for i, t in enumerate(types):
+                if t == release_type:
+                    keep_flag += 1
+            if keep_flag > 0:
+                resp.append(site)
 
-    return candidates
+        return resp
 
 
 if __name__ == "__main__":

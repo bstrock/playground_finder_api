@@ -1,4 +1,4 @@
-from sqlalchemy import String, BigInteger, Column, Integer, ForeignKey, Float, Boolean, JSON, DateTime
+from sqlalchemy import String, BigInteger, Column, Integer, ForeignKey, Float, Boolean, JSON, DateTime, ARRAY
 from sqlalchemy.orm import declarative_base, relationship
 from geoalchemy2 import Geometry
 from sqlalchemy.sql import func
@@ -27,7 +27,7 @@ class Site(Base):
     sector = Column(enums.make(kind='industry_sectors'), nullable=False)
     carcinogen = Column(Boolean, nullable=False)
     chemicals = Column(JSON, nullable=False)
-    release_types = Column(JSON, nullable=False)
+    release_types = Column(ARRAY(String), nullable=False)
     total_releases = Column(Float, nullable=False)
     geom = Column(Geometry("POINT", srid=4269))
 
