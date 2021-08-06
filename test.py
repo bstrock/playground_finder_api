@@ -7,9 +7,6 @@ from pandas import DataFrame
 
 client = TestClient(app)
 
-##
-
-
 # TEST CONSTANTS
 SITES_MN = 503
 
@@ -18,6 +15,7 @@ CARCINOGEN_SITES_MN = 267
 WATER_RELEASE_SITES_MN = 28
 AIR_RELEASE_SITES_MN = 321
 CARCINOGEN_AIR_RELEASE_SITES_MN = 201
+CARCINOGEN_WATER_RELEASE_SITES_MN = 20
 
 CHEMICAL_SITES_MN = 68
 CHEMICAL_AIR_RELEASE_SITES_MN = 52
@@ -54,6 +52,7 @@ def test_release_type(df: DataFrame,
     assert len(value_set) == 1  # TEST: only one type of boolean value is present
     check = value_set.pop()  # the value present
     assert check == True  # TEST: the only value present is True
+
 
 def test_query_all() -> NoReturn:
     # TEST CASE:  Spatial query which selects all sites in MN
@@ -98,7 +97,6 @@ def test_query_release_type(release_type: str) -> NoReturn:
     # TEST: query returns expected number of results
     if release_type == "WATER":
         assert len(response.json()) == WATER_RELEASE_SITES_MN
-
     elif release_type == "AIR":
         assert len(response.json()) == AIR_RELEASE_SITES_MN
 
@@ -171,7 +169,10 @@ def test_query_compound_carcinogen_and_release_type(release_type: str) -> NoRetu
 
     test_release_type(df=df, release_type=release_type)
 
-    assert len(res) == CARCINOGEN_AIR_RELEASE_SITES_MN
+    if release_type == "WATER":
+        assert len(res) == CARCINOGEN_WATER_RELEASE_SITES_MN
+    elif release_type == "AIR":
+        assert len(res) == CARCINOGEN_AIR_RELEASE_SITES_MN
 
 
 def test_query_compound_carcinogen_and_release_type_and_sectors(sectors: List[str],
@@ -234,7 +235,8 @@ if __name__ == "__main__":
     test_query_carcinogen()
     test_query_release_type(release_type="WATER")
     test_query_release_type(release_type="AIR")
-    test_query_compound_carcinogen_and_release_type("AIR")
+    test_query_compound_carcinogen_and_release_type(release_type="WATER")
+    test_query_compound_carcinogen_and_release_type(release_type="AIR")
 
     for test_sector in sector_tests:
         test_spatial_query_sectors(sectors=test_sector)
@@ -242,6 +244,7 @@ if __name__ == "__main__":
                                                                     release_type="AIR",
                                                                     carcinogen=False
                                                                     )
+
         test_query_compound_carcinogen_and_release_type_and_sectors(sectors=test_sector,
                                                                     release_type="AIR",
                                                                     carcinogen=True
