@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Dict
+from typing import Dict, Optional
 
 
 class Chemical(BaseModel):
@@ -28,3 +28,17 @@ class SiteSchema(BaseModel):
     class Config:
         orm_mode = True
         arbitrary_types_allowed = True
+
+
+class ReportSchema(BaseModel):
+    site_id: str
+    report_type: str
+    message: str
+    emission_type: Optional[str]
+    activity_type: Optional[str]
+    unused_type: Optional[str]
+
+    class Config:
+        orm_mode = True
+        arbitrary_types_allowed = True
+

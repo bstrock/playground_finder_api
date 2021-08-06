@@ -1,17 +1,18 @@
-from fastapi import FastAPI, Query as fastapi_Query, Depends
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from create_spatial_db import SpatialDB
+from fastapi import FastAPI, Query as fastapi_Query, Depends
 from sqlalchemy.orm import sessionmaker, Query
+from create_spatial_db import SpatialDB
 from geoalchemy2 import WKTElement
-from typing import Optional, List
-from schemas import SiteSchema
-from table_models import Site
+from typing import Optional, List, Dict
+from schemas import SiteSchema, ReportSchema
+from table_models import Site, Report, ActivityReports, EmissionReports, UnusedReports
 import logging
 import uvicorn
+from icecream import ic
 
 # initializations
 app = FastAPI()
-engine = create_async_engine(url=SpatialDB.url, echo=False, future=True)
+engine = create_async_engine(url=SpatialDB.url, echo=True, future=True)
 Session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
@@ -40,15 +41,16 @@ async def query(
         carcinogen: Optional[bool] = None,
         sectors: Optional[List[str]] = fastapi_Query(None),
         Session: AsyncSession = Depends(get_db)
-
 ) -> List[SiteSchema]:
 
     logging.info("Query received")
 
+    # prepare PostGIS geometry object
     query_point = WKTElement(f"POINT({lon} {lat})", srid=4269)
 
     logging.info("Query point: %s", query_point.desc)
 
+    # build spatial query
     query_sql = Query([Site]).filter(
         Site.geom.ST_DWithin(
             query_point, radius
@@ -57,6 +59,7 @@ async def query(
 
     logging.debug("Query SQL: %s", str(query_sql))
 
+    #  add filters based on optional query parameters
     if carcinogen:
         query_sql = query_sql.filter(Site.carcinogen == True)
 
@@ -71,25 +74,76 @@ async def query(
 
     if release_type:
         query_sql = query_sql.filter(Site.release_types.any(release_type))
+        logging.info("Query flag: RELEASE TYPE: %s", str(release_type))
+        logging.debug("Query SQL: %s", str(query_sql))
 
+    # send query to db by calling async session
     async with Session as s:
         logging.info("Transaction: BEGIN")
         async with s.begin():
-            logging.info("Session has checked out a connection")
+            logging.info("SESSION: Checked out a connection")
             res = await s.execute(query_sql.with_session(s).statement)
+            # context manager autocommits the query
+            logging.info("QUERY: Submitted")
+        logging.info("TRANSACTION: CLOSED\n")
 
-            logging.info("Query: SUBMITTED")
-        logging.info("Transaction: END\n")
-        res = res.scalars()
-        candidates = [SiteSchema.from_orm(site) for site in res]
+        res = res.scalars().all()  # decode results
+        for site in res:
+            ic(await site.sites)
 
-        logging.info("Query: Results unpacked")
-    logging.info("Session has returned connection to the pool")
+    logging.info("SESSION: returned connection to the pool")
 
-    if len(candidates) == 0:
-        logging.info("Query: NO RESULTS -- Endpoint Service Complete\n\n")
+    # db session is closed here
+    sites = [SiteSchema.from_orm(site) for site in res]  # unpack results to pydantic schema using list comprehension
 
-    return candidates
+    logging.info("QUERY: Results unpacked")
+
+    if len(sites) == 0:
+        logging.info("QUERY: NO RESULTS -- Endpoint Service COMPLETE\n\n")
+
+    logging.info("QUERY: Results returned -- endpoint service COMPLETE\n\n")
+    return sites
+
+
+@app.post("/submit")
+async def submit(
+        report: ReportSchema,
+        Session: AsyncSession = Depends(get_db)
+) -> Dict[str, str]:
+
+    main_report = Report(
+        site_id=report.site_id,
+        report_type=report.report_type
+    )
+
+    if report.message:
+        main_report.message = report.message
+
+    if report.emission_type:
+        linked_report = EmissionReports(
+            emission_type=report.emission_type
+        )
+
+    elif report.activity_type:
+        linked_report = ActivityReports(
+            activity_type=report.activity_type
+        )
+
+    elif report.unused_type:
+        linked_report = UnusedReports(
+            unused_type=report.unused_type
+        )
+
+    async with Session as s:
+        async with s.begin():
+            s.add(main_report)
+            await s.commit()
+            ic(main_report.__dict__)
+        async with s.begin():
+            linked_report.report_id = main_report.report_id
+            s.add(linked_report)
+
+    return {"status": "ok"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
