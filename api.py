@@ -1,19 +1,28 @@
-from fastapi import FastAPI, Query as fastapi_Query
-from sqlalchemy.orm import sessionmaker, Query
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import FastAPI, Query as fastapi_Query, Depends
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from create_spatial_db import SpatialDB
+from sqlalchemy.orm import sessionmaker, Query
 from geoalchemy2 import WKTElement
 from typing import Optional, List
 from schemas import SiteSchema
 from table_models import Site
-from icecream import ic
 import logging
 import uvicorn
 
+# initializations
 app = FastAPI()
-
-engine = SpatialDB.init()
+engine = create_async_engine(url=SpatialDB.url, echo=False, future=True)
 Session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+
+# dependency for injection
+async def get_db():
+    s = Session()
+    try:
+        yield s
+    finally:
+        await s.close()
+
 
 logging.basicConfig(
                     format='%(asctime)s %(message)s',
@@ -30,6 +39,8 @@ async def query(
         release_type: Optional[str] = None,
         carcinogen: Optional[bool] = None,
         sectors: Optional[List[str]] = fastapi_Query(None),
+        Session: AsyncSession = Depends(get_db)
+
 ) -> List[SiteSchema]:
 
     logging.info("Query received")
@@ -58,7 +69,10 @@ async def query(
         logging.info("Query flag: SECTORS: %s", str(sectors))
         logging.debug("Query SQL: %s", str(query_sql))
 
-    async with Session() as s:
+    if release_type:
+        query_sql = query_sql.filter(Site.release_types.any(release_type))
+
+    async with Session as s:
         logging.info("Transaction: BEGIN")
         async with s.begin():
             logging.info("Session has checked out a connection")
@@ -74,30 +88,8 @@ async def query(
 
     if len(candidates) == 0:
         logging.info("Query: NO RESULTS -- Endpoint Service Complete\n\n")
-        return candidates
 
-    if not release_type:
-        logging.info("Query: Returning results -- Endpoint Service Complete\n\n")
-        return candidates
-
-    elif release_type:
-        logging.info("Query flag: RELEASE TYPE: %s", release_type)
-        resp = []
-        for site in candidates:
-            types = site.release_types
-            keep_flag = 0
-            for i, t in enumerate(types):
-                if t == release_type:
-                    keep_flag += 1
-            if keep_flag > 0:
-                resp.append(site)
-
-        if len(resp) == 0:
-            logging.info("Query: NO RESULTS -- Endpoint Service Complete\n\n")
-        else:
-            logging.info("Query: Returning results -- Endpoint Service Complete\n\n")
-        return resp
-
+    return candidates
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

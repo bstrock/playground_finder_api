@@ -1,8 +1,8 @@
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy import create_engine, text, MetaData
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine import URL
-from sqlalchemy.ext.asyncio import create_async_engine
 from table_models import Base
-import asyncpg
 import os
 
 class SpatialDB:
@@ -24,7 +24,8 @@ class SpatialDB:
     @staticmethod
     def init():
         # use to create engine for SQLAlchemy connection or Session
-        return create_async_engine(url=SpatialDB.url, echo=False, future=True)
+        engine = create_async_engine(url=SpatialDB.url, echo=False, future=True)
+        return sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
     @staticmethod
     def make_db(engine):
