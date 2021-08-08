@@ -106,8 +106,8 @@ async def query(
 @app.post("/submit")
 async def submit(
         report: ReportSchema,
-        Session: AsyncSession = Depends(get_db)
-) -> Dict[str, str]:
+        Session: AsyncSession = Depends(get_db),
+) -> ReportSchema:
 
     main_report = Report(
         site_id=report.site_id,
@@ -141,7 +141,7 @@ async def submit(
             linked_report.report_id = main_report.report_id
             s.add(linked_report)
 
-    return {"status": "ok"}
+    return report
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)

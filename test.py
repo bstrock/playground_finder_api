@@ -4,8 +4,6 @@ from typing import List, NoReturn, Dict
 from icecream import ic
 from copy import deepcopy
 from pandas import DataFrame
-import requests
-import json
 
 client = TestClient(app)
 
@@ -289,6 +287,14 @@ class TestSubmit:
         response = client.post("/submit", json=params)
 
         assert response.status_code == 200
+        res = response.json()
+
+        expected = {k: v for k, v in params.items() if v is not None}
+
+        for k in expected:
+            assert k in res.keys()
+            assert res[k] == expected[k]
+
 
     @staticmethod
     def run_panel():
@@ -304,14 +310,13 @@ class TestSubmit:
         query_params = deepcopy(TestQueries.test_params)
         params = {**query_params, **target_site}
         response = client.get("/query", params=params)
-
         target_site_response = response.json()[3]
-        #ic(target_site_response)
+
 
 
 
 if __name__ == "__main__":
     pass
-    TestQueries.run_panel()
+    #TestQueries.run_panel()
     TestSubmit.run_panel()
     #requests.post("http://0.0.0.0:8001/submit", json=json.dumps(TestSubmit.test_params))

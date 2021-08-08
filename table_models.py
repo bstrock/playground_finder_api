@@ -10,9 +10,6 @@ from enums import enums
 Base = declarative_base()
 
 
-# self make a table into...a spacetime table
-
-# user table
 class Site(Base):
     __tablename__ = "sites"
     __mapper_args__ = {"eager_defaults": True}
@@ -32,7 +29,6 @@ class Site(Base):
     release_types = Column(ARRAY(String), nullable=False)
     total_releases = Column(Float, nullable=False)
     geom = Column(Geometry("POINT", srid=4269))
-
 
     def __init__(self, site_id, name, address, city, county, state, zip, latitude, longitude, sector, carcinogen, chemicals, release_types, total_releases, geom):
         self.site_id = site_id
@@ -69,6 +65,7 @@ class Report(Base):
     site = relationship("Site", backref="reports", lazy=False)
 
 
+# linked tables
 class EmissionReports(Base):
     __tablename__ = "emission_reports"
     __mapper_args__ = {"eager_defaults": True}
