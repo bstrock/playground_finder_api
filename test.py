@@ -3,7 +3,10 @@ from fastapi.testclient import TestClient
 from typing import List, NoReturn, Dict
 from icecream import ic
 from copy import deepcopy
-from pandas import DataFrame
+from pandas import DataFrame, read_csv
+import asyncio
+from tri_data_to_db import TRILoader
+from datetime import datetime as dt
 
 client = TestClient(app)
 
@@ -28,6 +31,8 @@ CARCINOGEN_FOOD_AIR_RELEASE_SITES_MN = 8
 TRANSPORTATION_EQUIPMENT_SITES_MN = 20
 TRANSPORTATION_EQUIPMENT_AIR_RELEASE_SITES_MN = 12
 CARCINOGEN_TRANSPORTATION_EQUIPMENT_AIR_RELEASE_SITES_MN = 7
+
+
 
 
 class TestQueries:
@@ -313,10 +318,13 @@ class TestSubmit:
         target_site_response = response.json()[3]
 
 
-
-
 if __name__ == "__main__":
-    pass
-    #TestQueries.run_panel()
+    ic(dt.now())
+    data = read_csv("~/Downloads/tri_20_mn.csv")
+    tri_loader = TRILoader()
+    tri_loader.set_data(data=data)
+
+    asyncio.run(tri_loader.main())
+    TestQueries.run_panel()
     TestSubmit.run_panel()
     #requests.post("http://0.0.0.0:8001/submit", json=json.dumps(TestSubmit.test_params))
