@@ -2,13 +2,15 @@ from api import app
 from fastapi.testclient import TestClient
 from typing import List, NoReturn, Dict
 from icecream import ic
+from httpx import AsyncClient
 from copy import deepcopy
 from pandas import DataFrame, read_csv
 import asyncio
 from tri_data_to_db import TRILoader
 from datetime import datetime as dt
-
+import os
 client = TestClient(app)
+CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
 
 # TEST CONSTANTS
 SITES_MN = 503
@@ -33,8 +35,6 @@ TRANSPORTATION_EQUIPMENT_AIR_RELEASE_SITES_MN = 12
 CARCINOGEN_TRANSPORTATION_EQUIPMENT_AIR_RELEASE_SITES_MN = 7
 
 
-
-
 class TestQueries:
     sector_tests = [
         ['Chemicals'],
@@ -45,7 +45,8 @@ class TestQueries:
     test_params = {
         "lat": 45,
         "lon": 96,
-        "radius": 1000
+        "radius": 1000,
+        "access_token": os.environ.get("SECRET_KEY")
     }
 
     @staticmethod
@@ -62,24 +63,31 @@ class TestQueries:
         assert check == True  # TEST: the only value present is True
 
     @staticmethod
-    def test_query_all() -> NoReturn:
+    async def test_query_all() -> NoReturn:
         # TEST CASE:  Spatial query which selects all sites in MN
 
+
         params = deepcopy(TestQueries.test_params)
-        response = client.get("/query", params=params)
+
+        async with AsyncClient(app=app, base_url="http://localhost:8000") as ac:
+            response = await ac.get("/query", params=params)
 
         assert response.status_code == 200
         assert len(response.json()) == SITES_MN
 
+        for site in response.json():
+            if site['site_id'] == TestSubmit.test_params['site_id']:
+                ic(site)
+
+
     @staticmethod
-    def test_query_carcinogen() -> NoReturn:
+    async def test_query_carcinogen() -> NoReturn:
         # TEST CASE:  Spatial query which selects all carcinogen sites in MN
 
         params = deepcopy(TestQueries.test_params)
         params["carcinogen"] = True
-        response = client.get("/query", params=params)
-
-        assert response.status_code == 200
+        async with AsyncClient(app=app, base_url="http://localhost:8000") as ac:
+            response = await ac.get("/query", params=params)
 
         df = DataFrame(response.json())
 
@@ -87,12 +95,15 @@ class TestQueries:
         assert (df.carcinogen.unique()) == [True]  # TEST: ensure all results are carcinogen
 
     @staticmethod
-    def test_query_release_type(release_type: str) -> NoReturn:
+    async def test_query_release_type(release_type: str) -> NoReturn:
         # TEST CASE: Spatial query which selects sites in MN based on release type
 
         params = deepcopy(TestQueries.test_params)
         params["release_type"] = release_type
-        response = client.get("/query", params=params)
+        #response = client.get("/query", params=params)
+
+        async with AsyncClient(app=app, base_url="http://localhost:8000") as ac:
+            response = await ac.get("/query", params=params)
 
         assert response.status_code == 200
 
@@ -109,7 +120,7 @@ class TestQueries:
             assert len(response.json()) == AIR_RELEASE_SITES_MN
 
     @staticmethod
-    def test_spatial_query_sectors(sectors: List[str]) -> NoReturn:
+    async def test_spatial_query_sectors(sectors: List[str]) -> NoReturn:
         # TEST CASE:
         #   Spatial query which selects sites in MN based on industry sector
         #
@@ -125,7 +136,9 @@ class TestQueries:
         params = deepcopy(TestQueries.test_params)
         params["sectors"] = sectors
 
-        full_query_response = client.get("/query", params=params)
+        # full_query_response = client.get("/query", params=params)
+        async with AsyncClient(app=app, base_url="http://localhost:8000") as ac:
+            full_query_response = await ac.get("/query", params=params)
 
         assert full_query_response.status_code == 200
 
@@ -139,7 +152,8 @@ class TestQueries:
         # it will also work if some of the sectors queried are 0
 
         # without sorting, alphabetical order of list items produces false negative
-        assert df['sector'].unique().tolist().sort() == sectors.sort()
+        sectors_received = df.sector.unique().tolist().sort()
+        assert sectors_received == sectors.sort()
 
         if len(sectors) == 1:
             assert total_results == CHEMICAL_SITES_MN
@@ -148,7 +162,11 @@ class TestQueries:
         # record results returned by queries for individual sectors
         for sector in sectors:
             params["sectors"] = [sector]
-            response = client.get("/query", params=params)
+            #response = client.get("/query", params=params)
+
+            async with AsyncClient(app=app, base_url="http://localhost:8000") as ac:
+                response = await ac.get("/query", params=params)
+
             counts.append(len(response.json()))
 
         assert total_results == sum(counts)
@@ -159,7 +177,7 @@ class TestQueries:
             assert total_results == CHEMICAL_SITES_MN + FOOD_SITES_MN + TRANSPORTATION_EQUIPMENT_SITES_MN
 
     @staticmethod
-    def test_query_compound_carcinogen_and_release_type(release_type: str) -> NoReturn:
+    async def test_query_compound_carcinogen_and_release_type(release_type: str) -> NoReturn:
         # TEST CASE:
         # Compound spatial query which selects carcinogen sites in MN based on release type
 
@@ -167,7 +185,10 @@ class TestQueries:
         params["carcinogen"] = True
         params["release_type"] = release_type
 
-        response = client.get("/query", params=params)
+        #response = client.get("/query", params=params)
+        async with AsyncClient(app=app, base_url="http://localhost:8000") as ac:
+            response = await ac.get("/query", params=params)
+
 
         assert response.status_code == 200
         res = response.json()
@@ -183,7 +204,7 @@ class TestQueries:
             assert len(res) == CARCINOGEN_AIR_RELEASE_SITES_MN
 
     @staticmethod
-    def test_query_compound_carcinogen_and_release_type_and_sectors(sectors: List[str],
+    async def test_query_compound_carcinogen_and_release_type_and_sectors(sectors: List[str],
                                                                     release_type: str,
                                                                     carcinogen: bool
                                                                     ) -> NoReturn:
@@ -198,7 +219,10 @@ class TestQueries:
         params["release_type"] = release_type
         params["sectors"] = sectors
 
-        query_all_response = client.get("/query", params=params)
+        #query_all_response = client.get("/query", params=params)
+        async with AsyncClient(app=app, base_url="http://localhost:8000") as ac:
+            query_all_response = await ac.get("/query", params=params)
+
         assert query_all_response.status_code == 200
 
         res = query_all_response.json()
@@ -218,7 +242,10 @@ class TestQueries:
 
         for sector in sectors:
             params['sectors'] = [sector]
-            response = client.get("/query", params=params)
+            #response = client.get("/query", params=params)
+            async with AsyncClient(app=app, base_url="http://localhost:8000") as ac:
+                response = await ac.get("/query", params=params)
+
             counts.append(len(response.json()))
 
         assert total_results == sum(counts)
@@ -239,22 +266,22 @@ class TestQueries:
                 assert total_results == CHEMICAL_AIR_RELEASE_SITES_MN + FOOD_AIR_RELEASE_SITES_MN + TRANSPORTATION_EQUIPMENT_AIR_RELEASE_SITES_MN
 
     @staticmethod
-    def run_panel():
-        TestQueries.test_query_all()
-        TestQueries.test_query_carcinogen()
-        TestQueries.test_query_release_type(release_type="WATER")
-        TestQueries.test_query_release_type(release_type="AIR")
-        TestQueries.test_query_compound_carcinogen_and_release_type(release_type="WATER")
-        TestQueries.test_query_compound_carcinogen_and_release_type(release_type="AIR")
+    async def run_panel():
+        await TestQueries.test_query_all()
+        await TestQueries.test_query_carcinogen()
+        await TestQueries.test_query_release_type(release_type="WATER")
+        await TestQueries.test_query_release_type(release_type="AIR")
+        await TestQueries.test_query_compound_carcinogen_and_release_type(release_type="WATER")
+        await TestQueries.test_query_compound_carcinogen_and_release_type(release_type="AIR")
 
         for test_sector in TestQueries.sector_tests:
-            TestQueries.test_spatial_query_sectors(sectors=test_sector)
-            TestQueries.test_query_compound_carcinogen_and_release_type_and_sectors(sectors=test_sector,
+            await TestQueries.test_spatial_query_sectors(sectors=test_sector)
+            await TestQueries.test_query_compound_carcinogen_and_release_type_and_sectors(sectors=test_sector,
                                                                                     release_type="AIR",
                                                                                     carcinogen=False
                                                                                     )
 
-            TestQueries.test_query_compound_carcinogen_and_release_type_and_sectors(sectors=test_sector,
+            await TestQueries.test_query_compound_carcinogen_and_release_type_and_sectors(sectors=test_sector,
                                                                                     release_type="AIR",
                                                                                     carcinogen=True
                                                                                     )
@@ -264,9 +291,12 @@ class TestSubmit:
 
     test_message = "You are reading the thing which I have typed."
     test_params = {
-                   "site_id": "55003NDRSNFOOTO",
-                   "message": test_message
+                   "site_id": "55413NTRPL2015N",
+                   "message": test_message,
+                   "access_token": os.environ.get("SECRET_KEY")
                   }
+
+    #55003NDRSNFOOTO
 
     report_params = [
                         {
@@ -284,12 +314,13 @@ class TestSubmit:
                     ]
 
     @staticmethod
-    def test_submit(report_params: Dict[str, str]) -> NoReturn:
+    async def test_submit(report_params: Dict[str, str]) -> NoReturn:
 
         params = deepcopy(TestSubmit.test_params)
         params = {**params, **report_params}
 
-        response = client.post("/submit", json=params)
+        async with AsyncClient(app=app, base_url="http://localhost:8000") as ac:
+            response = await ac.post("/submit", json=params)
 
         assert response.status_code == 200
         res = response.json()
@@ -297,14 +328,15 @@ class TestSubmit:
         expected = {k: v for k, v in params.items() if v is not None}
 
         for k in expected:
-            assert k in res.keys()
-            assert res[k] == expected[k]
+            if k != "access_token":
+                assert k in res.keys()
+                assert res[k] == expected[k]
 
 
     @staticmethod
-    def run_panel():
+    async def run_panel():
         for report in TestSubmit.report_params:
-            TestSubmit.test_submit(report)
+            await TestSubmit.test_submit(report)
 
         target_site = {
                        "release_type": "AIR",
@@ -314,17 +346,28 @@ class TestSubmit:
 
         query_params = deepcopy(TestQueries.test_params)
         params = {**query_params, **target_site}
-        response = client.get("/query", params=params)
-        target_site_response = response.json()[3]
+        #response = client.get("/query", params=params)
+
+        async with AsyncClient(app=app, base_url="http://localhost:8000") as ac:
+            response = await ac.get("/query", params=params)
+
+        #target_site_response = response.json()[3]
 
 
 if __name__ == "__main__":
-    ic(dt.now())
-    data = read_csv("~/Downloads/tri_20_mn.csv")
-    tri_loader = TRILoader()
-    tri_loader.set_data(data=data)
+    start = dt.now()
+    data = read_csv("~/Downloads/tri_20_mn.csv")  # this is a dataframe
+    tri_loader = TRILoader()  # set loader class
+    tri_loader.set_data(data=data)  # load data
 
-    asyncio.run(tri_loader.main())
-    TestQueries.run_panel()
-    TestSubmit.run_panel()
+    #asyncio.run(tri_loader.main())  # run protocols to create db and tables, then import the dataframe
+
+    async def main():
+        await asyncio.wait([TestQueries.run_panel(), TestSubmit.run_panel()])  # run protocols to create db and tables, then import the dataframeTestQueries.run_panel()  # run the query tests
+
+    asyncio.run(main())  # run the submit report tests
+    end = dt.now()
+
+    delta = end - start
+    ic(delta.total_seconds())
     #requests.post("http://0.0.0.0:8001/submit", json=json.dumps(TestSubmit.test_params))

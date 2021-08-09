@@ -57,7 +57,8 @@ class Report(Base):
                 BigInteger,
                 autoincrement=True,
                 primary_key=True
-            )  # it has lots of referants
+            )
+
     site_id = Column(String, ForeignKey("sites.site_id", name="sites_key"), nullable=False)
     message = Column(String(240), nullable=True)
     report_type = Column(enums.make(kind="report_types"), nullable=False)  # enumeration creation from values in enum.py

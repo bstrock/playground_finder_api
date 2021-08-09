@@ -1,10 +1,10 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from fastapi import FastAPI, Query as fastapi_Query, Depends
-from sqlalchemy.orm import sessionmaker, Query
+from sqlalchemy.orm import sessionmaker, Query, selectinload
 from create_spatial_db import SpatialDB
 from geoalchemy2 import WKTElement
-from typing import Optional, List, Dict
-from schemas import SiteSchema, ReportSchema
+from typing import Optional, List
+from schemas import SiteSchema, ReportSchema, Globals
 from table_models import Site, Report, ActivityReports, EmissionReports, UnusedReports
 import logging
 import uvicorn
@@ -37,70 +37,74 @@ async def query(
         lat: float,
         lon: float,
         radius: int,
+        access_token: str,
         release_type: Optional[str] = None,
         carcinogen: Optional[bool] = None,
         sectors: Optional[List[str]] = fastapi_Query(None),
-        Session: AsyncSession = Depends(get_db)
+        Session: AsyncSession = Depends(get_db),
 ) -> List[SiteSchema]:
 
     logging.info("Query received")
 
-    # prepare PostGIS geometry object
-    query_point = WKTElement(f"POINT({lon} {lat})", srid=4269)
+    if access_token == Globals.SECRET_KEY:
 
-    logging.info("Query point: %s", query_point.desc)
+        # prepare PostGIS geometry object
+        query_point = WKTElement(f"POINT({lon} {lat})", srid=4269)
 
-    # build spatial query
-    query_sql = Query([Site]).filter(
-        Site.geom.ST_DWithin(
-            query_point, radius
-        )
-    )
+        logging.info("Query point: %s", query_point.desc)
 
-    logging.debug("Query SQL: %s", str(query_sql))
+        # build spatial query
+        query_sql = Query([Site]).filter(
+            Site.geom.ST_DWithin(
+                query_point, radius
+            )
+        ).options(selectinload(Site.reports))
 
-    #  add filters based on optional query parameters
-    if carcinogen:
-        query_sql = query_sql.filter(Site.carcinogen == True)
-
-        logging.info("Query flag: CARCINOGEN")
         logging.debug("Query SQL: %s", str(query_sql))
 
-    if sectors:
-        query_sql = query_sql.filter(Site.sector.in_(sectors))
+        #  add filters based on optional query parameters
+        if carcinogen:
+            query_sql = query_sql.filter(Site.carcinogen == True)
 
-        logging.info("Query flag: SECTORS: %s", str(sectors))
-        logging.debug("Query SQL: %s", str(query_sql))
+            logging.info("Query flag: CARCINOGEN")
+            logging.debug("Query SQL: %s", str(query_sql))
 
-    if release_type:
-        query_sql = query_sql.filter(Site.release_types.any(release_type))
-        logging.info("Query flag: RELEASE TYPE: %s", str(release_type))
-        logging.debug("Query SQL: %s", str(query_sql))
+        if sectors:
+            query_sql = query_sql.filter(Site.sector.in_(sectors))
 
-    # send query to db by calling async session
-    async with Session as s:
-        logging.info("Transaction: BEGIN")
-        async with s.begin():
-            logging.info("SESSION: Checked out a connection")
-            res = await s.execute(query_sql.with_session(s).statement)
-            # context manager autocommits the query
-            logging.info("QUERY: Submitted")
-        logging.info("TRANSACTION: CLOSED\n")
+            logging.info("Query flag: SECTORS: %s", str(sectors))
+            logging.debug("Query SQL: %s", str(query_sql))
 
-        res = res.scalars().all()  # decode results)
+        if release_type:
+            query_sql = query_sql.filter(Site.release_types.any(release_type))
+            logging.info("Query flag: RELEASE TYPE: %s", str(release_type))
+            logging.debug("Query SQL: %s", str(query_sql))
 
-    logging.info("SESSION: returned connection to the pool")
+        # send query to db by calling async session
+        async with Session as s:
+            logging.info("Transaction: BEGIN")
+            async with s.begin():
+                logging.info("SESSION: Checked out a connection")
+                res = await s.execute(query_sql.with_session(s).statement)
+                # context manager autocommits the query
+                logging.info("QUERY: Submitted")
+            logging.info("TRANSACTION: CLOSED\n")
 
-    # db session is closed here
-    sites = [SiteSchema.from_orm(site) for site in res]  # unpack results to pydantic schema using list comprehension
+            res = res.scalars().all()  # decode results)
 
-    logging.info("QUERY: Results unpacked")
 
-    if len(sites) == 0:
-        logging.info("QUERY: NO RESULTS -- Endpoint Service COMPLETE\n\n")
+        logging.info("SESSION: returned connection to the pool")
 
-    logging.info("QUERY: Results returned -- endpoint service COMPLETE\n\n")
-    return sites
+        # db session is closed here
+        sites = [SiteSchema.from_orm(site) for site in res]  # unpack results to pydantic schema using list comprehension
+
+        logging.info("QUERY: Results unpacked")
+
+        if len(sites) == 0:
+            logging.info("QUERY: NO RESULTS -- Endpoint Service COMPLETE\n\n")
+
+        logging.info("QUERY: Results returned -- endpoint service COMPLETE\n\n")
+        return sites
 
 
 @app.post("/submit")
