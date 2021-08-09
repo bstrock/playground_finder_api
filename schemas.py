@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import Dict, Optional, List
 from fastapi import HTTPException, status
+from sqlalchemy.orm import with_polymorphic
+from table_models import Report, UnusedReports, ActivityReports, EmissionReports
 import os
 
 
@@ -59,5 +61,7 @@ class Globals:
     SECRET_KEY = os.environ.get("SECRET_KEY")
     ALGORITHM = os.environ.get("ALGORITHM")
     CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
+    ALL_REPORTS = with_polymorphic(Report, [EmissionReports, ActivityReports, UnusedReports])
+
 
 

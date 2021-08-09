@@ -73,11 +73,13 @@ class TestQueries:
             response = await ac.get("/query", params=params)
 
         assert response.status_code == 200
+        ic(len(response.json()))
         assert len(response.json()) == SITES_MN
 
         for site in response.json():
             if site['site_id'] == TestSubmit.test_params['site_id']:
                 ic(site)
+
 
 
     @staticmethod
@@ -365,7 +367,7 @@ if __name__ == "__main__":
     async def main():
         await asyncio.wait([TestQueries.run_panel(), TestSubmit.run_panel()])  # run protocols to create db and tables, then import the dataframeTestQueries.run_panel()  # run the query tests
 
-    asyncio.run(main())  # run the submit report tests
+    asyncio.run(TestQueries.run_panel())  # run the submit report tests
     end = dt.now()
 
     delta = end - start

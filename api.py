@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from fastapi import FastAPI, Query as fastapi_Query, Depends
-from sqlalchemy.orm import sessionmaker, Query, selectinload
+from sqlalchemy.orm import sessionmaker, Query, selectinload, with_polymorphic
 from create_spatial_db import SpatialDB
 from geoalchemy2 import WKTElement
 from typing import Optional, List
@@ -88,15 +88,19 @@ async def query(
                 res = await s.execute(query_sql.with_session(s).statement)
                 # context manager autocommits the query
                 logging.info("QUERY: Submitted")
+                res = res.scalars().all()  # decode results)
+                for result in res:
+                    ic(result.reports)
+                sites = [SiteSchema.from_orm(site) for site in res]  # unpack results to pydantic schema using list comprehension
             logging.info("TRANSACTION: CLOSED\n")
 
-            res = res.scalars().all()  # decode results)
+
 
 
         logging.info("SESSION: returned connection to the pool")
 
         # db session is closed here
-        sites = [SiteSchema.from_orm(site) for site in res]  # unpack results to pydantic schema using list comprehension
+
 
         logging.info("QUERY: Results unpacked")
 
@@ -142,7 +146,6 @@ async def submit(
             await s.commit()
             ic(main_report.__dict__)
         async with s.begin():
-            linked_report.report_id = main_report.report_id
             s.add(linked_report)
 
     return report
