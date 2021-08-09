@@ -1,10 +1,12 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from fastapi import FastAPI, Query as fastapi_Query, Depends
+from fastapi.encoders import jsonable_encoder
+from sqlalchemy import func
 from sqlalchemy.orm import sessionmaker, Query, selectinload, with_polymorphic
 from create_spatial_db import SpatialDB
 from geoalchemy2 import WKTElement
 from typing import Optional, List
-from schemas import SiteSchema, ReportSchema, Globals
+from schemas import SiteSchema, ReportSchema, Globals, ChildReportSchema
 from table_models import Site, Report, ActivityReports, EmissionReports, UnusedReports
 import logging
 import uvicorn
@@ -89,12 +91,9 @@ async def query(
                 # context manager autocommits the query
                 logging.info("QUERY: Submitted")
                 res = res.scalars().all()  # decode results)
-                for result in res:
-                    ic(result.reports)
+
                 sites = [SiteSchema.from_orm(site) for site in res]  # unpack results to pydantic schema using list comprehension
             logging.info("TRANSACTION: CLOSED\n")
-
-
 
 
         logging.info("SESSION: returned connection to the pool")
@@ -115,9 +114,9 @@ async def query(
 async def submit(
         report: ReportSchema,
         Session: AsyncSession = Depends(get_db),
-) -> ReportSchema:
+):
 
-    main_report = Report(
+    """main_report = Report(
         site_id=report.site_id,
         report_type=report.report_type
     )
@@ -126,29 +125,35 @@ async def submit(
         main_report.message = report.message
 
     if report.emission_type:
-        linked_report = EmissionReports(
-            emission_type=report.emission_type
-        )
+        main_report
 
     elif report.activity_type:
-        linked_report = ActivityReports(
-            activity_type=report.activity_type
-        )
+        main_report.activity_type = report.activity_type
 
     elif report.unused_type:
-        linked_report = UnusedReports(
-            unused_type=report.unused_type
-        )
+        main_report.unused_type=report.unused_type"""
+    data = jsonable_encoder(report)
+    ic(data)
+
+    exclude = ['message', 'site_id', 'report_type']
+
+    for i, sub in enumerate(Globals.SUB_REPORTS):
+        for k in data.keys():
+            if k in sub.__dict__.keys() and k not in exclude and data[k] is not None:
+                ic(k, sub)
+                child = sub()
+                break
+
+    for k in data:
+        if data[k] is not None:
+            child.__setattr__(k, data[k])
 
     async with Session as s:
         async with s.begin():
-            s.add(main_report)
-            await s.commit()
-            ic(main_report.__dict__)
-        async with s.begin():
-            s.add(linked_report)
+            s.add(child)
 
-    return report
+    return child
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)

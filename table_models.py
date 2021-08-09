@@ -62,7 +62,6 @@ class Report(Base):
     report_type = Column(enums.make(kind="report_types"), nullable=False)  # enumeration creation from values in enum.py
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
     site = relationship("Site", backref="reports", lazy=False)
-    #emission_reports = relationship("EmissionReports", back_populates="emission_reports", lazy=False)
 
     __mapper_args__ = {
         "eager_defaults": True,
@@ -82,7 +81,7 @@ class EmissionReports(Report):
 
     report_id = Column(BigInteger, ForeignKey("reports.report_id", name="emissions_key"), primary_key=True)
     emission_type = Column(enums.make('emission_types'), nullable=False)
-    #report = relationship("Report", back_populates="emission_reports", lazy=False)
+    report = relationship("Report", backref="Emission", lazy=False)
 
 
 class ActivityReports(Report):
@@ -91,19 +90,19 @@ class ActivityReports(Report):
         "eager_defaults": True,
         "polymorphic_identity": "Activity"
     }
-
-    report_id = Column(BigInteger, ForeignKey("reports.report_id", name="request_key"), primary_key=True)
+    #activity_report_id = Column(BigInteger, primary_key=True)
+    report_id = Column(BigInteger, ForeignKey("reports.report_id", name="activity_key"), primary_key=True)
     activity_type = Column(enums.make('activity_types'), nullable=False)
-    #report = relationship("Report", backref="activity_reports", lazy=False)
+    report = relationship("Report", backref="Activity", lazy=False)
 
 
 class UnusedReports(Report):
     __tablename__ = "unused_reports"
     __mapper_args__ = {
         "eager_defaults": True,
-        "polymorphic_identity": "Unused"
+        "polymorphic_identity": "Unused Site"
     }
 
     report_id = Column(BigInteger, ForeignKey("reports.report_id", name="damage_key"), primary_key=True)
     unused_type = Column(enums.make('unused_types'), nullable=False)
-    #report = relationship("Report", backref="damage_report", lazy=False)
+    report = relationship("Report", backref="damage_report", lazy=False)

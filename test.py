@@ -326,11 +326,13 @@ class TestSubmit:
 
         assert response.status_code == 200
         res = response.json()
+        ic(res)
 
         expected = {k: v for k, v in params.items() if v is not None}
-
+        generated_keys = ['timestamp', 'report_id', 'access_token']
         for k in expected:
-            if k != "access_token":
+            if k not in generated_keys:
+                ic(k)
                 assert k in res.keys()
                 assert res[k] == expected[k]
 
@@ -362,12 +364,12 @@ if __name__ == "__main__":
     tri_loader = TRILoader()  # set loader class
     tri_loader.set_data(data=data)  # load data
 
-    #asyncio.run(tri_loader.main())  # run protocols to create db and tables, then import the dataframe
+    asyncio.run(tri_loader.main())  # run protocols to create db and tables, then import the dataframe
 
     async def main():
-        await asyncio.wait([TestQueries.run_panel(), TestSubmit.run_panel()])  # run protocols to create db and tables, then import the dataframeTestQueries.run_panel()  # run the query tests
+        await asyncio.wait([TestSubmit.run_panel(), TestQueries.run_panel()])  # run protocols to create db and tables, then import the dataframeTestQueries.run_panel()  # run the query tests
 
-    asyncio.run(TestQueries.run_panel())  # run the submit report tests
+    asyncio.run(main())
     end = dt.now()
 
     delta = end - start

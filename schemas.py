@@ -5,7 +5,6 @@ from sqlalchemy.orm import with_polymorphic
 from table_models import Report, UnusedReports, ActivityReports, EmissionReports
 import os
 
-
 class Chemical(BaseModel):
     unit: str
     total: float
@@ -14,11 +13,11 @@ class Chemical(BaseModel):
         orm_mode = True
 
 
-
 class ReportSchema(BaseModel):
+    report_id: Optional[str]
     site_id: str
     report_type: str
-    message: str
+    message: Optional[str]
     emission_type: Optional[str]
     activity_type: Optional[str]
     unused_type: Optional[str]
@@ -26,6 +25,16 @@ class ReportSchema(BaseModel):
     class Config:
         orm_mode = True
         arbitrary_types_allowed = True
+
+
+class ChildReportSchema(BaseModel):
+    report_id: str
+    emission_type: Optional[str]
+    activity_type: Optional[str]
+    unused_type: Optional[str]
+
+    class Config:
+        orm_mode = True
 
 class SiteSchema(BaseModel):
     site_id: str
@@ -47,6 +56,7 @@ class SiteSchema(BaseModel):
         orm_mode = True
         arbitrary_types_allowed = True
 
+
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -62,6 +72,5 @@ class Globals:
     ALGORITHM = os.environ.get("ALGORITHM")
     CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
     ALL_REPORTS = with_polymorphic(Report, [EmissionReports, ActivityReports, UnusedReports])
-
-
+    SUB_REPORTS = [EmissionReports, ActivityReports, UnusedReports]
 
