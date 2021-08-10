@@ -13,28 +13,6 @@ import os
 client = TestClient(app)
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
 
-# TEST CONSTANTS
-SITES_MN = 503
-
-CARCINOGEN_SITES_MN = 267
-
-WATER_RELEASE_SITES_MN = 28
-AIR_RELEASE_SITES_MN = 321
-CARCINOGEN_AIR_RELEASE_SITES_MN = 201
-CARCINOGEN_WATER_RELEASE_SITES_MN = 20
-
-CHEMICAL_SITES_MN = 68
-CHEMICAL_AIR_RELEASE_SITES_MN = 52
-CARCINOGEN_CHEMICAL_AIR_RELEASE_SITES_MN = 27
-
-FOOD_SITES_MN = 76
-FOOD_AIR_RELEASE_SITES_MN = 28
-CARCINOGEN_FOOD_AIR_RELEASE_SITES_MN = 8
-
-TRANSPORTATION_EQUIPMENT_SITES_MN = 20
-TRANSPORTATION_EQUIPMENT_AIR_RELEASE_SITES_MN = 12
-CARCINOGEN_TRANSPORTATION_EQUIPMENT_AIR_RELEASE_SITES_MN = 7
-
 
 class TestQueries:
     sector_tests = [
@@ -45,10 +23,74 @@ class TestQueries:
 
     test_params = {
         "lat": 45,
-        "lon": 96,
+        "lon": -96,
         "radius": 1000,
         "access_token": os.environ.get("SECRET_KEY"),
     }
+
+    # TEST CONSTANTS
+    SITES_MN = 503
+
+    CARCINOGEN_SITES_MN = 267
+
+    WATER_RELEASE_SITES_MN = 28
+    AIR_RELEASE_SITES_MN = 321
+    CARCINOGEN_AIR_RELEASE_SITES_MN = 201
+    CARCINOGEN_WATER_RELEASE_SITES_MN = 20
+
+    CHEMICAL_SITES_MN = 68
+    CHEMICAL_AIR_RELEASE_SITES_MN = 52
+    CARCINOGEN_CHEMICAL_AIR_RELEASE_SITES_MN = 27
+
+    FOOD_SITES_MN = 76
+    FOOD_AIR_RELEASE_SITES_MN = 28
+    CARCINOGEN_FOOD_AIR_RELEASE_SITES_MN = 8
+
+    TRANSPORTATION_EQUIPMENT_SITES_MN = 20
+    TRANSPORTATION_EQUIPMENT_AIR_RELEASE_SITES_MN = 12
+    CARCINOGEN_TRANSPORTATION_EQUIPMENT_AIR_RELEASE_SITES_MN = 7
+
+    SPATIAL_TEST_10_MILE_RADIUS = 2
+    SPATIAL_TEST_100_MILE_RADIUS = 100
+
+    SPATIAL_EXPECTED_RESPONSE = [
+        {
+            "address": "800 DIAGONAL ST",
+            "carcinogen": False,
+            "chemicals": {"n-Hexane": {"total": 189178.05, "unit": "Pounds"}},
+            "city": "DAWSON",
+            "latitude": 44.93265,
+            "longitude": 44.93265,
+            "name": "AG PROCESSING INC A COOPERATIVE",
+            "release_types": ["AIR"],
+            "reports": [],
+            "sector": "Food",
+            "site_id": "56232GPRCS8THDI",
+            "state": "MN",
+            "total_releases": 189178.05,
+            "zip": 56232,
+        },
+        {
+            "address": "HWY 212 & COUNTY RD 25",
+            "carcinogen": True,
+            "chemicals": {
+                "Copper compounds": {"total": 0.0, "unit": "Pounds"},
+                "Formaldehyde": {"total": 0.0, "unit": "Pounds"},
+                "Methanol": {"total": 0.0, "unit": "Pounds"},
+            },
+            "city": "DAWSON",
+            "latitude": 44.936564,
+            "longitude": 44.936564,
+            "name": "JENNIE-O TURKEYSTORE DAWSON FEED MILL",
+            "release_types": [None],
+            "reports": [],
+            "sector": "Food",
+            "site_id": "56232LNDLKHWY21",
+            "state": "MN",
+            "total_releases": 0.0,
+            "zip": 56232,
+        },
+    ]
 
     @staticmethod
     def test_release_type(df: DataFrame, release_type: str) -> NoReturn:
@@ -75,7 +117,7 @@ class TestQueries:
 
         assert response.status_code == 200
         ic(len(response.json()))
-        assert len(response.json()) == SITES_MN
+        assert len(response.json()) == TestQueries.SITES_MN
 
         for site in response.json():
             if site["site_id"] == TestSubmit.test_params["site_id"]:
@@ -93,7 +135,7 @@ class TestQueries:
         df = DataFrame(response.json())
 
         assert (
-            len(response.json()) == CARCINOGEN_SITES_MN
+            len(response.json()) == TestQueries.CARCINOGEN_SITES_MN
         )  # TEST:  returns correct # of results
         assert (df.carcinogen.unique()) == [
             True
@@ -120,12 +162,12 @@ class TestQueries:
 
         # TEST: query returns expected number of results
         if release_type == "WATER":
-            assert len(response.json()) == WATER_RELEASE_SITES_MN
+            assert len(response.json()) == TestQueries.WATER_RELEASE_SITES_MN
         elif release_type == "AIR":
-            assert len(response.json()) == AIR_RELEASE_SITES_MN
+            assert len(response.json()) == TestQueries.AIR_RELEASE_SITES_MN
 
     @staticmethod
-    async def test_spatial_query_sectors(sectors: List[str]) -> NoReturn:
+    async def test_query_sectors(sectors: List[str]) -> NoReturn:
         # TEST CASE:
         #   Spatial query which selects sites in MN based on industry sector
         #
@@ -161,7 +203,7 @@ class TestQueries:
         assert sectors_received == sectors.sort()
 
         if len(sectors) == 1:
-            assert total_results == CHEMICAL_SITES_MN
+            assert total_results == TestQueries.CHEMICAL_SITES_MN
             return  # no need to check sum total when there's only one sector
 
         # record results returned by queries for individual sectors
@@ -177,11 +219,11 @@ class TestQueries:
         assert total_results == sum(counts)
 
         if len(sectors) == 2:
-            assert total_results == CHEMICAL_SITES_MN + FOOD_SITES_MN
+            assert total_results == TestQueries.CHEMICAL_SITES_MN + TestQueries.FOOD_SITES_MN
         elif len(sectors) == 3:
             assert (
                 total_results
-                == CHEMICAL_SITES_MN + FOOD_SITES_MN + TRANSPORTATION_EQUIPMENT_SITES_MN
+                == TestQueries.CHEMICAL_SITES_MN + TestQueries.FOOD_SITES_MN + TestQueries.TRANSPORTATION_EQUIPMENT_SITES_MN
             )
 
     @staticmethod
@@ -210,9 +252,9 @@ class TestQueries:
         TestQueries.test_release_type(df=df, release_type=release_type)
 
         if release_type == "WATER":
-            assert len(res) == CARCINOGEN_WATER_RELEASE_SITES_MN
+            assert len(res) == TestQueries.CARCINOGEN_WATER_RELEASE_SITES_MN
         elif release_type == "AIR":
-            assert len(res) == CARCINOGEN_AIR_RELEASE_SITES_MN
+            assert len(res) == TestQueries.CARCINOGEN_AIR_RELEASE_SITES_MN
 
     @staticmethod
     async def test_query_compound_carcinogen_and_release_type_and_sectors(
@@ -247,9 +289,9 @@ class TestQueries:
                 assert (df.carcinogen.unique()) == [
                     True
                 ]  # TEST: ensure all results are carcinogen
-                assert total_results == CARCINOGEN_CHEMICAL_AIR_RELEASE_SITES_MN
+                assert total_results == TestQueries.CARCINOGEN_CHEMICAL_AIR_RELEASE_SITES_MN
             else:
-                assert total_results == CHEMICAL_AIR_RELEASE_SITES_MN
+                assert total_results == TestQueries.CHEMICAL_AIR_RELEASE_SITES_MN
             return
 
         for sector in sectors:
@@ -270,13 +312,13 @@ class TestQueries:
                 ]  # TEST: ensure all results are carcinogen
                 assert (
                     total_results
-                    == CARCINOGEN_CHEMICAL_AIR_RELEASE_SITES_MN
-                    + CARCINOGEN_FOOD_AIR_RELEASE_SITES_MN
+                    == TestQueries.CARCINOGEN_CHEMICAL_AIR_RELEASE_SITES_MN
+                    + TestQueries.CARCINOGEN_FOOD_AIR_RELEASE_SITES_MN
                 )
             else:
                 assert (
                     total_results
-                    == CHEMICAL_AIR_RELEASE_SITES_MN + FOOD_AIR_RELEASE_SITES_MN
+                    == TestQueries.CHEMICAL_AIR_RELEASE_SITES_MN + TestQueries.FOOD_AIR_RELEASE_SITES_MN
                 )
 
         elif len(sectors) == 3:
@@ -286,17 +328,33 @@ class TestQueries:
                 ]  # TEST: ensure all results are carcinogen
                 assert (
                     total_results
-                    == CARCINOGEN_CHEMICAL_AIR_RELEASE_SITES_MN
-                    + CARCINOGEN_FOOD_AIR_RELEASE_SITES_MN
-                    + CARCINOGEN_TRANSPORTATION_EQUIPMENT_AIR_RELEASE_SITES_MN
+                    == TestQueries.CARCINOGEN_CHEMICAL_AIR_RELEASE_SITES_MN
+                    + TestQueries.CARCINOGEN_FOOD_AIR_RELEASE_SITES_MN
+                    + TestQueries.CARCINOGEN_TRANSPORTATION_EQUIPMENT_AIR_RELEASE_SITES_MN
                 )
             else:
                 assert (
                     total_results
-                    == CHEMICAL_AIR_RELEASE_SITES_MN
-                    + FOOD_AIR_RELEASE_SITES_MN
-                    + TRANSPORTATION_EQUIPMENT_AIR_RELEASE_SITES_MN
+                    == TestQueries.CHEMICAL_AIR_RELEASE_SITES_MN
+                    + TestQueries.FOOD_AIR_RELEASE_SITES_MN
+                    + TestQueries.TRANSPORTATION_EQUIPMENT_AIR_RELEASE_SITES_MN
                 )
+
+    @staticmethod
+    async def test_spatial_query():
+        params = deepcopy(TestQueries.test_params)
+
+        for r in [10, 100]:
+            params["radius"] = r
+            async with AsyncClient(app=app, base_url="http://localhost:8000") as ac:
+                response = await ac.get("/query", params=params)
+
+            assert response.status_code == 200
+
+            if r == 10:
+                assert response.json() == TestQueries.SPATIAL_EXPECTED_RESPONSE
+            elif r == 100:
+                assert len(response.json()) == TestQueries.SPATIAL_TEST_100_MILE_RADIUS
 
     @staticmethod
     async def run_panel():
@@ -312,7 +370,7 @@ class TestQueries:
         )
 
         for test_sector in TestQueries.sector_tests:
-            await TestQueries.test_spatial_query_sectors(sectors=test_sector)
+            await TestQueries.test_query_sectors(sectors=test_sector)
             await TestQueries.test_query_compound_carcinogen_and_release_type_and_sectors(
                 sectors=test_sector, release_type="AIR", carcinogen=False
             )
@@ -320,6 +378,8 @@ class TestQueries:
             await TestQueries.test_query_compound_carcinogen_and_release_type_and_sectors(
                 sectors=test_sector, release_type="AIR", carcinogen=True
             )
+
+        await TestQueries.test_spatial_query()
 
 
 class TestSubmit:

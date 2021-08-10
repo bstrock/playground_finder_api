@@ -5,26 +5,30 @@ from schemas import SiteSchema, ReportSchema, Globals
 from fastapi.encoders import jsonable_encoder
 from create_spatial_db import SpatialDB
 from table_models import Site, Report
-from geoalchemy2 import WKTElement
 from typing import Optional, List
 from sqlalchemy import select
+from geoalchemy2 import func
 from icecream import ic
 import logging
 import uvicorn
 
 # initializations
 app = FastAPI()
-engine = create_async_engine(url=SpatialDB.url, echo=False, future=True)
+engine = create_async_engine(url=SpatialDB.url, echo=True, future=True)
 Session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
-# dependency for injection
+# dependencies for injection
 async def get_db():
     s = Session()
     try:
         yield s
     finally:
         await s.close()
+
+
+def miles_to_meters(radius: int):
+    return radius * Globals.MILES_TO_METERS
 
 
 logging.basicConfig(
@@ -38,8 +42,8 @@ logging.basicConfig(
 async def query(
     lat: float,
     lon: float,
-    radius: int,
     access_token: str,
+    radius: float = Depends(miles_to_meters),
     release_type: Optional[str] = None,
     carcinogen: Optional[bool] = None,
     sectors: Optional[List[str]] = fastapi_Query(None),
@@ -52,15 +56,28 @@ async def query(
     if access_token == Globals.SECRET_KEY:
 
         # prepare PostGIS geometry object
-        query_point = WKTElement(f"POINT({lon} {lat})", srid=4269)
+        query_point = f"POINT({lon} {lat})"
 
-        logging.info("Query point: %s", query_point.desc)
+        logging.info("Query point: %s", query_point)
 
         # build spatial query
+        # note: we're using PostGIS Geography objects, which are in EPSG 4326 with meters as the unit of measure.
         query_sql = (
-            Query([Site])
-            .filter(Site.geom.ST_DWithin(query_point, radius))
-            .options(selectinload(Site.reports))
+            Query([Site])  # must be a list
+            .filter(  # refine sites by
+                Site.geom.ST_DWithin(  # PostGIS function
+                    func.ST_GeogFromText(  # translate query point to postgis geography object
+                        query_point  # location searched
+                    ),
+                    radius,  # distance within which we're searching
+                    True,  # since we're using Geography objects, this flag enables spheroid-based calculations
+                )
+            )
+            .options(  # this method chain allows us to specify eager loading behavior
+                selectinload(  # since we're using async/session interface, loading needs to happen in query context
+                    Site.reports  # remember our joined inheritance structure?  this loads all joined tables.  Neat!
+                )
+            )
         )
 
         logging.debug("Query SQL: %s", str(query_sql))
@@ -118,7 +135,6 @@ async def submit(
     report: ReportSchema,
     Session: AsyncSession = Depends(get_db),
 ):
-
     logging.info("Report Submission received")
     data = jsonable_encoder(report)  # it's just nice to have a dictionary
 
@@ -164,7 +180,6 @@ async def submit(
 async def get_all_reports(
     access_token: str, Session=Depends(get_db)
 ) -> List[ReportSchema]:
-
     if access_token == Globals.SECRET_KEY:
         async with Session as s:
             async with s.begin():

@@ -11,7 +11,7 @@ from sqlalchemy import (
     ARRAY,
 )
 from sqlalchemy.orm import declarative_base, relationship
-from geoalchemy2 import Geometry
+from geoalchemy2 import Geography
 from sqlalchemy.sql import func
 from enums import enums
 
@@ -39,7 +39,7 @@ class Site(Base):
     chemicals = Column(JSON, nullable=False)
     release_types = Column(ARRAY(String), nullable=False)
     total_releases = Column(Float, nullable=False)
-    geom = Column(Geometry("POINT", srid=4269))
+    geom = Column(Geography(geometry_type="POINT", srid=4326))
 
     def __init__(
         self,

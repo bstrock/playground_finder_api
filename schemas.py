@@ -77,3 +77,4 @@ class Globals:
         Report, [EmissionReports, ActivityReports, UnusedReports]
     )
     SUB_REPORTS = [EmissionReports, ActivityReports, UnusedReports]
+    MILES_TO_METERS = 1609.34
