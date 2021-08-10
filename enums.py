@@ -26,34 +26,36 @@ emission_types = ("Water", "Air", "Land")
 activity_types = ("Sitework", "Manufacturing", "Vehicle", "Personnel", "Trespassing")
 unused_types = ("Signage", "Lack of Activity", "Disrepair")
 industry_sectors = (
-                    'Machinery',
-                    'Wood Products',
-                    'Primary Metals',
-                    'Petroleum',
-                    'Fabricated Metals',
-                    'Computers and Electronic Products',
-                    'Food',
-                    'Electric Utilities',
-                    'Miscellaneous Manufacturing',
-                    'Chemicals',
-                    'Transportation Equipment',
-                    'Nonmetallic Mineral Product',
-                    'Electrical Equipment',
-                    'Plastics and Rubber',
-                    'Hazardous Waste',
-                    'Other',
-                    'Chemical Wholesalers',
-                    'Petroleum Bulk Terminals',
-                    'Furniture',
-                    'Printing',
-                    'Paper',
-                    'Leather'
-                    )
+    "Machinery",
+    "Wood Products",
+    "Primary Metals",
+    "Petroleum",
+    "Fabricated Metals",
+    "Computers and Electronic Products",
+    "Food",
+    "Electric Utilities",
+    "Miscellaneous Manufacturing",
+    "Chemicals",
+    "Transportation Equipment",
+    "Nonmetallic Mineral Product",
+    "Electrical Equipment",
+    "Plastics and Rubber",
+    "Hazardous Waste",
+    "Other",
+    "Chemical Wholesalers",
+    "Petroleum Bulk Terminals",
+    "Furniture",
+    "Printing",
+    "Paper",
+    "Leather",
+)
 
 # instantiate- this object is imported in main script
 
-enums = EnumStorage(report_types=report_types,
-                    emission_types=emission_types,
-                    activity_types=activity_types,
-                    unused_types=unused_types,
-                    industry_sectors=industry_sectors)
+enums = EnumStorage(
+    report_types=report_types,
+    emission_types=emission_types,
+    activity_types=activity_types,
+    unused_types=unused_types,
+    industry_sectors=industry_sectors,
+)

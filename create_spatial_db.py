@@ -7,7 +7,6 @@ import asyncio
 import os
 
 
-
 class SpatialDB:
 
     # connection parameters
@@ -20,7 +19,7 @@ class SpatialDB:
         password=password,
         host="localhost",
         port=5432,
-        database="tri_app"
+        database="tri_app",
     )
 
     engine = create_async_engine(url=url, echo=False, future=True)
@@ -29,7 +28,9 @@ class SpatialDB:
     @staticmethod
     def init():
         # use to create engine for SQLAlchemy connection or Session
-        return sessionmaker(SpatialDB.engine, class_=AsyncSession, expire_on_commit=False)
+        return sessionmaker(
+            SpatialDB.engine, class_=AsyncSession, expire_on_commit=False
+        )
 
     @staticmethod
     async def make_db():
@@ -69,6 +70,7 @@ async def main():
     # SpatialDB.enable_PostGIS(engine)
     await SpatialDB.make_db()
     # SpatialDB.count_tables(engine)
+
 
 # STUFF HAPPENS HERE
 # generate and execute sql to make all the tables and things

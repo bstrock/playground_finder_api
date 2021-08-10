@@ -1,4 +1,15 @@
-from sqlalchemy import String, BigInteger, Column, Integer, ForeignKey, Float, Boolean, JSON, DateTime, ARRAY
+from sqlalchemy import (
+    String,
+    BigInteger,
+    Column,
+    Integer,
+    ForeignKey,
+    Float,
+    Boolean,
+    JSON,
+    DateTime,
+    ARRAY,
+)
 from sqlalchemy.orm import declarative_base, relationship
 from geoalchemy2 import Geometry
 from sqlalchemy.sql import func
@@ -23,14 +34,31 @@ class Site(Base):
     zip = Column(Integer, nullable=False)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
-    sector = Column(enums.make(kind='industry_sectors'), nullable=False)
+    sector = Column(enums.make(kind="industry_sectors"), nullable=False)
     carcinogen = Column(Boolean, nullable=False)
     chemicals = Column(JSON, nullable=False)
     release_types = Column(ARRAY(String), nullable=False)
     total_releases = Column(Float, nullable=False)
     geom = Column(Geometry("POINT", srid=4269))
 
-    def __init__(self, site_id, name, address, city, county, state, zip, latitude, longitude, sector, carcinogen, chemicals, release_types, total_releases, geom):
+    def __init__(
+        self,
+        site_id,
+        name,
+        address,
+        city,
+        county,
+        state,
+        zip,
+        latitude,
+        longitude,
+        sector,
+        carcinogen,
+        chemicals,
+        release_types,
+        total_releases,
+        geom,
+    ):
         self.site_id = site_id
         self.name = name
         self.address = address
@@ -52,57 +80,58 @@ class Site(Base):
 class Report(Base):
     __tablename__ = "reports"
 
-    report_id = Column(
-                BigInteger,
-                autoincrement=True,
-                primary_key=True
-            )
-    site_id = Column(String, ForeignKey("sites.site_id", name="sites_key"), nullable=False)
+    report_id = Column(BigInteger, autoincrement=True, primary_key=True)
+    site_id = Column(
+        String, ForeignKey("sites.site_id", name="sites_key"), nullable=False
+    )
     message = Column(String(240), nullable=True)
-    report_type = Column(enums.make(kind="report_types"), nullable=False)  # enumeration creation from values in enum.py
+    report_type = Column(
+        enums.make(kind="report_types"), nullable=False
+    )  # enumeration creation from values in enum.py
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
     site = relationship("Site", backref="reports", lazy=False)
 
     __mapper_args__ = {
         "eager_defaults": True,
-        'polymorphic_identity': 'report',
-        'polymorphic_on': report_type,
-        'with_polymorphic': '*'
+        "polymorphic_identity": "report",
+        "polymorphic_on": report_type,
+        "with_polymorphic": "*",
     }
 
 
 # linked tables
 class EmissionReports(Report):
     __tablename__ = "emission_reports"
-    __mapper_args__ = {
-        "eager_defaults": True,
-        "polymorphic_identity": "Emission"
-    }
+    __mapper_args__ = {"eager_defaults": True, "polymorphic_identity": "Emission"}
 
-    report_id = Column(BigInteger, ForeignKey("reports.report_id", name="emissions_key"), primary_key=True)
-    emission_type = Column(enums.make('emission_types'), nullable=False)
+    report_id = Column(
+        BigInteger,
+        ForeignKey("reports.report_id", name="emissions_key"),
+        primary_key=True,
+    )
+    emission_type = Column(enums.make("emission_types"), nullable=False)
     report = relationship("Report", backref="Emission", lazy=False)
 
 
 class ActivityReports(Report):
     __tablename__ = "activity_reports"
-    __mapper_args__ = {
-        "eager_defaults": True,
-        "polymorphic_identity": "Activity"
-    }
+    __mapper_args__ = {"eager_defaults": True, "polymorphic_identity": "Activity"}
 
-    report_id = Column(BigInteger, ForeignKey("reports.report_id", name="activity_key"), primary_key=True)
-    activity_type = Column(enums.make('activity_types'), nullable=False)
+    report_id = Column(
+        BigInteger,
+        ForeignKey("reports.report_id", name="activity_key"),
+        primary_key=True,
+    )
+    activity_type = Column(enums.make("activity_types"), nullable=False)
     report = relationship("Report", backref="Activity", lazy=False)
 
 
 class UnusedReports(Report):
     __tablename__ = "unused_reports"
-    __mapper_args__ = {
-        "eager_defaults": True,
-        "polymorphic_identity": "Unused Site"
-    }
+    __mapper_args__ = {"eager_defaults": True, "polymorphic_identity": "Unused Site"}
 
-    report_id = Column(BigInteger, ForeignKey("reports.report_id", name="damage_key"), primary_key=True)
-    unused_type = Column(enums.make('unused_types'), nullable=False)
+    report_id = Column(
+        BigInteger, ForeignKey("reports.report_id", name="damage_key"), primary_key=True
+    )
+    unused_type = Column(enums.make("unused_types"), nullable=False)
     report = relationship("Report", backref="Unused Site", lazy=False)

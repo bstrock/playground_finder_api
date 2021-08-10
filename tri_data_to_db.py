@@ -14,6 +14,7 @@ from datetime import datetime as dt
 # columns have awkward names like -> 64. POTW - TOTAL TRANSFERS
 # we want them to be nice like -> potw_total_transfers
 
+
 class TRILoader:
     GRAMS_TO_POUNDS = 0.00220462
     engine = SpatialDB.engine
@@ -35,9 +36,29 @@ class TRILoader:
             self.data.rename(columns={col: new}, inplace=True)  # rename
 
     def filter_columns(self):
-        columns = ['trifd', 'facility_name', 'street_address', 'city', 'county', 'st', 'zip', 'latitude', 'longitude',
-                   'industry_sector', 'chemical', 'carcinogen', 'unit_of_measure', 'total_releases', "fugitive_air",
-                   "stack_air", "water", "underground", "landfills", "surface_impndmnt", "land_treatment"]
+        columns = [
+            "trifd",
+            "facility_name",
+            "street_address",
+            "city",
+            "county",
+            "st",
+            "zip",
+            "latitude",
+            "longitude",
+            "industry_sector",
+            "chemical",
+            "carcinogen",
+            "unit_of_measure",
+            "total_releases",
+            "fugitive_air",
+            "stack_air",
+            "water",
+            "underground",
+            "landfills",
+            "surface_impndmnt",
+            "land_treatment",
+        ]
 
         self.data = self.data.filter(items=columns)
 
@@ -45,14 +66,16 @@ class TRILoader:
 
     def data_to_sites(self):
 
-        sites = self.data['trifd'].unique().tolist()  # keys
+        sites = self.data["trifd"].unique().tolist()  # keys
 
         sites_to_db = []
 
         for site in sites:
             df = self.data[self.data.trifd == site]  # subset data for site
             check_carcinogen = df.carcinogen.unique()  # array of values
-            carcinogen = True if "YES" in check_carcinogen else False  # site flagged True if any chemical is carcinogenic
+            carcinogen = (
+                True if "YES" in check_carcinogen else False
+            )  # site flagged True if any chemical is carcinogenic
             chemicals = {}  # placeholder
             geom = f"POINT({df.longitude.unique()[0]} {df.latitude.unique()[0]})"  # PostGIS string
 
@@ -64,23 +87,26 @@ class TRILoader:
             if df.water.sum() > 0:
                 types.append("WATER")
 
-            if df.underground.sum() > 0 or df.landfills.sum() > 0 or df.surface_impndmnt.sum() > 0:
+            if (
+                df.underground.sum() > 0
+                or df.landfills.sum() > 0
+                or df.surface_impndmnt.sum() > 0
+            ):
                 types.append("LAND")
 
-            total_releases = 0.  # value counter
+            total_releases = 0.0  # value counter
 
             # get row for each chemical at the site, record its unit and total, add total to releases
             for chemical in df.chemical.unique():
                 row = df[df.chemical == chemical]
-                unit = row['unit_of_measure'].iloc[0]
-                total = row['total_releases'].iloc[0]
+                unit = row["unit_of_measure"].iloc[0]
+                total = row["total_releases"].iloc[0]
 
-                total_releases += total if unit == "Pounds" else total * self.GRAMS_TO_POUNDS
+                total_releases += (
+                    total if unit == "Pounds" else total * self.GRAMS_TO_POUNDS
+                )
 
-                chemicals[chemical] = {
-                    "unit": unit,
-                    "total": total
-                }
+                chemicals[chemical] = {"unit": unit, "total": total}
 
             if len(types) == 0:
                 types = [None]
@@ -101,7 +127,7 @@ class TRILoader:
                 chemicals=chemicals,
                 release_types=array(types),
                 total_releases=total_releases,
-                geom=geom
+                geom=geom,
             )
 
             sites_to_db.append(this_site)
