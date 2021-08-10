@@ -90,7 +90,7 @@ class ActivityReports(Report):
         "eager_defaults": True,
         "polymorphic_identity": "Activity"
     }
-    #activity_report_id = Column(BigInteger, primary_key=True)
+
     report_id = Column(BigInteger, ForeignKey("reports.report_id", name="activity_key"), primary_key=True)
     activity_type = Column(enums.make('activity_types'), nullable=False)
     report = relationship("Report", backref="Activity", lazy=False)
@@ -105,4 +105,4 @@ class UnusedReports(Report):
 
     report_id = Column(BigInteger, ForeignKey("reports.report_id", name="damage_key"), primary_key=True)
     unused_type = Column(enums.make('unused_types'), nullable=False)
-    report = relationship("Report", backref="damage_report", lazy=False)
+    report = relationship("Report", backref="Unused Site", lazy=False)

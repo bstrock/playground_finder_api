@@ -1,20 +1,20 @@
+from icecream import ic
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from fastapi import FastAPI, Query as fastapi_Query, Depends
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import func
-from sqlalchemy.orm import sessionmaker, Query, selectinload, with_polymorphic
+from sqlalchemy.orm import sessionmaker, Query, selectinload
+from sqlalchemy import select
 from create_spatial_db import SpatialDB
 from geoalchemy2 import WKTElement
 from typing import Optional, List
-from schemas import SiteSchema, ReportSchema, Globals, ChildReportSchema
-from table_models import Site, Report, ActivityReports, EmissionReports, UnusedReports
+from schemas import SiteSchema, ReportSchema, Globals
+from table_models import Site, Report
 import logging
 import uvicorn
-from icecream import ic
 
 # initializations
 app = FastAPI()
-engine = create_async_engine(url=SpatialDB.url, echo=True, future=True)
+engine = create_async_engine(url=SpatialDB.url, echo=False, future=True)
 Session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
@@ -47,6 +47,7 @@ async def query(
 ) -> List[SiteSchema]:
 
     logging.info("Query received")
+    logging.info("\n\n***QUERY PARAMETERS***\n")
 
     if access_token == Globals.SECRET_KEY:
 
@@ -81,7 +82,7 @@ async def query(
             query_sql = query_sql.filter(Site.release_types.any(release_type))
             logging.info("Query flag: RELEASE TYPE: %s", str(release_type))
             logging.debug("Query SQL: %s", str(query_sql))
-
+        logging.info("\n\n**** TRANSACTION ****\n")
         # send query to db by calling async session
         async with Session as s:
             logging.info("Transaction: BEGIN")
@@ -93,15 +94,15 @@ async def query(
                 res = res.scalars().all()  # decode results)
 
                 sites = [SiteSchema.from_orm(site) for site in res]  # unpack results to pydantic schema using list comprehension
-            logging.info("TRANSACTION: CLOSED\n")
+            logging.info("TRANSACTION: CLOSED")
 
 
         logging.info("SESSION: returned connection to the pool")
-
+        logging.info("\n*** END TRANSACTION ***\n")
         # db session is closed here
 
 
-        logging.info("QUERY: Results unpacked")
+        logging.info("\n*** RESULT ***\n")
 
         if len(sites) == 0:
             logging.info("QUERY: NO RESULTS -- Endpoint Service COMPLETE\n\n")
@@ -110,50 +111,51 @@ async def query(
         return sites
 
 
-@app.post("/submit")
+@app.post("/submit", response_model=ReportSchema)
 async def submit(
         report: ReportSchema,
         Session: AsyncSession = Depends(get_db),
 ):
 
-    """main_report = Report(
-        site_id=report.site_id,
-        report_type=report.report_type
-    )
+    data = jsonable_encoder(report) # it's just nice to have a dictionary
 
-    if report.message:
-        main_report.message = report.message
-
-    if report.emission_type:
-        main_report
-
-    elif report.activity_type:
-        main_report.activity_type = report.activity_type
-
-    elif report.unused_type:
-        main_report.unused_type=report.unused_type"""
-    data = jsonable_encoder(report)
-    ic(data)
-
-    exclude = ['message', 'site_id', 'report_type']
-
-    for i, sub in enumerate(Globals.SUB_REPORTS):
+    # need to figure out which table model to base the report off of
+    exclude = ['message', 'site_id', 'report_type']  # common to all reports
+    for report_type in Globals.SUB_REPORTS:
         for k in data.keys():
-            if k in sub.__dict__.keys() and k not in exclude and data[k] is not None:
-                ic(k, sub)
-                child = sub()
+            # each report type has a single unique column
+            # we check if that column is in the report type schema, but not one of the common columns
+            if k in report_type.__dict__.keys() and k not in exclude and data[k] is not None:
+                report = report_type()  # we've found our report type- let's make an object
                 break
 
+    # we unpack the request submission into the report object
     for k in data:
         if data[k] is not None:
-            child.__setattr__(k, data[k])
+            report.__setattr__(k, data[k])
 
     async with Session as s:
         async with s.begin():
-            s.add(child)
+            s.add(report)
 
-    return child
+    return report
 
+@app.get("/reports")
+async def get_all_reports(access_token: str,
+                          Session = Depends(get_db)
+                          ) -> List[ReportSchema]:
+
+    if access_token == Globals.SECRET_KEY:
+        async with Session as s:
+            async with s.begin():
+                stmt = select(Report)
+                res = await s.execute(stmt)
+    ic(res)
+    reports = res.scalars().all()
+
+    response = [ReportSchema.from_orm(report) for report in reports]
+
+    return response
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)

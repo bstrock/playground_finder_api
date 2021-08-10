@@ -254,7 +254,7 @@ class TestQueries:
 
         if len(sectors) == 2:
             if carcinogen:
-                ic(total_results)
+
                 assert (df.carcinogen.unique()) == [True]  # TEST: ensure all results are carcinogen
                 assert total_results == CARCINOGEN_CHEMICAL_AIR_RELEASE_SITES_MN + CARCINOGEN_FOOD_AIR_RELEASE_SITES_MN
             else:
@@ -315,6 +315,28 @@ class TestSubmit:
                         }
                     ]
 
+    EXPECTED_INHERITANCE_RESPONSE = [{'activity_type': None,
+                       'emission_type': 'Water',
+                       'message': 'You are reading the thing which I have typed.',
+                       'report_id': '2',
+                       'report_type': 'Emission',
+                       'site_id': '55413NTRPL2015N',
+                       'unused_type': None},
+                      {'activity_type': 'Sitework',
+                       'emission_type': None,
+                       'message': 'You are reading the thing which I have typed.',
+                       'report_id': '1',
+                       'report_type': 'Activity',
+                       'site_id': '55413NTRPL2015N',
+                       'unused_type': None},
+                      {'activity_type': None,
+                       'emission_type': None,
+                       'message': 'You are reading the thing which I have typed.',
+                       'report_id': '3',
+                       'report_type': 'Unused Site',
+                       'site_id': '55413NTRPL2015N',
+                       'unused_type': 'Signage'}]
+
     @staticmethod
     async def test_submit(report_params: Dict[str, str]) -> NoReturn:
 
@@ -326,36 +348,30 @@ class TestSubmit:
 
         assert response.status_code == 200
         res = response.json()
-        ic(res)
+
 
         expected = {k: v for k, v in params.items() if v is not None}
         generated_keys = ['timestamp', 'report_id', 'access_token']
         for k in expected:
             if k not in generated_keys:
-                ic(k)
+
                 assert k in res.keys()
                 assert res[k] == expected[k]
+
+    @staticmethod
+    async def test_inheritance():
+        async with AsyncClient(app=app, base_url="http://localhost:8000") as ac:
+            response = await ac.get("/reports", params={"access_token": os.environ.get("SECRET_KEY")})
+
+        assert response.status_code == 200
+        assert response.json() == TestSubmit.EXPECTED_INHERITANCE_RESPONSE
 
 
     @staticmethod
     async def run_panel():
         for report in TestSubmit.report_params:
             await TestSubmit.test_submit(report)
-
-        target_site = {
-                       "release_type": "AIR",
-                       "carcinogen": True,
-                       "sectors": "Wood Products"
-                       }
-
-        query_params = deepcopy(TestQueries.test_params)
-        params = {**query_params, **target_site}
-        #response = client.get("/query", params=params)
-
-        async with AsyncClient(app=app, base_url="http://localhost:8000") as ac:
-            response = await ac.get("/query", params=params)
-
-        #target_site_response = response.json()[3]
+        await TestSubmit.test_inheritance()
 
 
 if __name__ == "__main__":
