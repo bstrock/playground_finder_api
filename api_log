@@ -1,0 +1,966 @@
+08/05/2021 11:07:53 PM Using selector: KqueueSelector
+08/05/2021 11:07:53 PM Query received
+08/05/2021 11:07:53 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:53 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:53 PM Transaction: BEGIN
+08/05/2021 11:07:53 PM Session has checked out a connection
+08/05/2021 11:07:54 PM Query: SUBMITTED
+08/05/2021 11:07:54 PM Transaction: END
+08/05/2021 11:07:54 PM Query: Results unpacked
+08/05/2021 11:07:54 PM Session has returned connection to the pool
+08/05/2021 11:07:54 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:54 PM Query received
+08/05/2021 11:07:54 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:54 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:54 PM Query flag: CARCINOGEN
+08/05/2021 11:07:54 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true
+08/05/2021 11:07:54 PM Transaction: BEGIN
+08/05/2021 11:07:54 PM Session has checked out a connection
+08/05/2021 11:07:54 PM Query: SUBMITTED
+08/05/2021 11:07:54 PM Transaction: END
+08/05/2021 11:07:54 PM Query: Results unpacked
+08/05/2021 11:07:54 PM Session has returned connection to the pool
+08/05/2021 11:07:54 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:54 PM Query received
+08/05/2021 11:07:54 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:54 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:54 PM Transaction: BEGIN
+08/05/2021 11:07:54 PM Session has checked out a connection
+08/05/2021 11:07:54 PM Query: SUBMITTED
+08/05/2021 11:07:54 PM Transaction: END
+08/05/2021 11:07:55 PM Query: Results unpacked
+08/05/2021 11:07:55 PM Session has returned connection to the pool
+08/05/2021 11:07:55 PM Query flag: RELEASE TYPE: WATER
+08/05/2021 11:07:55 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:55 PM Query received
+08/05/2021 11:07:55 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:55 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:55 PM Transaction: BEGIN
+08/05/2021 11:07:55 PM Session has checked out a connection
+08/05/2021 11:07:55 PM Query: SUBMITTED
+08/05/2021 11:07:55 PM Transaction: END
+08/05/2021 11:07:55 PM Query: Results unpacked
+08/05/2021 11:07:55 PM Session has returned connection to the pool
+08/05/2021 11:07:55 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:55 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:55 PM Query received
+08/05/2021 11:07:55 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:55 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:55 PM Query flag: CARCINOGEN
+08/05/2021 11:07:55 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true
+08/05/2021 11:07:55 PM Transaction: BEGIN
+08/05/2021 11:07:55 PM Session has checked out a connection
+08/05/2021 11:07:55 PM Query: SUBMITTED
+08/05/2021 11:07:55 PM Transaction: END
+08/05/2021 11:07:56 PM Query: Results unpacked
+08/05/2021 11:07:56 PM Session has returned connection to the pool
+08/05/2021 11:07:56 PM Query flag: RELEASE TYPE: WATER
+08/05/2021 11:07:56 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:56 PM Query received
+08/05/2021 11:07:56 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:56 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:56 PM Query flag: CARCINOGEN
+08/05/2021 11:07:56 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true
+08/05/2021 11:07:56 PM Transaction: BEGIN
+08/05/2021 11:07:56 PM Session has checked out a connection
+08/05/2021 11:07:56 PM Query: SUBMITTED
+08/05/2021 11:07:56 PM Transaction: END
+08/05/2021 11:07:56 PM Query: Results unpacked
+08/05/2021 11:07:56 PM Session has returned connection to the pool
+08/05/2021 11:07:56 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:56 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:56 PM Query received
+08/05/2021 11:07:56 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:56 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:56 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:07:56 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:56 PM Transaction: BEGIN
+08/05/2021 11:07:56 PM Session has checked out a connection
+08/05/2021 11:07:56 PM Query: SUBMITTED
+08/05/2021 11:07:56 PM Transaction: END
+08/05/2021 11:07:56 PM Query: Results unpacked
+08/05/2021 11:07:56 PM Session has returned connection to the pool
+08/05/2021 11:07:56 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:56 PM Query received
+08/05/2021 11:07:56 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:56 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:56 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:07:56 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:56 PM Transaction: BEGIN
+08/05/2021 11:07:56 PM Session has checked out a connection
+08/05/2021 11:07:56 PM Query: SUBMITTED
+08/05/2021 11:07:56 PM Transaction: END
+08/05/2021 11:07:56 PM Query: Results unpacked
+08/05/2021 11:07:56 PM Session has returned connection to the pool
+08/05/2021 11:07:56 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:56 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:56 PM Query received
+08/05/2021 11:07:56 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:56 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:56 PM Query flag: CARCINOGEN
+08/05/2021 11:07:56 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true
+08/05/2021 11:07:56 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:07:56 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:56 PM Transaction: BEGIN
+08/05/2021 11:07:56 PM Session has checked out a connection
+08/05/2021 11:07:56 PM Query: SUBMITTED
+08/05/2021 11:07:56 PM Transaction: END
+08/05/2021 11:07:56 PM Query: Results unpacked
+08/05/2021 11:07:56 PM Session has returned connection to the pool
+08/05/2021 11:07:56 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:56 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:56 PM Query received
+08/05/2021 11:07:56 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:56 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:56 PM Query flag: SECTORS: ['Chemicals', 'Food']
+08/05/2021 11:07:56 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:56 PM Transaction: BEGIN
+08/05/2021 11:07:56 PM Session has checked out a connection
+08/05/2021 11:07:56 PM Query: SUBMITTED
+08/05/2021 11:07:56 PM Transaction: END
+08/05/2021 11:07:56 PM Query: Results unpacked
+08/05/2021 11:07:56 PM Session has returned connection to the pool
+08/05/2021 11:07:56 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:56 PM Query received
+08/05/2021 11:07:56 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:56 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:56 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:57 PM Transaction: BEGIN
+08/05/2021 11:07:57 PM Session has checked out a connection
+08/05/2021 11:07:57 PM Query: SUBMITTED
+08/05/2021 11:07:57 PM Transaction: END
+08/05/2021 11:07:57 PM Query: Results unpacked
+08/05/2021 11:07:57 PM Session has returned connection to the pool
+08/05/2021 11:07:57 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:57 PM Query received
+08/05/2021 11:07:57 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:57 PM Query flag: SECTORS: ['Food']
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:57 PM Transaction: BEGIN
+08/05/2021 11:07:57 PM Session has checked out a connection
+08/05/2021 11:07:57 PM Query: SUBMITTED
+08/05/2021 11:07:57 PM Transaction: END
+08/05/2021 11:07:57 PM Query: Results unpacked
+08/05/2021 11:07:57 PM Session has returned connection to the pool
+08/05/2021 11:07:57 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:57 PM Query received
+08/05/2021 11:07:57 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:57 PM Query flag: SECTORS: ['Chemicals', 'Food']
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:57 PM Transaction: BEGIN
+08/05/2021 11:07:57 PM Session has checked out a connection
+08/05/2021 11:07:57 PM Query: SUBMITTED
+08/05/2021 11:07:57 PM Transaction: END
+08/05/2021 11:07:57 PM Query: Results unpacked
+08/05/2021 11:07:57 PM Session has returned connection to the pool
+08/05/2021 11:07:57 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:57 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:57 PM Query received
+08/05/2021 11:07:57 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:57 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:57 PM Transaction: BEGIN
+08/05/2021 11:07:57 PM Session has checked out a connection
+08/05/2021 11:07:57 PM Query: SUBMITTED
+08/05/2021 11:07:57 PM Transaction: END
+08/05/2021 11:07:57 PM Query: Results unpacked
+08/05/2021 11:07:57 PM Session has returned connection to the pool
+08/05/2021 11:07:57 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:57 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:57 PM Query received
+08/05/2021 11:07:57 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:57 PM Query flag: SECTORS: ['Food']
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:57 PM Transaction: BEGIN
+08/05/2021 11:07:57 PM Session has checked out a connection
+08/05/2021 11:07:57 PM Query: SUBMITTED
+08/05/2021 11:07:57 PM Transaction: END
+08/05/2021 11:07:57 PM Query: Results unpacked
+08/05/2021 11:07:57 PM Session has returned connection to the pool
+08/05/2021 11:07:57 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:57 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:57 PM Query received
+08/05/2021 11:07:57 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:57 PM Query flag: CARCINOGEN
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true
+08/05/2021 11:07:57 PM Query flag: SECTORS: ['Chemicals', 'Food']
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:57 PM Transaction: BEGIN
+08/05/2021 11:07:57 PM Session has checked out a connection
+08/05/2021 11:07:57 PM Query: SUBMITTED
+08/05/2021 11:07:57 PM Transaction: END
+08/05/2021 11:07:57 PM Query: Results unpacked
+08/05/2021 11:07:57 PM Session has returned connection to the pool
+08/05/2021 11:07:57 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:57 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:57 PM Query received
+08/05/2021 11:07:57 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:57 PM Query flag: CARCINOGEN
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true
+08/05/2021 11:07:57 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:57 PM Transaction: BEGIN
+08/05/2021 11:07:57 PM Session has checked out a connection
+08/05/2021 11:07:57 PM Query: SUBMITTED
+08/05/2021 11:07:57 PM Transaction: END
+08/05/2021 11:07:57 PM Query: Results unpacked
+08/05/2021 11:07:57 PM Session has returned connection to the pool
+08/05/2021 11:07:57 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:57 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:57 PM Query received
+08/05/2021 11:07:57 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:57 PM Query flag: CARCINOGEN
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true
+08/05/2021 11:07:57 PM Query flag: SECTORS: ['Food']
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:57 PM Transaction: BEGIN
+08/05/2021 11:07:57 PM Session has checked out a connection
+08/05/2021 11:07:57 PM Query: SUBMITTED
+08/05/2021 11:07:57 PM Transaction: END
+08/05/2021 11:07:57 PM Query: Results unpacked
+08/05/2021 11:07:57 PM Session has returned connection to the pool
+08/05/2021 11:07:57 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:57 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:57 PM Query received
+08/05/2021 11:07:57 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:57 PM Query flag: SECTORS: ['Chemicals', 'Food', 'Transportation Equipment']
+08/05/2021 11:07:57 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:57 PM Transaction: BEGIN
+08/05/2021 11:07:57 PM Session has checked out a connection
+08/05/2021 11:07:57 PM Query: SUBMITTED
+08/05/2021 11:07:57 PM Transaction: END
+08/05/2021 11:07:58 PM Query: Results unpacked
+08/05/2021 11:07:58 PM Session has returned connection to the pool
+08/05/2021 11:07:58 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:58 PM Query received
+08/05/2021 11:07:58 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:58 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:58 PM Transaction: BEGIN
+08/05/2021 11:07:58 PM Session has checked out a connection
+08/05/2021 11:07:58 PM Query: SUBMITTED
+08/05/2021 11:07:58 PM Transaction: END
+08/05/2021 11:07:58 PM Query: Results unpacked
+08/05/2021 11:07:58 PM Session has returned connection to the pool
+08/05/2021 11:07:58 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:58 PM Query received
+08/05/2021 11:07:58 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:58 PM Query flag: SECTORS: ['Food']
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:58 PM Transaction: BEGIN
+08/05/2021 11:07:58 PM Session has checked out a connection
+08/05/2021 11:07:58 PM Query: SUBMITTED
+08/05/2021 11:07:58 PM Transaction: END
+08/05/2021 11:07:58 PM Query: Results unpacked
+08/05/2021 11:07:58 PM Session has returned connection to the pool
+08/05/2021 11:07:58 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:58 PM Query received
+08/05/2021 11:07:58 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:58 PM Query flag: SECTORS: ['Transportation Equipment']
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:58 PM Transaction: BEGIN
+08/05/2021 11:07:58 PM Session has checked out a connection
+08/05/2021 11:07:58 PM Query: SUBMITTED
+08/05/2021 11:07:58 PM Transaction: END
+08/05/2021 11:07:58 PM Query: Results unpacked
+08/05/2021 11:07:58 PM Session has returned connection to the pool
+08/05/2021 11:07:58 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:58 PM Query received
+08/05/2021 11:07:58 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:58 PM Query flag: SECTORS: ['Chemicals', 'Food', 'Transportation Equipment']
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:58 PM Transaction: BEGIN
+08/05/2021 11:07:58 PM Session has checked out a connection
+08/05/2021 11:07:58 PM Query: SUBMITTED
+08/05/2021 11:07:58 PM Transaction: END
+08/05/2021 11:07:58 PM Query: Results unpacked
+08/05/2021 11:07:58 PM Session has returned connection to the pool
+08/05/2021 11:07:58 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:58 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:58 PM Query received
+08/05/2021 11:07:58 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:58 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:58 PM Transaction: BEGIN
+08/05/2021 11:07:58 PM Session has checked out a connection
+08/05/2021 11:07:58 PM Query: SUBMITTED
+08/05/2021 11:07:58 PM Transaction: END
+08/05/2021 11:07:58 PM Query: Results unpacked
+08/05/2021 11:07:58 PM Session has returned connection to the pool
+08/05/2021 11:07:58 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:58 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:58 PM Query received
+08/05/2021 11:07:58 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:58 PM Query flag: SECTORS: ['Food']
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:58 PM Transaction: BEGIN
+08/05/2021 11:07:58 PM Session has checked out a connection
+08/05/2021 11:07:58 PM Query: SUBMITTED
+08/05/2021 11:07:58 PM Transaction: END
+08/05/2021 11:07:58 PM Query: Results unpacked
+08/05/2021 11:07:58 PM Session has returned connection to the pool
+08/05/2021 11:07:58 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:58 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:58 PM Query received
+08/05/2021 11:07:58 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:58 PM Query flag: SECTORS: ['Transportation Equipment']
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:58 PM Transaction: BEGIN
+08/05/2021 11:07:58 PM Session has checked out a connection
+08/05/2021 11:07:58 PM Query: SUBMITTED
+08/05/2021 11:07:58 PM Transaction: END
+08/05/2021 11:07:58 PM Query: Results unpacked
+08/05/2021 11:07:58 PM Session has returned connection to the pool
+08/05/2021 11:07:58 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:58 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:58 PM Query received
+08/05/2021 11:07:58 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:58 PM Query flag: CARCINOGEN
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true
+08/05/2021 11:07:58 PM Query flag: SECTORS: ['Chemicals', 'Food', 'Transportation Equipment']
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:58 PM Transaction: BEGIN
+08/05/2021 11:07:58 PM Session has checked out a connection
+08/05/2021 11:07:58 PM Query: SUBMITTED
+08/05/2021 11:07:58 PM Transaction: END
+08/05/2021 11:07:58 PM Query: Results unpacked
+08/05/2021 11:07:58 PM Session has returned connection to the pool
+08/05/2021 11:07:58 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:58 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:58 PM Query received
+08/05/2021 11:07:58 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:58 PM Query flag: CARCINOGEN
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true
+08/05/2021 11:07:58 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:58 PM Transaction: BEGIN
+08/05/2021 11:07:58 PM Session has checked out a connection
+08/05/2021 11:07:58 PM Query: SUBMITTED
+08/05/2021 11:07:58 PM Transaction: END
+08/05/2021 11:07:58 PM Query: Results unpacked
+08/05/2021 11:07:58 PM Session has returned connection to the pool
+08/05/2021 11:07:58 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:58 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:58 PM Query received
+08/05/2021 11:07:58 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:58 PM Query flag: CARCINOGEN
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true
+08/05/2021 11:07:58 PM Query flag: SECTORS: ['Food']
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:58 PM Transaction: BEGIN
+08/05/2021 11:07:58 PM Session has checked out a connection
+08/05/2021 11:07:58 PM Query: SUBMITTED
+08/05/2021 11:07:58 PM Transaction: END
+08/05/2021 11:07:58 PM Query: Results unpacked
+08/05/2021 11:07:58 PM Session has returned connection to the pool
+08/05/2021 11:07:58 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:58 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:07:58 PM Query received
+08/05/2021 11:07:58 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1)
+08/05/2021 11:07:58 PM Query flag: CARCINOGEN
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true
+08/05/2021 11:07:58 PM Query flag: SECTORS: ['Transportation Equipment']
+08/05/2021 11:07:58 PM Query SQL: SELECT sites.site_id AS sites_site_id, sites.name AS sites_name, sites.address AS sites_address, sites.city AS sites_city, sites.county AS sites_county, sites.state AS sites_state, sites.zip AS sites_zip, sites.latitude AS sites_latitude, sites.longitude AS sites_longitude, sites.sector AS sites_sector, sites.carcinogen AS sites_carcinogen, sites.chemicals AS sites_chemicals, sites.release_types AS sites_release_types, sites.total_releases AS sites_total_releases, ST_AsEWKB(sites.geom) AS sites_geom 
+FROM sites 
+WHERE ST_DWithin(sites.geom, ST_GeomFromText(:ST_GeomFromText_1, :ST_GeomFromText_2), :ST_DWithin_1) AND sites.carcinogen = true AND sites.sector IN ([POSTCOMPILE_sector_1])
+08/05/2021 11:07:58 PM Transaction: BEGIN
+08/05/2021 11:07:58 PM Session has checked out a connection
+08/05/2021 11:07:58 PM Query: SUBMITTED
+08/05/2021 11:07:58 PM Transaction: END
+08/05/2021 11:07:58 PM Query: Results unpacked
+08/05/2021 11:07:58 PM Session has returned connection to the pool
+08/05/2021 11:07:58 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:07:58 PM Query: Returning results -- Endpoint Service Complete
+08/05/2021 11:10:38 PM Query received
+08/05/2021 11:10:38 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:38 PM 
+Transaction: BEGIN
+08/05/2021 11:10:38 PM Session has checked out a connection
+08/05/2021 11:10:38 PM Query: SUBMITTED
+08/05/2021 11:10:38 PM Transaction: END
+
+08/05/2021 11:10:38 PM Query: Results unpacked
+08/05/2021 11:10:38 PM Session has returned connection to the pool
+08/05/2021 11:10:38 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:38 PM Query received
+08/05/2021 11:10:38 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:38 PM Query flag: CARCINOGEN
+08/05/2021 11:10:38 PM 
+Transaction: BEGIN
+08/05/2021 11:10:38 PM Session has checked out a connection
+08/05/2021 11:10:38 PM Query: SUBMITTED
+08/05/2021 11:10:38 PM Transaction: END
+
+08/05/2021 11:10:38 PM Query: Results unpacked
+08/05/2021 11:10:38 PM Session has returned connection to the pool
+08/05/2021 11:10:38 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:38 PM Query received
+08/05/2021 11:10:38 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:38 PM 
+Transaction: BEGIN
+08/05/2021 11:10:38 PM Session has checked out a connection
+08/05/2021 11:10:38 PM Query: SUBMITTED
+08/05/2021 11:10:39 PM Transaction: END
+
+08/05/2021 11:10:39 PM Query: Results unpacked
+08/05/2021 11:10:39 PM Session has returned connection to the pool
+08/05/2021 11:10:39 PM Query flag: RELEASE TYPE: WATER
+08/05/2021 11:10:39 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:39 PM Query received
+08/05/2021 11:10:39 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:39 PM 
+Transaction: BEGIN
+08/05/2021 11:10:39 PM Session has checked out a connection
+08/05/2021 11:10:39 PM Query: SUBMITTED
+08/05/2021 11:10:39 PM Transaction: END
+
+08/05/2021 11:10:39 PM Query: Results unpacked
+08/05/2021 11:10:39 PM Session has returned connection to the pool
+08/05/2021 11:10:39 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:39 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:39 PM Query received
+08/05/2021 11:10:39 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:39 PM Query flag: CARCINOGEN
+08/05/2021 11:10:39 PM 
+Transaction: BEGIN
+08/05/2021 11:10:39 PM Session has checked out a connection
+08/05/2021 11:10:39 PM Query: SUBMITTED
+08/05/2021 11:10:40 PM Transaction: END
+
+08/05/2021 11:10:40 PM Query: Results unpacked
+08/05/2021 11:10:40 PM Session has returned connection to the pool
+08/05/2021 11:10:40 PM Query flag: RELEASE TYPE: WATER
+08/05/2021 11:10:40 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:40 PM Query received
+08/05/2021 11:10:40 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:40 PM Query flag: CARCINOGEN
+08/05/2021 11:10:40 PM 
+Transaction: BEGIN
+08/05/2021 11:10:40 PM Session has checked out a connection
+08/05/2021 11:10:40 PM Query: SUBMITTED
+08/05/2021 11:10:40 PM Transaction: END
+
+08/05/2021 11:10:40 PM Query: Results unpacked
+08/05/2021 11:10:40 PM Session has returned connection to the pool
+08/05/2021 11:10:40 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:40 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:40 PM Query received
+08/05/2021 11:10:40 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:40 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:10:40 PM 
+Transaction: BEGIN
+08/05/2021 11:10:40 PM Session has checked out a connection
+08/05/2021 11:10:40 PM Query: SUBMITTED
+08/05/2021 11:10:40 PM Transaction: END
+
+08/05/2021 11:10:40 PM Query: Results unpacked
+08/05/2021 11:10:40 PM Session has returned connection to the pool
+08/05/2021 11:10:40 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:40 PM Query received
+08/05/2021 11:10:40 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:40 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:10:40 PM 
+Transaction: BEGIN
+08/05/2021 11:10:40 PM Session has checked out a connection
+08/05/2021 11:10:40 PM Query: SUBMITTED
+08/05/2021 11:10:40 PM Transaction: END
+
+08/05/2021 11:10:40 PM Query: Results unpacked
+08/05/2021 11:10:40 PM Session has returned connection to the pool
+08/05/2021 11:10:40 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:40 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:40 PM Query received
+08/05/2021 11:10:40 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:40 PM Query flag: CARCINOGEN
+08/05/2021 11:10:40 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:10:40 PM 
+Transaction: BEGIN
+08/05/2021 11:10:40 PM Session has checked out a connection
+08/05/2021 11:10:40 PM Query: SUBMITTED
+08/05/2021 11:10:40 PM Transaction: END
+
+08/05/2021 11:10:40 PM Query: Results unpacked
+08/05/2021 11:10:40 PM Session has returned connection to the pool
+08/05/2021 11:10:40 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:40 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:40 PM Query received
+08/05/2021 11:10:40 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:40 PM Query flag: SECTORS: ['Chemicals', 'Food']
+08/05/2021 11:10:40 PM 
+Transaction: BEGIN
+08/05/2021 11:10:40 PM Session has checked out a connection
+08/05/2021 11:10:40 PM Query: SUBMITTED
+08/05/2021 11:10:40 PM Transaction: END
+
+08/05/2021 11:10:40 PM Query: Results unpacked
+08/05/2021 11:10:40 PM Session has returned connection to the pool
+08/05/2021 11:10:40 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:40 PM Query received
+08/05/2021 11:10:40 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:40 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:10:40 PM 
+Transaction: BEGIN
+08/05/2021 11:10:40 PM Session has checked out a connection
+08/05/2021 11:10:40 PM Query: SUBMITTED
+08/05/2021 11:10:40 PM Transaction: END
+
+08/05/2021 11:10:40 PM Query: Results unpacked
+08/05/2021 11:10:40 PM Session has returned connection to the pool
+08/05/2021 11:10:40 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:40 PM Query received
+08/05/2021 11:10:40 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:40 PM Query flag: SECTORS: ['Food']
+08/05/2021 11:10:40 PM 
+Transaction: BEGIN
+08/05/2021 11:10:40 PM Session has checked out a connection
+08/05/2021 11:10:41 PM Query: SUBMITTED
+08/05/2021 11:10:41 PM Transaction: END
+
+08/05/2021 11:10:41 PM Query: Results unpacked
+08/05/2021 11:10:41 PM Session has returned connection to the pool
+08/05/2021 11:10:41 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:41 PM Query received
+08/05/2021 11:10:41 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:41 PM Query flag: SECTORS: ['Chemicals', 'Food']
+08/05/2021 11:10:41 PM 
+Transaction: BEGIN
+08/05/2021 11:10:41 PM Session has checked out a connection
+08/05/2021 11:10:41 PM Query: SUBMITTED
+08/05/2021 11:10:41 PM Transaction: END
+
+08/05/2021 11:10:41 PM Query: Results unpacked
+08/05/2021 11:10:41 PM Session has returned connection to the pool
+08/05/2021 11:10:41 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:41 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:41 PM Query received
+08/05/2021 11:10:41 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:41 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:10:41 PM 
+Transaction: BEGIN
+08/05/2021 11:10:41 PM Session has checked out a connection
+08/05/2021 11:10:41 PM Query: SUBMITTED
+08/05/2021 11:10:41 PM Transaction: END
+
+08/05/2021 11:10:41 PM Query: Results unpacked
+08/05/2021 11:10:41 PM Session has returned connection to the pool
+08/05/2021 11:10:41 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:41 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:41 PM Query received
+08/05/2021 11:10:41 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:41 PM Query flag: SECTORS: ['Food']
+08/05/2021 11:10:41 PM 
+Transaction: BEGIN
+08/05/2021 11:10:41 PM Session has checked out a connection
+08/05/2021 11:10:41 PM Query: SUBMITTED
+08/05/2021 11:10:41 PM Transaction: END
+
+08/05/2021 11:10:41 PM Query: Results unpacked
+08/05/2021 11:10:41 PM Session has returned connection to the pool
+08/05/2021 11:10:41 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:41 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:41 PM Query received
+08/05/2021 11:10:41 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:41 PM Query flag: CARCINOGEN
+08/05/2021 11:10:41 PM Query flag: SECTORS: ['Chemicals', 'Food']
+08/05/2021 11:10:41 PM 
+Transaction: BEGIN
+08/05/2021 11:10:41 PM Session has checked out a connection
+08/05/2021 11:10:41 PM Query: SUBMITTED
+08/05/2021 11:10:41 PM Transaction: END
+
+08/05/2021 11:10:41 PM Query: Results unpacked
+08/05/2021 11:10:41 PM Session has returned connection to the pool
+08/05/2021 11:10:41 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:41 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:41 PM Query received
+08/05/2021 11:10:41 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:41 PM Query flag: CARCINOGEN
+08/05/2021 11:10:41 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:10:41 PM 
+Transaction: BEGIN
+08/05/2021 11:10:41 PM Session has checked out a connection
+08/05/2021 11:10:41 PM Query: SUBMITTED
+08/05/2021 11:10:41 PM Transaction: END
+
+08/05/2021 11:10:41 PM Query: Results unpacked
+08/05/2021 11:10:41 PM Session has returned connection to the pool
+08/05/2021 11:10:41 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:41 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:41 PM Query received
+08/05/2021 11:10:41 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:41 PM Query flag: CARCINOGEN
+08/05/2021 11:10:41 PM Query flag: SECTORS: ['Food']
+08/05/2021 11:10:41 PM 
+Transaction: BEGIN
+08/05/2021 11:10:41 PM Session has checked out a connection
+08/05/2021 11:10:41 PM Query: SUBMITTED
+08/05/2021 11:10:41 PM Transaction: END
+
+08/05/2021 11:10:41 PM Query: Results unpacked
+08/05/2021 11:10:41 PM Session has returned connection to the pool
+08/05/2021 11:10:41 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:41 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:41 PM Query received
+08/05/2021 11:10:41 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:41 PM Query flag: SECTORS: ['Chemicals', 'Food', 'Transportation Equipment']
+08/05/2021 11:10:41 PM 
+Transaction: BEGIN
+08/05/2021 11:10:41 PM Session has checked out a connection
+08/05/2021 11:10:41 PM Query: SUBMITTED
+08/05/2021 11:10:41 PM Transaction: END
+
+08/05/2021 11:10:41 PM Query: Results unpacked
+08/05/2021 11:10:41 PM Session has returned connection to the pool
+08/05/2021 11:10:41 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:41 PM Query received
+08/05/2021 11:10:41 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:41 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:10:41 PM 
+Transaction: BEGIN
+08/05/2021 11:10:41 PM Session has checked out a connection
+08/05/2021 11:10:41 PM Query: SUBMITTED
+08/05/2021 11:10:41 PM Transaction: END
+
+08/05/2021 11:10:41 PM Query: Results unpacked
+08/05/2021 11:10:41 PM Session has returned connection to the pool
+08/05/2021 11:10:41 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:41 PM Query received
+08/05/2021 11:10:41 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:41 PM Query flag: SECTORS: ['Food']
+08/05/2021 11:10:41 PM 
+Transaction: BEGIN
+08/05/2021 11:10:41 PM Session has checked out a connection
+08/05/2021 11:10:41 PM Query: SUBMITTED
+08/05/2021 11:10:41 PM Transaction: END
+
+08/05/2021 11:10:41 PM Query: Results unpacked
+08/05/2021 11:10:41 PM Session has returned connection to the pool
+08/05/2021 11:10:41 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:41 PM Query received
+08/05/2021 11:10:41 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:41 PM Query flag: SECTORS: ['Transportation Equipment']
+08/05/2021 11:10:41 PM 
+Transaction: BEGIN
+08/05/2021 11:10:41 PM Session has checked out a connection
+08/05/2021 11:10:42 PM Query: SUBMITTED
+08/05/2021 11:10:42 PM Transaction: END
+
+08/05/2021 11:10:42 PM Query: Results unpacked
+08/05/2021 11:10:42 PM Session has returned connection to the pool
+08/05/2021 11:10:42 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:42 PM Query received
+08/05/2021 11:10:42 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:42 PM Query flag: SECTORS: ['Chemicals', 'Food', 'Transportation Equipment']
+08/05/2021 11:10:42 PM 
+Transaction: BEGIN
+08/05/2021 11:10:42 PM Session has checked out a connection
+08/05/2021 11:10:42 PM Query: SUBMITTED
+08/05/2021 11:10:42 PM Transaction: END
+
+08/05/2021 11:10:42 PM Query: Results unpacked
+08/05/2021 11:10:42 PM Session has returned connection to the pool
+08/05/2021 11:10:42 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:42 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:42 PM Query received
+08/05/2021 11:10:42 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:42 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:10:42 PM 
+Transaction: BEGIN
+08/05/2021 11:10:42 PM Session has checked out a connection
+08/05/2021 11:10:42 PM Query: SUBMITTED
+08/05/2021 11:10:42 PM Transaction: END
+
+08/05/2021 11:10:42 PM Query: Results unpacked
+08/05/2021 11:10:42 PM Session has returned connection to the pool
+08/05/2021 11:10:42 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:42 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:42 PM Query received
+08/05/2021 11:10:42 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:42 PM Query flag: SECTORS: ['Food']
+08/05/2021 11:10:42 PM 
+Transaction: BEGIN
+08/05/2021 11:10:42 PM Session has checked out a connection
+08/05/2021 11:10:42 PM Query: SUBMITTED
+08/05/2021 11:10:42 PM Transaction: END
+
+08/05/2021 11:10:42 PM Query: Results unpacked
+08/05/2021 11:10:42 PM Session has returned connection to the pool
+08/05/2021 11:10:42 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:42 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:42 PM Query received
+08/05/2021 11:10:42 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:42 PM Query flag: SECTORS: ['Transportation Equipment']
+08/05/2021 11:10:42 PM 
+Transaction: BEGIN
+08/05/2021 11:10:42 PM Session has checked out a connection
+08/05/2021 11:10:42 PM Query: SUBMITTED
+08/05/2021 11:10:42 PM Transaction: END
+
+08/05/2021 11:10:42 PM Query: Results unpacked
+08/05/2021 11:10:42 PM Session has returned connection to the pool
+08/05/2021 11:10:42 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:42 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:42 PM Query received
+08/05/2021 11:10:42 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:42 PM Query flag: CARCINOGEN
+08/05/2021 11:10:42 PM Query flag: SECTORS: ['Chemicals', 'Food', 'Transportation Equipment']
+08/05/2021 11:10:42 PM 
+Transaction: BEGIN
+08/05/2021 11:10:42 PM Session has checked out a connection
+08/05/2021 11:10:42 PM Query: SUBMITTED
+08/05/2021 11:10:42 PM Transaction: END
+
+08/05/2021 11:10:42 PM Query: Results unpacked
+08/05/2021 11:10:42 PM Session has returned connection to the pool
+08/05/2021 11:10:42 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:42 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:42 PM Query received
+08/05/2021 11:10:42 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:42 PM Query flag: CARCINOGEN
+08/05/2021 11:10:42 PM Query flag: SECTORS: ['Chemicals']
+08/05/2021 11:10:42 PM 
+Transaction: BEGIN
+08/05/2021 11:10:42 PM Session has checked out a connection
+08/05/2021 11:10:42 PM Query: SUBMITTED
+08/05/2021 11:10:42 PM Transaction: END
+
+08/05/2021 11:10:42 PM Query: Results unpacked
+08/05/2021 11:10:42 PM Session has returned connection to the pool
+08/05/2021 11:10:42 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:42 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:42 PM Query received
+08/05/2021 11:10:42 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:42 PM Query flag: CARCINOGEN
+08/05/2021 11:10:42 PM Query flag: SECTORS: ['Food']
+08/05/2021 11:10:42 PM 
+Transaction: BEGIN
+08/05/2021 11:10:42 PM Session has checked out a connection
+08/05/2021 11:10:42 PM Query: SUBMITTED
+08/05/2021 11:10:42 PM Transaction: END
+
+08/05/2021 11:10:42 PM Query: Results unpacked
+08/05/2021 11:10:42 PM Session has returned connection to the pool
+08/05/2021 11:10:42 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:42 PM Query: Returning results -- Endpoint Service Complete
+
+
+08/05/2021 11:10:42 PM Query received
+08/05/2021 11:10:42 PM Query point: POINT(96.0 45.0)
+08/05/2021 11:10:42 PM Query flag: CARCINOGEN
+08/05/2021 11:10:42 PM Query flag: SECTORS: ['Transportation Equipment']
+08/05/2021 11:10:42 PM 
+Transaction: BEGIN
+08/05/2021 11:10:42 PM Session has checked out a connection
+08/05/2021 11:10:42 PM Query: SUBMITTED
+08/05/2021 11:10:42 PM Transaction: END
+
+08/05/2021 11:10:42 PM Query: Results unpacked
+08/05/2021 11:10:42 PM Session has returned connection to the pool
+08/05/2021 11:10:42 PM Query flag: RELEASE TYPE: AIR
+08/05/2021 11:10:42 PM Query: Returning results -- Endpoint Service Complete
+
+
