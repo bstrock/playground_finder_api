@@ -58,7 +58,7 @@ class TRILoader:
             "landfills",
             "surface_impndmnt",
             "land_treatment",
-            "b_-_other_surface_i"
+            "b_-_other_surface_i",
         ]
 
         self.data = self.data.filter(items=columns)

@@ -22,8 +22,8 @@ class TestQueries:
     ]
 
     test_params = {
-        "latitude": 45.,
-        "longitude": -96.,
+        "latitude": 45.0,
+        "longitude": -96.0,
         "radius": 1000,
         "access_token": os.environ.get("SECRET_KEY"),
     }
@@ -66,7 +66,6 @@ class TestQueries:
         assert len(value_set) == 1  # TEST: only one type of boolean value is present
         check = value_set.pop()  # the value present
         assert check == True  # TEST: the only value present is True
-
 
     @staticmethod
     async def test_query_all() -> NoReturn:
@@ -175,11 +174,16 @@ class TestQueries:
         assert total_results == sum(counts)
 
         if len(sectors) == 2:
-            assert total_results == TestQueries.CHEMICAL_SITES_MN + TestQueries.FOOD_SITES_MN
+            assert (
+                total_results
+                == TestQueries.CHEMICAL_SITES_MN + TestQueries.FOOD_SITES_MN
+            )
         elif len(sectors) == 3:
             assert (
                 total_results
-                == TestQueries.CHEMICAL_SITES_MN + TestQueries.FOOD_SITES_MN + TestQueries.TRANSPORTATION_EQUIPMENT_SITES_MN
+                == TestQueries.CHEMICAL_SITES_MN
+                + TestQueries.FOOD_SITES_MN
+                + TestQueries.TRANSPORTATION_EQUIPMENT_SITES_MN
             )
 
     @staticmethod
@@ -245,7 +249,10 @@ class TestQueries:
                 assert (df.carcinogen.unique()) == [
                     True
                 ]  # TEST: ensure all results are carcinogen
-                assert total_results == TestQueries.CARCINOGEN_CHEMICAL_AIR_RELEASE_SITES_MN
+                assert (
+                    total_results
+                    == TestQueries.CARCINOGEN_CHEMICAL_AIR_RELEASE_SITES_MN
+                )
             else:
                 assert total_results == TestQueries.CHEMICAL_AIR_RELEASE_SITES_MN
             return
@@ -274,7 +281,8 @@ class TestQueries:
             else:
                 assert (
                     total_results
-                    == TestQueries.CHEMICAL_AIR_RELEASE_SITES_MN + TestQueries.FOOD_AIR_RELEASE_SITES_MN
+                    == TestQueries.CHEMICAL_AIR_RELEASE_SITES_MN
+                    + TestQueries.FOOD_AIR_RELEASE_SITES_MN
                 )
 
         elif len(sectors) == 3:
@@ -355,8 +363,35 @@ class TestSubmit:
         {"report_type": "Inactive Site", "unused_type": "Signage"},
     ]
 
-    EXPECTED_INHERITANCE_RESPONSE = [{'report_id': '2', 'site_id': '55413NTRPL2015N', 'report_type': 'Emission', 'message': 'You are reading the thing which I have typed.', 'emission_type': 'Water', 'activity_type': None, 'unused_type': None}, {'report_id': '1', 'site_id': '55413NTRPL2015N', 'report_type': 'Active Site', 'message': 'You are reading the thing which I have typed.', 'emission_type': None, 'activity_type': 'Sitework', 'unused_type': None}, {'report_id': '3', 'site_id': '55413NTRPL2015N', 'report_type': 'Inactive Site', 'message': 'You are reading the thing which I have typed.', 'emission_type': None, 'activity_type': None, 'unused_type': 'Signage'}]
-
+    EXPECTED_INHERITANCE_RESPONSE = [
+        {
+            "report_id": "2",
+            "site_id": "55413NTRPL2015N",
+            "report_type": "Emission",
+            "message": "You are reading the thing which I have typed.",
+            "emission_type": "Water",
+            "activity_type": None,
+            "unused_type": None,
+        },
+        {
+            "report_id": "1",
+            "site_id": "55413NTRPL2015N",
+            "report_type": "Active Site",
+            "message": "You are reading the thing which I have typed.",
+            "emission_type": None,
+            "activity_type": "Sitework",
+            "unused_type": None,
+        },
+        {
+            "report_id": "3",
+            "site_id": "55413NTRPL2015N",
+            "report_type": "Inactive Site",
+            "message": "You are reading the thing which I have typed.",
+            "emission_type": None,
+            "activity_type": None,
+            "unused_type": "Signage",
+        },
+    ]
 
     @staticmethod
     async def test_submit(report_params: Dict[str, str]) -> NoReturn:

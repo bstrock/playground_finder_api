@@ -131,7 +131,9 @@ class UnusedReports(Report):
     __mapper_args__ = {"eager_defaults": True, "polymorphic_identity": "Inactive Site"}
 
     report_id = Column(
-        BigInteger, ForeignKey("reports.report_id", name="inactive_sites_key"), primary_key=True
+        BigInteger,
+        ForeignKey("reports.report_id", name="inactive_sites_key"),
+        primary_key=True,
     )
     unused_type = Column(enums.make("unused_types"), nullable=False)
     report = relationship("Report", backref="Inactive Site", lazy=False)

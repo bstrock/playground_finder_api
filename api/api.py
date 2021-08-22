@@ -27,10 +27,10 @@ async def get_db():
 
 
 def miles_to_meters(radius: int):
-
+    # converts user int to meters (POSTGis Geography measurement unit)
     return radius * Globals.MILES_TO_METERS
 
-
+# it's a basic logger
 logging.basicConfig(
     format="%(asctime)s %(message)s",
     datefmt="%m/%d/%Y %I:%M:%S %p",
@@ -53,7 +53,6 @@ async def query(
 
     logging.info("Query received")
     logging.info("\n\n***QUERY PARAMETERS***\n")
-
 
     # prepare PostGIS geometry object
     query_point = f"POINT({longitude} {latitude})"
@@ -137,7 +136,6 @@ async def submit(
 ) -> ReportSchema:
     logging.info("Report Submission received")
     data = jsonable_encoder(report)  # it's just nice to have a dictionary
-    print(data)
 
     # need to figure out which table model to base the report off of
     exclude = ["message", "site_id", "report_type"]  # common to all reports
@@ -183,11 +181,10 @@ async def get_all_reports(
         Session=Depends(get_db)
 ) -> List[ReportSchema]:
 
-    if access_token == Globals.SECRET_KEY:
-        async with Session as s:
-            async with s.begin():
-                stmt = select(Report)
-                res = await s.execute(stmt)
+    async with Session as s:
+        async with s.begin():
+            stmt = select(Report)
+            res = await s.execute(stmt)
 
     reports = res.scalars().all()
 
