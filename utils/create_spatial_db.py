@@ -1,7 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import text, MetaData
-from sqlalchemy.engine import URL
 from models.tables import Base
 import asyncio
 import os
@@ -12,7 +11,7 @@ class SpatialDB:
     # connection parameters
     username = os.environ.get("USERNAME")
     password = os.environ.get("PASSWORD")
-    url = os.environ.get("SECRET_URL")
+    url = os.environ.get("DATABASE_URL")
 
     engine = create_async_engine(url=url, echo=False, future=True)
 
