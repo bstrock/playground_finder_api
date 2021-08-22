@@ -11,7 +11,7 @@ class SpatialDB:
     # connection parameters
     username = os.environ.get("USERNAME")
     password = os.environ.get("PASSWORD")
-    url = os.environ.get("DATABASE_URL")
+    url = os.environ.get("SECRET_URL")
 
     engine = create_async_engine(url=url, echo=False, future=True)
 
