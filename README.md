@@ -4,6 +4,8 @@ Example backend API designed to read data from US EPA TRI datasets, extract/tran
 
 The API is currently live and deployed via Heroku.
 
+All database and API operations are fully asyncronous.
+
 CONTENTS:
 
 /api:  contains the api source code.  uses PostGIS to process spatial queries.
