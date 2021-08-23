@@ -16,4 +16,5 @@ CONTENTS:
   - tri_loader.py uses pandas and sqlalchemy models to perform ETL operations on TRI Data and imports them into the spatial database
   - test.py contains an extensive test suite, which provides a continuous integration testing baseline to ensure efficient API development
   
-  
+PRIMARY TOOLS USED:
+FastAPI, SQLAlchemy, GeoAlchemy, pandas, asyncio
