@@ -27,7 +27,7 @@ This repo is for the backend component of my final project for Geospatial Web an
 
 `/api`:  contains the api source code.  uses PostGIS to process spatial queries.
 
-`/models`: contains SQLAlchemy database table models and FastAPI schemas.
+`/models`: contains SQLAlchemy database table models and FastAPI schemas, along with a useful utility to define and unpack custom PostgreSQL ENUM types.
 
 `/utils`:
 
