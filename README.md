@@ -25,11 +25,11 @@ This repo is for the backend component of my final project for Geospatial Web an
 
 <h2>Project Structure and Contents</h2>
 
-`/api`:  contains the api source code.  uses PostGIS to process spatial queries.
+`/api` contains the api source code.  uses PostGIS to process spatial queries.
 
-`/models`: contains SQLAlchemy database table models and FastAPI schemas, along with a useful utility to define and unpack custom PostgreSQL ENUM types.
+`/models` contains SQLAlchemy database table models and FastAPI schemas, along with a useful utility to define and unpack custom PostgreSQL ENUM types.
 
-`/utils`:
+`/utils`
 
   - `create_spatial_db.py` contains a class which offers methods to create databases with PostGIS-enabled spatial datatypes, based on the models defined in `models.py`
   - `tri_loader.py` uses pandas and sqlalchemy models to perform ETL operations on TRI Data and imports them into the spatial database
