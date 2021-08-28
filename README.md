@@ -26,7 +26,9 @@ This repo is for the backend component of my final project for Geospatial Web an
 <h2>Project Structure and Contents</h2>
 
 /api:  contains the api source code.  uses PostGIS to process spatial queries.
+
 /models: contains SQLAlchemy database table models and FastAPI schemas.
+
 /utils:
 
   - create_spatial_db.py contains a class which offers methods to create databases with PostGIS-enabled spatial datatypes.
