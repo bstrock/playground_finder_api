@@ -53,7 +53,7 @@ This repo is for the backend component of my final project for Geospatial Web an
 
 `/utils`
 
-  - `create_spatial_db.py` contains a class which offers methods to create databases with PostGIS-enabled spatial datatypes, based on the models defined in `models.py`
+  - `create_spatial_db.py` contains a class which offers methods to create databases with PostGIS-enabled spatial datatypes, based on the SQLAlchemy models defined in `models/tables.py`
   - `tri_loader.py` uses pandas and sqlalchemy models to perform ETL operations on TRI Data and imports them into the spatial database
 
 `/tests` Contains an extensive test suite, which provides a continuous integration testing baseline to ensure efficient API development
