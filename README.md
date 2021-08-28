@@ -44,7 +44,8 @@ This repo is for the backend component of my final project for Geospatial Web an
 │       └── tri_data_to_db.py
 └── tests/
         ├── __init__.py
-        └── test.py```
+        └── test.py
+```
 
 `/api` contains the api source code.  uses PostGIS to process spatial queries.
 
