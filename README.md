@@ -25,6 +25,27 @@ This repo is for the backend component of my final project for Geospatial Web an
 
 <h2>Project Structure and Contents</h2>
 
+`tri_nearby/
+├── a.Dockerfile
+├── heroku.yml
+├── Procfile
+├── requirements.txt
+├── api/
+│       ├── __init__.py
+│       └── api.py
+├── models/
+│       ├── __init__.py
+│       ├── enums.py
+│       ├── tables.py
+│       └── schema.py
+├── utils/
+│       ├── __init__.py
+│       ├── create_spatial_db.py
+│       └── tri_data_to_db.py
+└── tests/
+        ├── __init__.py
+        └── test.py`
+
 `/api` contains the api source code.  uses PostGIS to process spatial queries.
 
 `/models` contains SQLAlchemy database table models and FastAPI schemas, along with a useful utility to define and unpack custom PostgreSQL ENUM types.
