@@ -5,14 +5,6 @@ This repo is for the backend component of my final project for Geospatial Web an
 
 [View a 5 minute overview walkthrough here](https://youtu.be/jYbpUzD-KjI)
 
-<h2>Project Features</h2>
-
-* Programatically generated spatial database using SQLAlchemy/GeoAlchemy2
-* Fully asynchronous operations using FastAPI and SQLAlchemy's 2.0 style
-* Allows users to perform spatial and attribute-based queries to explore TRI sites in their vicinity
-* Joined table inheretance structure allows easy loading of attribute tables for storing secondary characteristics
-* Complete package- one toolkit to create the database, perform ETL on the data, service queries from the endpoints, and test the API before deployment
-
 <h2>Tech Stack</h2>
 
 * FastAPI
@@ -22,6 +14,14 @@ This repo is for the backend component of my final project for Geospatial Web an
 * pandas
 * Docker
 * Heroku (deployment)
+
+<h2>Project Features</h2>
+
+* Programatically generated spatial database using SQLAlchemy/GeoAlchemy2
+* Fully asynchronous operations using FastAPI and SQLAlchemy's 2.0 style
+* Allows users to perform spatial and attribute-based queries to explore TRI sites in their vicinity
+* Joined table inheretance structure allows easy loading of attribute tables for storing secondary characteristics
+* Complete package- one toolkit to create the database, perform ETL on the data, service queries from the endpoints, and test the API before deployment
 
 <h2>Project Structure and Contents</h2>
 
