@@ -4,6 +4,7 @@ This repo is for the backend component of my final project for Geospatial Web an
 <h2>Link to project demo</h2>
 
 [View a 5 minute overview walkthrough here](https://youtu.be/jYbpUzD-KjI)
+[Check out the frontend Swift app repo here](https://github.com/bstrock/tri_nearby_swift_mapkit)
 
 <h2>Tech Stack</h2>
 
