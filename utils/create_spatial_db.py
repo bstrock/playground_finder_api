@@ -56,7 +56,7 @@ class SpatialDB:
 
 async def main():
     engine = SpatialDB.init()
-    await SpatialDB.enable_PostGIS(engine)
+    #await SpatialDB.enable_PostGIS(engine)
     await SpatialDB.reset_db()
 
     await SpatialDB.make_db()
