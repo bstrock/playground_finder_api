@@ -4,16 +4,17 @@ from sqlalchemy import (
     Column,
     Integer,
     ForeignKey,
-    Boolean,
+    Integer,
     DateTime,
     ARRAY,
     Text
 )
 
 from sqlalchemy.orm import declarative_base, relationship
-from geoalchemy2 import Geography
+from geoalchemy2 import Geometry
 from sqlalchemy.sql import func
 from models.enums import enums
+from icecream import ic
 
 # TABLES DEFINED HERE
 
@@ -33,7 +34,8 @@ class Site(Base):
     addr_city = Column(String(100), nullable=False)
     addr_state = Column(String(2), nullable=False)
     addr_zip = Column(Integer, nullable=False)
-    geom = Column(Geography(geometry_type="POLYGON", srid=4326))
+    geom = Column(Geometry(geometry_type="POLYGON", srid=4326))
+
 
 
 class Equipment(Base):
@@ -71,6 +73,7 @@ class Equipment(Base):
     site = relationship("Site", backref="equipment", lazy=False)
 
 
+
 class Amenities(Base):
     __tablename__ = "amenities"
     __mapper_args__ = {"eager_defaults": True}
@@ -81,15 +84,15 @@ class Amenities(Base):
         primary_key=True
     )
 
-    splash_pad = Column(Boolean, nullable=True)
-    beach = Column(Boolean, nullable=True)
-    changing_rooms = Column(Boolean, nullable=True)
-    waterfront = Column(Boolean, nullable=True)
-    concessions = Column(Boolean, nullable=True)
-    rentals = Column(Boolean, nullable=True)
-    indoor_restroom = Column(Boolean, nullable=True)
-    portable_restroom = Column(Boolean, nullable=True)
-    trails = Column(Boolean, nullable=True)
+    splash_pad = Column(Integer, nullable=True)
+    beach = Column(Integer, nullable=True)
+    changing_rooms = Column(Integer, nullable=True)
+    waterfront = Column(Integer, nullable=True)
+    concessions = Column(Integer, nullable=True)
+    rentals = Column(Integer, nullable=True)
+    indoor_restroom = Column(Integer, nullable=True)
+    portable_restroom = Column(Integer, nullable=True)
+    trails = Column(Integer, nullable=True)
     picnic_tables = Column(Integer, nullable=True)
     benches = Column(Integer, nullable=True)
     shelter = Column(Integer, nullable=True)
@@ -109,12 +112,12 @@ class SportsFacilities(Base):
         primary_key=True
         )
 
-    skate_park = Column(Boolean, nullable=True)
-    tennis_court = Column(Boolean, nullable=True)
-    hockey_rink = Column(Boolean, nullable=True)
-    soccer_field = Column(Boolean, nullable=True)
-    basketball_court = Column(Boolean, nullable=True)
-    baseball_diamond = Column(Boolean, nullable=True)
+    skate_park = Column(Integer, nullable=True)
+    tennis_court = Column(Integer, nullable=True)
+    hockey_rink = Column(Integer, nullable=True)
+    soccer_field = Column(Integer, nullable=True)
+    basketball_court = Column(Integer, nullable=True)
+    baseball_diamond = Column(Integer, nullable=True)
 
     site = relationship("Site", backref="sports_facilities", lazy=False)
 
@@ -137,13 +140,14 @@ class Review(Base):
 
     review_id = Column(BigInteger, autoincrement=True, primary_key=True)
     user_id = Column(BigInteger, ForeignKey("users.user_id", name="reviews_key"), nullable=False)
+    site_id = Column(String, ForeignKey("sites.site_id", name='site_reviews_key'))
     comment = Column(Text, nullable=True)
     stars = Column(Integer, nullable=False)
-    promoted = Column(Boolean, nullable=True)
+    promoted = Column(Integer, nullable=True)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
-    site = relationship("Site", backref="reviews", lazy=False)
-    user = relationship("User", backref="reviews", lazy=False)
+    site = relationship("Site", backref="site_reviews", lazy=False)
+    user = relationship("User", backref="user_reviews", lazy=False)
 
 
 # report table

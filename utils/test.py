@@ -1,4 +1,4 @@
-from utils.tri_data_to_db import TRILoader
+from utils.playground_data_to_db import TRILoader
 from fastapi.testclient import TestClient
 from typing import List, NoReturn, Dict
 from pandas import DataFrame, read_csv

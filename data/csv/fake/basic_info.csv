@@ -1,0 +1,33 @@
+SITE_ID,SITE_NAME,SUBSTRATE_TYPE,AGE_RANGE,VISIT_DATE,ADDR_NUM,ADDR_STREET1,ADDR_STREET2,ADDR_CITY,ADDR_STATE,ADDR_ZIP
+S001,Edgewood Park,WOOD_CHIPS,0-12,10/25/21 12:00 AM,6950,Edenvale Blvd,6950 Edenvale Blvd,Eden Prairie,MN,55346
+S002,Edenvale Park,WOOD_CHIPS,0-12,6:00 PM,7200,Edenvale Blvd,7200 Edenvale Blvd,Eden Prairie,MN,55346
+S003,Birch Island Park,WOOD_CHIPS,0-12,,6225,Eden Prairie Rd,6225 Eden Prairie Rd,Eden Prairie,MN,55346
+S004,Round Lake Park,WOOD_CHIPS,0-12,,16691,Valley View Rd,16691 Valley View Rd,Eden Prairie,MN,55346
+S005,Bryant Lake Regional Park,GRAVEL,0-12,,6800,Rowland Rd,6800 Rowland Rd,Eden Prairie,MN,55344
+S006,Carmel Park,SYNTHETIC,0-12,,11610,Tyrell Dr,11610 Tyrell Dr,Eden Prairie,MN,55344
+S007,Cedar Hills Park,WOOD_CHIPS,0-12,,9580,Eden Prairie Rd,9580 Eden Prairie Rd,Eden Prairie,MN,55347
+S008,Crestwood Park,GRAVEL,0-12,,9780,Dell Rd,9780 Dell Rd,Eden Prairie,MN,55344
+S009,Eden Lake Park,GRAVEL,0-12,,11700,Anderson Lakes Pkwy,11700 Anderson Lakes Pkwy,Eden Prairie,MN,55344
+S010,Eden Valley Park,WOOD_CHIPS,0-12,,16600,Duck Lake Trl,16600 Duck Lake Trl,Eden Prairie,MN,55344
+S011,Forest Hills Park,WOOD_CHIPS,0-12,,13708,Holly Rd,13708 Holly Rd,Eden Prairie,MN,55344
+S012,Franlo Park,SYNTHETIC,0-12,,10245,Franlo Rd,10245 Franlo Rd,Eden Prairie,MN,55344
+S013,Hidden Ponds Park,SYNTHETIC,7-12,,18300,Twilight Trl,18300 Twilight Trl,Eden Prairie,MN,55344
+S014,Homeward Hills Park,WOOD_CHIPS,7-12,,12000,Silverwood Dr,12000 Silverwood Dr,Eden Prairie,MN,55344
+S015,Miller Park,GRAVEL,7-12,,8208,Eden Prairie Rd,8208 Eden Prairie Rd,Eden Prairie,MN,55344
+S016,Nesbitt Preserve Park,SYNTHETIC,7-12,,8641,Center Way,8641 Center Way,Eden Prairie,MN,55344
+S017,Pheasant Woods park,SYNTHETIC,7-12,,8420,Mitchell Rd,8420 Mitchell Rd,Eden Prairie,MN,55344
+S018,Pioneer Park,GRAVEL,7-12,,8940,Sutton Dr,8940 Sutton Dr,Eden Prairie,MN,55344
+S019,Prairie East Park,WOOD_CHIPS,7-12,,10379,Balsam Way,10379 Balsam Way,Eden Prairie,MN,55344
+S020,Prairie View Park,WOOD_CHIPS,7-12,,17255,Peterborg Rd,17255 Peterborg Rd,Eden Prairie,MN,55344
+S021,Purgatory Creek Park,WOOD_CHIPS,4-8,,13001,Technology Dr,13001 Technology Dr,Eden Prairie,MN,55344
+S022,Red Rock Lake Park,WOOD_CHIPS,4-8,,15416,Boulder Pointe Rd,15416 Boulder Pointe Rd,Eden Prairie,MN,55344
+S023,Rice Marsh Lake Park,SYNTHETIC,4-8,,8266,Erin Bay,8266 Erin Bay,Eden Prairie,MN,55344
+S024,Riley lake Park,GRAVEL,4-8,,9180,Riley Lake Rd,9180 Riley Lake Rd,Eden Prairie,MN,55344
+S025,Round Lake Park,WOOD_CHIPS,4-8,,16691,Valley View Rd,16691 Valley View Rd,Eden Prairie,MN,55346
+S026,Rustic Hills Park,GRAVEL,4-8,,17465,Rustic Hills Dr,17465 Rustic Hills Dr,Eden Prairie,MN,55344
+S027,Smetana Lake Park,SYNTHETIC,4-8,,7620,Smetana Ln,7620 Smetana Ln,Eden Prairie,MN,55344
+S028,Staring Lake Park,GRAVEL,4-8,,14800,Pioneer Trl,14800 Pioneer Trl,Eden Prairie,MN,55347
+S029,Sterling Field Park,WOOD_CHIPS,4-8,,17800,Sterling Ter,17800 Sterling Ter,Eden Prairie,MN,55344
+S030,Topview Park,WOOD_CHIPS,9-12,,7231,Gerard Dr,7231 Gerard Dr,Eden Prairie,MN,55344
+S031,Willow Park,WOOD_CHIPS,9-12,,7402,Butterscotch Rd,7402 Butterscotch Rd,Eden Prairie,MN,55344
+S032,Wyndam Knoll Park,WOOD_CHIPS,,,6525,Dell Rd,6525 Dell Rd,Eden Prairie,MN,55344
