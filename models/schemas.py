@@ -1,68 +1,119 @@
-from models.tables import Report, UnusedReports, ActivityReports, EmissionReports
-from sqlalchemy.orm import with_polymorphic
 from fastapi import HTTPException, status
-from typing import Dict, Optional, List
-from datetime import datetime
+from typing import Optional, List
 from pydantic import BaseModel
 import os
 
 
-class Chemical(BaseModel):
-    unit: str
-    total: float
-
-    class Config:
-        orm_mode = True
-
-
 class ReportSchema(BaseModel):
-    report_id: Optional[str] = None
+    report_id: int
     site_id: str
+    user_id: int
     report_type: str
-    message: Optional[str] = None
-    emission_type: Optional[str] = None
-    activity_type: Optional[str] = None
-    unused_type: Optional[str] = None
+    timestamp: str
+    comment: Optional[str] = None
+    photo_location: Optional[str] = None
+    equipment: Optional[str] = None
 
     class Config:
         orm_mode = True
         arbitrary_types_allowed = True
 
 
-class ChildReportSchema(BaseModel):
-    report_id: str
-    emission_type: Optional[str]
-    activity_type: Optional[str]
-    unused_type: Optional[str]
+class ReviewSchema(BaseModel):
+    review_id: int
+    site_id: str
+    user_id: int
+    stars: int
+    timestamp: str
+    comment: Optional[str] = None
+    promoted: Optional[str] = None
 
     class Config:
         orm_mode = True
+        arbitrary_types_allowed = True
+
+
+class EquipmentSchema(BaseModel):
+    diggers: int
+    ladders: int
+    toddler_swings: int
+    standard_swings: int
+    tire_swings: int
+    accessible_swings: int
+    seesaws: int
+    climbers: int
+    spinners: int
+    bridges: int
+    tunnels: int
+    slides: int
+    thematic: int
+    ropes: int
+    fire_poles: int
+    staircases: int
+    musical: int
+    play_towers: int
+    telephones: int
+    binoculars: int
+    tactile: int
+
+    class Config:
+        orm_mode = True
+        arbitrary_types_allowed = True
+
+
+class AmenitiesSchema(BaseModel):
+    splash_pad: Optional[bool]
+    beach: Optional[bool]
+    changing_rooms: Optional[bool]
+    waterfront: Optional[bool]
+    concessions: Optional[bool]
+    rentals: Optional[bool]
+    indoor_restroom: Optional[bool]
+    portable_restroom: Optional[bool]
+    trails: Optional[bool]
+    picnic_tables: Optional[bool]
+    benches: Optional[bool]
+    shelter: Optional[bool]
+    sun_shades: Optional[bool]
+    grills: Optional[bool]
+
+    class Config:
+        orm_mode = True
+        arbitrary_types_allowed = True
+
+
+class SportsFacilitiesSchema(BaseModel):
+    skate_park: Optional[bool]
+    tennis_court: Optional[bool]
+    hockey_rink: Optional[bool]
+    soccer_field: Optional[bool]
+    basketball_court: Optional[bool]
+    baseball_diamond: Optional[bool]
+
+    class Config:
+        orm_mode = True
+        arbitrary_types_allowed = True
 
 
 class SiteSchema(BaseModel):
     site_id: str
-    name: str
-    address: str
-    city: str
-    state: str
-    zip: int
-    latitude: float
-    longitude: float
-    sector: str
-    carcinogen: bool
-    chemicals: Dict[str, Chemical]
-    release_types: list
-    total_releases: float
+    site_name: str
+    substrate_type: str
+    addr_street1: str
+    addr_street2: str
+    addr_city: str
+    addr_state: str
+    addr_zip: int
+    geom: str
     reports: Optional[List[ReportSchema]]
+    reviews: Optional[List[ReviewSchema]]
+    equipment: EquipmentSchema
+    amenities: AmenitiesSchema
+    sports_facilities: SportsFacilitiesSchema
 
     class Config:
         orm_mode = True
         arbitrary_types_allowed = True
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
 
 
 class Globals:
@@ -74,8 +125,4 @@ class Globals:
     SECRET_KEY = os.environ.get("SECRET_KEY")
     ALGORITHM = os.environ.get("ALGORITHM")
     CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
-    ALL_REPORTS = with_polymorphic(
-        Report, [EmissionReports, ActivityReports, UnusedReports]
-    )
-    SUB_REPORTS = [EmissionReports, ActivityReports, UnusedReports]
     MILES_TO_METERS = 1609.34

@@ -1,7 +1,7 @@
 import geopandas as gpd
 import pandas as pd
 from pandas import DataFrame
-from models.tables import Site, Equipment, Amenities
+from models.tables import Site, Equipment, Amenities, SportsFacilities
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from utils.create_spatial_db import SpatialDB
@@ -44,6 +44,7 @@ class PlaygroundLoader:
         self.sites = None
         self.equipment = []
         self.amenities = []
+        self.sports_facilities = []
 
     def set_data(self, data: DataFrame):
         # sets data object used in program
@@ -67,19 +68,31 @@ class PlaygroundLoader:
             # no you can't use a ternary operator for this
             if class_to_use == Equipment:  # where we store the objects for insertion
                 self.equipment.append(table_row)
-            else:
+            elif class_to_use == Amenities:
                 self.amenities.append(table_row)
+            elif class_to_use == SportsFacilities:
+                self.sports_facilities.append(table_row)
 
         # here we need to grab the table schema in order to generate fake data
         table_schema = pd.read_csv(path, index_col='SITE_ID')  # its columns
         shape = table_schema.shape  # its dimensions
-        random_data = np.random.randint(0, 10, size=shape)  # creates an array of random ints 0-10
+
+        # here we check which class and method to use
+        path_split = path.split('/')
+        sentinel = path_split[-1]
+
+        if sentinel == 'equipment.csv':
+            class_to_use = Equipment
+            random_data = np.random.randint(0, 10, size=shape)  # creates an array of random ints 0-10
+        elif sentinel == 'amenities.csv':
+            class_to_use = Amenities
+        elif sentinel == 'sports_facilities.csv':
+            class_to_use = SportsFacilities
+
+        if sentinel != 'equipment.csv':
+            random_data = np.random.choice(a=[True, False], size=shape, p=[.25, .75])
         df = pd.DataFrame(random_data, columns=table_schema.columns,
                           index=table_schema.index)  # the actual dataframe we're using
-
-        # here we check which class to use
-        path_split = path.split('/')
-        class_to_use = Equipment if path_split[-1] == 'equipment.csv' else Amenities
 
         # remember our really useful function?  now we just apply it to the dataframe...zwoop, row objects!
         df.apply(lambda x: class_from_row(row=x, class_to_use=class_to_use), axis=1)
@@ -117,7 +130,7 @@ class PlaygroundLoader:
         # let's do this
 
         # these are the lists of row objects we are inserting
-        data_in = [self.sites, self.equipment, self.amenities]
+        data_in = [self.sites, self.equipment, self.amenities, self.sports_facilities]
 
         # scrub the db real quick here
         await SpatialDB.reset_db()
@@ -140,6 +153,8 @@ if __name__ == "__main__":
     json_path = "~/Documents/777/playground_planner/data/json/playgrounds.json"
     equipment_path = '~/Documents/777/playground_planner/data/csv/fake/equipment.csv'
     amenities_path = '~/Documents/777/playground_planner/data/csv/fake/amenities.csv'
+    sports_facilities_path = '~/Documents/777/playground_planner/data/csv/fake/sports_facilites.csv'
+
 
     data = gpd.read_file(json_path)
 

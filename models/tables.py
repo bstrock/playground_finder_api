@@ -2,12 +2,12 @@ from sqlalchemy import (
     String,
     BigInteger,
     Column,
-    Integer,
+    Boolean,
     ForeignKey,
     Integer,
     DateTime,
     ARRAY,
-    Text
+    Text,
 )
 
 from sqlalchemy.orm import declarative_base, relationship
@@ -35,7 +35,6 @@ class Site(Base):
     addr_state = Column(String(2), nullable=False)
     addr_zip = Column(Integer, nullable=False)
     geom = Column(Geometry(geometry_type="POLYGON", srid=4326))
-
 
 
 class Equipment(Base):
@@ -73,7 +72,6 @@ class Equipment(Base):
     site = relationship("Site", backref="equipment", lazy=False)
 
 
-
 class Amenities(Base):
     __tablename__ = "amenities"
     __mapper_args__ = {"eager_defaults": True}
@@ -84,20 +82,20 @@ class Amenities(Base):
         primary_key=True
     )
 
-    splash_pad = Column(Integer, nullable=True)
-    beach = Column(Integer, nullable=True)
-    changing_rooms = Column(Integer, nullable=True)
-    waterfront = Column(Integer, nullable=True)
-    concessions = Column(Integer, nullable=True)
-    rentals = Column(Integer, nullable=True)
-    indoor_restroom = Column(Integer, nullable=True)
-    portable_restroom = Column(Integer, nullable=True)
-    trails = Column(Integer, nullable=True)
-    picnic_tables = Column(Integer, nullable=True)
-    benches = Column(Integer, nullable=True)
-    shelter = Column(Integer, nullable=True)
-    sun_shades = Column(Integer, nullable=True)
-    grills = Column(Integer, nullable=True)
+    splash_pad = Column(Boolean, nullable=True)
+    beach = Column(Boolean, nullable=True)
+    changing_rooms = Column(Boolean, nullable=True)
+    waterfront = Column(Boolean, nullable=True)
+    concessions = Column(Boolean, nullable=True)
+    rentals = Column(Boolean, nullable=True)
+    indoor_restroom = Column(Boolean, nullable=True)
+    portable_restroom = Column(Boolean, nullable=True)
+    trails = Column(Boolean, nullable=True)
+    picnic_tables = Column(Boolean, nullable=True)
+    benches = Column(Boolean, nullable=True)
+    shelter = Column(Boolean, nullable=True)
+    sun_shades = Column(Boolean, nullable=True)
+    grills = Column(Boolean, nullable=True)
 
     site = relationship("Site", backref="amenities", lazy=False)
 
@@ -112,12 +110,13 @@ class SportsFacilities(Base):
         primary_key=True
         )
 
-    skate_park = Column(Integer, nullable=True)
-    tennis_court = Column(Integer, nullable=True)
-    hockey_rink = Column(Integer, nullable=True)
-    soccer_field = Column(Integer, nullable=True)
-    basketball_court = Column(Integer, nullable=True)
-    baseball_diamond = Column(Integer, nullable=True)
+    skate_park = Column(Boolean, nullable=True)
+    tennis_court = Column(Boolean, nullable=True)
+    hockey_rink = Column(Boolean, nullable=True)
+    soccer_field = Column(Boolean, nullable=True)
+    basketball_court = Column(Boolean, nullable=True)
+    baseball_diamond = Column(Boolean, nullable=True)
+    soccer_field = Column(Boolean, nullable=True)
 
     site = relationship("Site", backref="sports_facilities", lazy=False)
 
@@ -158,7 +157,6 @@ class Report(Base):
     report_id = Column(BigInteger, autoincrement=True, primary_key=True)
     site_id = Column(String, ForeignKey("sites.site_id", name="reports_site_key"), nullable=False)
     user_id = Column(BigInteger, ForeignKey("users.user_id", name="reports_user_key"), nullable=False)
-    message = Column(String(240), nullable=True)
     report_type = Column(enums.make(kind="report_types"), nullable=False)  # enumeration creation from values in enum.py
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
     comment = Column(Text, nullable=True)
