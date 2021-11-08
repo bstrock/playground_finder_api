@@ -116,6 +116,35 @@ class SiteSchema(BaseModel):
         arbitrary_types_allowed = True
 
 
+class UserSchema(BaseModel):
+    email: str
+    hashed_password: str
+    first_name: str
+    last_name: str
+    favorite_parks: List[str]
+
+    class Config:
+        orm_mode = True
+        arbitrary_types_allowed = True
+
+
+class UserInDBSchema(UserSchema):
+    email: str
+    hashed_password: str
+    first_name: str
+    last_name: str
+    favorite_parks: Optional[List[str]]
+
+
+class TokenSchema(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenDataSchema(BaseModel):
+    username: Optional[str] = None
+
+
 class Globals:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

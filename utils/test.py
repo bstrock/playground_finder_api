@@ -443,7 +443,7 @@ if __name__ == "__main__":
     async def main():
         await asyncio.wait(
             [TestSubmit.run_panel(), TestQueries.run_panel()]
-        )  # run protocols to create db and tables, then import the dataframeTestQueries.run_panel()  # run the query tests
+        )  # run protocols to create db and tables, then import the dataframeTestQueries.run_panel()  # run the query test
 
     asyncio.run(main())
     end = dt.now()

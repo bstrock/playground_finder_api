@@ -21,11 +21,15 @@ class EnumStorage:
 
 #  enum tuples
 substrate_types = ("WOOD_CHIPS", "SYNTHETIC", "GRAVEL")
-report_types = ("HAZARD", "LITTER", "OFFLEASH_DOG", "EQUIPMENT_ISSUE", "VANDALISM", "DAMAGE")
+report_types = (
+    "HAZARD",
+    "LITTER",
+    "OFFLEASH_DOG",
+    "EQUIPMENT_ISSUE",
+    "VANDALISM",
+    "DAMAGE",
+)
 
 # instantiate- this object is imported in main script
 
-enums = EnumStorage(
-    substrate_types=substrate_types,
-    report_types=report_types
-)
+enums = EnumStorage(substrate_types=substrate_types, report_types=report_types)

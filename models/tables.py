@@ -2,7 +2,7 @@ from sqlalchemy import (
     String,
     BigInteger,
     Column,
-    Boolean,
+    Integer,
     ForeignKey,
     Integer,
     DateTime,
@@ -42,9 +42,7 @@ class Equipment(Base):
     __mapper_args__ = {"eager_defaults": True}
 
     site_id = Column(
-        String,
-        ForeignKey("sites.site_id", name="equipment_key"),
-        primary_key=True
+        String, ForeignKey("sites.site_id", name="equipment_key"), primary_key=True
     )
 
     diggers = Column(Integer, nullable=True)
@@ -77,25 +75,23 @@ class Amenities(Base):
     __mapper_args__ = {"eager_defaults": True}
 
     site_id = Column(
-        String,
-        ForeignKey("sites.site_id", name="amenities_key"),
-        primary_key=True
+        String, ForeignKey("sites.site_id", name="amenities_key"), primary_key=True
     )
 
-    splash_pad = Column(Boolean, nullable=True)
-    beach = Column(Boolean, nullable=True)
-    changing_rooms = Column(Boolean, nullable=True)
-    waterfront = Column(Boolean, nullable=True)
-    concessions = Column(Boolean, nullable=True)
-    rentals = Column(Boolean, nullable=True)
-    indoor_restroom = Column(Boolean, nullable=True)
-    portable_restroom = Column(Boolean, nullable=True)
-    trails = Column(Boolean, nullable=True)
-    picnic_tables = Column(Boolean, nullable=True)
-    benches = Column(Boolean, nullable=True)
-    shelter = Column(Boolean, nullable=True)
-    sun_shades = Column(Boolean, nullable=True)
-    grills = Column(Boolean, nullable=True)
+    splash_pad = Column(Integer, nullable=True)
+    beach = Column(Integer, nullable=True)
+    changing_rooms = Column(Integer, nullable=True)
+    waterfront = Column(Integer, nullable=True)
+    concessions = Column(Integer, nullable=True)
+    rentals = Column(Integer, nullable=True)
+    indoor_restroom = Column(Integer, nullable=True)
+    portable_restroom = Column(Integer, nullable=True)
+    trails = Column(Integer, nullable=True)
+    picnic_tables = Column(Integer, nullable=True)
+    benches = Column(Integer, nullable=True)
+    shelter = Column(Integer, nullable=True)
+    sun_shades = Column(Integer, nullable=True)
+    grills = Column(Integer, nullable=True)
 
     site = relationship("Site", backref="amenities", lazy=False)
 
@@ -107,16 +103,16 @@ class SportsFacilities(Base):
     site_id = Column(
         String,
         ForeignKey("sites.site_id", name="sports_facilities_key"),
-        primary_key=True
-        )
+        primary_key=True,
+    )
 
-    skate_park = Column(Boolean, nullable=True)
-    tennis_court = Column(Boolean, nullable=True)
-    hockey_rink = Column(Boolean, nullable=True)
-    soccer_field = Column(Boolean, nullable=True)
-    basketball_court = Column(Boolean, nullable=True)
-    baseball_diamond = Column(Boolean, nullable=True)
-    soccer_field = Column(Boolean, nullable=True)
+    skate_park = Column(Integer, nullable=True)
+    tennis_court = Column(Integer, nullable=True)
+    hockey_rink = Column(Integer, nullable=True)
+    soccer_field = Column(Integer, nullable=True)
+    basketball_court = Column(Integer, nullable=True)
+    baseball_diamond = Column(Integer, nullable=True)
+    soccer_field = Column(Integer, nullable=True)
 
     site = relationship("Site", backref="sports_facilities", lazy=False)
 
@@ -125,9 +121,8 @@ class User(Base):
     __tablename__ = "users"
     __mapper_args__ = {"eager_defaults": True}
 
-    user_id = Column(BigInteger, autoincrement=True, primary_key=True)
-    email = Column(String(50), unique=True)
-    password = Column(String(50), nullable=False) # these will be hashed
+    email = Column(String(50), unique=True, primary_key=True)
+    hashed_password = Column(String(100), nullable=False)  # these will be hashed
     first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
     favorite_parks = Column(ARRAY(String, dimensions=1))
@@ -135,11 +130,13 @@ class User(Base):
 
 class Review(Base):
     __tablename__ = "reviews"
-    __mapper_args__ = {'eager_defaults': True}
+    __mapper_args__ = {"eager_defaults": True}
 
     review_id = Column(BigInteger, autoincrement=True, primary_key=True)
-    user_id = Column(BigInteger, ForeignKey("users.user_id", name="reviews_key"), nullable=False)
-    site_id = Column(String, ForeignKey("sites.site_id", name='site_reviews_key'))
+    user_email = Column(
+        String, ForeignKey("users.email", name="reviews_key"), nullable=False
+    )
+    site_id = Column(String, ForeignKey("sites.site_id", name="site_reviews_key"))
     comment = Column(Text, nullable=True)
     stars = Column(Integer, nullable=False)
     promoted = Column(Integer, nullable=True)
@@ -155,9 +152,15 @@ class Report(Base):
     __mapper_args__ = {"eager_defaults": True}
 
     report_id = Column(BigInteger, autoincrement=True, primary_key=True)
-    site_id = Column(String, ForeignKey("sites.site_id", name="reports_site_key"), nullable=False)
-    user_id = Column(BigInteger, ForeignKey("users.user_id", name="reports_user_key"), nullable=False)
-    report_type = Column(enums.make(kind="report_types"), nullable=False)  # enumeration creation from values in enum.py
+    site_id = Column(
+        String, ForeignKey("sites.site_id", name="reports_site_key"), nullable=False
+    )
+    user_email = Column(
+        String, ForeignKey("users.email", name="reports_user_key"), nullable=False
+    )
+    report_type = Column(
+        enums.make(kind="report_types"), nullable=False
+    )  # enumeration creation from values in enum.py
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
     comment = Column(Text, nullable=True)
     photo_location = Column(String(100), nullable=True)

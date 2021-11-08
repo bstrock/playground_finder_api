@@ -12,17 +12,16 @@ class SpatialDB:
     # connection parameters
     username = os.environ.get("USERNAME")
     password = os.environ.get("PASSWORD")
-    #url = os.environ.get("SECRET_URL")
+    # url = os.environ.get("SECRET_URL")
 
     url = URL.create(
-        drivername='postgresql+asyncpg',
+        drivername="postgresql+asyncpg",
         username=username,
         password=password,
         host="localhost",
         port=5432,
-        database='brianstrock'
+        database="brianstrock",
     )
-
 
     engine = create_async_engine(url=url, echo=False, future=True)
 
