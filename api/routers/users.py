@@ -21,7 +21,7 @@ async def create_user(
         incoming_user: UserSchema,
         Session: AsyncSession = Depends(get_db)
 ):
-    ic(incoming_user)
+
     async with Session as s:
         async with s.begin():
             presence_test = await s.get(User, incoming_user.email)
@@ -45,6 +45,6 @@ async def read_users_me(current_user: UserSchema = Depends(get_current_user)):
     return current_user
 
 
-@router.get("/me/items")
-async def read_own_items(current_user: UserSchema = Depends(get_current_user)):
+@router.get("/me/favorites")
+async def get_favorites(current_user: UserSchema = Depends(get_current_user)):
     return [{"item_id": "Foo", "owner": current_user.email}]

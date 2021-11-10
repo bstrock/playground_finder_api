@@ -1,9 +1,9 @@
 import geopandas as gpd
 import pandas as pd
 from pandas import DataFrame
-from models.tables import Site, Equipment, Amenities, SportsFacilities, User
+from models.tables import Site, Equipment, Amenities, SportsFacilities, User, Base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.engine import create_engine
 from utils.create_spatial_db import SpatialDB
 from passlib.context import CryptContext
 from sqlalchemy.engine import URL
@@ -11,10 +11,11 @@ import os
 from icecream import ic
 import numpy as np
 import json
-
+from sqlalchemy import MetaData
 from icecream import ic
 import asyncio
 from datetime import datetime as dt
+
 
 pd.set_option("display.max_rows", None)
 pd.set_option("display.max_columns", None)
@@ -30,7 +31,7 @@ class PlaygroundLoader:
 
     # points to localhost
     url = URL.create(
-        drivername="postgresql+asyncpg",
+        drivername="postgresql+psycopg2",
         username=username,
         password=password,
         host="localhost",
@@ -38,8 +39,8 @@ class PlaygroundLoader:
         database="brianstrock",
     )
 
-    engine = create_async_engine(url=url, echo=False, future=True)
-    Session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+    engine = create_engine(url=url, echo=False)
+    Session = sessionmaker(engine)
 
     def __init__(self):
         self.data = None
@@ -67,10 +68,9 @@ class PlaygroundLoader:
 
         for col in row.index:  # grab the row columns
             setattr(
-                table_row, col.lower(), row[col]
+                table_row, col.lower(), int(row[col])
             )  # give our model object these attributes
         setattr(table_row, index_col, row._name)  # set site id attribute
-        ic(table_row)
         # no you can't use a ternary operator for this
         self.inserts[key].append(table_row)
 
@@ -81,7 +81,6 @@ class PlaygroundLoader:
         # here we need to grab the table schema in order to generate fake data
         table_schema = pd.read_csv(path, index_col="SITE_ID")  # its columns
         shape = table_schema.shape  # its dimensions
-        ic(shape)
         size = (29, shape[1])
         # here we check which class and method to use
         path_split = path.split("/")
@@ -134,8 +133,8 @@ class PlaygroundLoader:
                     addr_street1=df.ADDR_STR_1,
                     addr_city=df.ADDR_CITY,
                     addr_state=df.ADDR_STATE,
-                    addr_zip=df.ADDR_ZIP,
-                    geom=df.geometry.to_wkt(),
+                    addr_zip=int(df.ADDR_ZIP),
+                    geom=df.geometry.wkt,
                 )
             )
 
@@ -147,7 +146,6 @@ class PlaygroundLoader:
 
         for user in user_data_df.index.unique():
             this_user = user_data_df.loc[user]
-            ic(this_user.name)
             user_object = User(
                 email=this_user.name,
                 hashed_password=self.pwd_context.hash(this_user.hashed_password),
@@ -159,21 +157,51 @@ class PlaygroundLoader:
 
 
     # %%
-    async def main(self):
+    def main(self):
         # let's do this
+
+        path_base = "~/Documents/777/playground_planner/data"
+        fake_csv_path = path_base + "/csv/fake"
+
+        json_path = path_base + "/json/playgrounds.json"
+        equipment_path = fake_csv_path + "/equipment.csv"
+        amenities_path = fake_csv_path + "/amenities.csv"
+        sports_facilities_path = fake_csv_path + "/sports_facilities.csv"
+        fake_users_path = fake_csv_path + "/users.csv"
+
+        data = gpd.read_file(json_path)
+
+        keep_these_columns = [
+            "USER_SITE_",
+            "SITE_NAME",
+            "SUBSTRATE_",
+            "ADDR_STR_1",
+            "ADDR_CITY",
+            "ADDR_STATE",
+            "ADDR_ZIP",
+            "geometry",
+        ]
+
+        self.set_data(data=data[keep_these_columns])  # set data
+        self.data_to_sites()  # generate sites
+        self.randomized_import(equipment_path)  # import random data
+        self.randomized_import(amenities_path)  # and one more time
+        self.randomized_import(sports_facilities_path)
+        self.import_test_users(fake_users_path)
 
         # these are the lists of row objects we are inserting
         keys = list(self.inserts.keys())
 
         # scrub the db real quick here
-        await SpatialDB.reset_db()
+        Base.metadata.drop_all(self.engine)
+        Base.metadata.create_all(self.engine)
 
         # yay for context managers
         # let's put some objects in our database
 
         for key in keys:  # loop through tables
-            async with self.Session() as s:
-                async with s.begin():
+            with self.Session() as s:
+                with s.begin():
                     s.add_all(self.inserts[key])  # autocommit the whole dang thing
 
         # that's it, just a loop that loads everything in like 2 seconds, nothing to see here
@@ -183,37 +211,10 @@ class PlaygroundLoader:
 
 if __name__ == "__main__":
     # set up some stuff
-    path_base = "~/Documents/777/playground_planner/data"
-    fake_csv_path = path_base + "/csv/fake"
 
-    json_path = path_base + "/json/playgrounds.json"
-    equipment_path = fake_csv_path + "/equipment.csv"
-    amenities_path = fake_csv_path + "/amenities.csv"
-    sports_facilities_path = fake_csv_path + "/sports_facilities.csv"
-    fake_users_path = fake_csv_path + "/users.csv"
-
-    data = gpd.read_file(json_path)
-
-    keep_these_columns = [
-        "USER_SITE_",
-        "SITE_NAME",
-        "SUBSTRATE_",
-        "ADDR_STR_1",
-        "ADDR_CITY",
-        "ADDR_STATE",
-        "ADDR_ZIP",
-        "geometry",
-    ]
 
     # create the class object
     playground_loader = PlaygroundLoader()
-
-    playground_loader.set_data(data=data[keep_these_columns])  # set data
-    playground_loader.data_to_sites()  # generate sites
-    playground_loader.randomized_import(equipment_path)  # import random data
-    playground_loader.randomized_import(amenities_path)  # and one more time
-    playground_loader.randomized_import(sports_facilities_path)
-    playground_loader.import_test_users(fake_users_path)
-    asyncio.run(playground_loader.main())  # get that business into the db
+    playground_loader.main()
 
     # that's a wrap

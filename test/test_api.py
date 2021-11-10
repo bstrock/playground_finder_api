@@ -1,11 +1,18 @@
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from utils.playground_data_to_db import PlaygroundLoader
+import geopandas as gpd
 from api.main import app
 from icecream import ic
+
 client = TestClient(app)
+import pytest
+import asyncio
+from test.test_db_schema import Session
+from models.tables import Site, Equipment, Amenities, SportsFacilities, User
 
 
-def test_liveness_check():
+def test_liveness_check(startup):
     response = client.get("/")
     assert response.status_code == 200
 
@@ -47,3 +54,7 @@ def test_create_new_user():
     response = client.post('/users/create', json=user)
     assert response.status_code == 200
 
+    with Session() as s:
+        with s.begin():
+            presence_test = s.get(User, user['email'])
+            assert presence_test

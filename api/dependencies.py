@@ -38,7 +38,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 20000  # like two weeks
 # dependencies for injection
 fake_users_db = {
     "johndoe@example.com": {
-        "email": "1",
         "first_name": "John",
         "last_name": "Doe",
         "email": "johndoe@example.com",
@@ -104,14 +103,11 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        ic(token)
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        ic(payload)
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
         token_data = TokenDataSchema(username=username)
-        ic(token_data)
     except JWTError:
         raise credentials_exception
     user = get_user(fake_users_db, username=token_data.username)
@@ -120,8 +116,10 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         raise credentials_exception
     return user
 
+
 def schema_to_row(schema, table):
     return table(**schema.dict())
+
 
 async def get_db():
     s = Session()
