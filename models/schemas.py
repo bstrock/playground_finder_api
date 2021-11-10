@@ -121,7 +121,7 @@ class UserSchema(BaseModel):
     hashed_password: str
     first_name: str
     last_name: str
-    favorite_parks: List[str]
+    favorite_parks: Optional[List[str]]
 
     class Config:
         orm_mode = True

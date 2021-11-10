@@ -1,8 +1,5 @@
 from sqlalchemy.engine import create_engine, URL
-from sqlalchemy.orm import sessionmaker, Query
-from sqlalchemy import text, MetaData
-from models.tables import Base
-import asyncio
+from sqlalchemy.orm import sessionmaker
 import os
 from icecream import ic
 from models.tables import Site, Equipment, Amenities, SportsFacilities, User
@@ -10,7 +7,6 @@ import pytest
 
 username = os.environ.get("USERNAME")
 password = os.environ.get("PASSWORD")
-# url = os.environ.get("SECRET_URL")
 
 # points to localhost
 url = URL.create(
@@ -48,7 +44,6 @@ def test_fake_users():
 
 
 def test_sites_content():
-
     # gets its own test due to expected None value
 
     res = query_table(Site)  # get table
