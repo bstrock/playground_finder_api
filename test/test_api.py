@@ -58,3 +58,15 @@ def test_create_new_user():
         with s.begin():
             presence_test = s.get(User, user['email'])
             assert presence_test
+
+
+def test_basic_query():
+    params = {
+        'latitude': 44.85,
+        'longitude': -93.47,
+        'radius': 1000
+    }
+
+    response = client.get('/query', params=params)
+    assert response.status_code == 200
+    ic(response)

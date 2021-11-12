@@ -100,11 +100,11 @@ class SiteSchema(BaseModel):
     site_name: str
     substrate_type: str
     addr_street1: str
-    addr_street2: str
+    addr_street2: Optional[str]
     addr_city: str
     addr_state: str
     addr_zip: int
-    geom: str
+    geom: object  # totally cheating here
     reports: Optional[List[ReportSchema]]
     reviews: Optional[List[ReviewSchema]]
     equipment: EquipmentSchema

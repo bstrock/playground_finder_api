@@ -70,6 +70,7 @@ class Equipment(Base):
     site = relationship("Site", backref="equipment", lazy=False)
 
 
+
 class Amenities(Base):
     __tablename__ = "amenities"
     __mapper_args__ = {"eager_defaults": True}
@@ -142,8 +143,8 @@ class Review(Base):
     promoted = Column(Integer, nullable=True)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
-    site = relationship("Site", backref="site_reviews", lazy=False)
-    user = relationship("User", backref="user_reviews", lazy=False)
+    site = relationship("Site", backref="reviews", lazy=False)
+    user = relationship("User", backref="reviews", lazy=False)
 
 
 # report table

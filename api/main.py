@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, Query, selectinload
 from fastapi import FastAPI, Query as fastapi_Query, Depends, HTTPException, status
 from datetime import datetime, timedelta
-
+from api.dependencies import get_db
 from models.schemas import (
     SiteSchema,
     ReportSchema,
@@ -25,7 +25,7 @@ from utils.create_spatial_db import SpatialDB
 from models.tables import Site, Report
 from typing import Optional, List
 from sqlalchemy import select
-from geoalchemy2 import func
+from geoalchemy2 import func, shape
 import logging
 import uvicorn
 import os
@@ -104,17 +104,16 @@ async def liveness_check():
 
 # ROUTES
 
-'''
+
 @app.get("/query")
 async def query(
-    latitude: float,
-    longitude: float,
-    access_token: str,
-    radius: float,
-    release_type: Optional[str] = None,
-    carcinogen: Optional[bool] = None,
-    sectors: Optional[List[str]] = fastapi_Query(None),
-    Session: AsyncSession = Depends(get_db),
+        latitude: float,
+        longitude: float,
+        radius: float,
+        equipment: Optional[List[str]] = fastapi_Query(None),
+        amenities: Optional[List[str]] = fastapi_Query(None),
+        sports_facilities: Optional[List[str]] = fastapi_Query(None),
+        Session: AsyncSession = Depends(get_db),
 ) -> List[SiteSchema]:
     logging.info("Query received")
     logging.info("\n\n***QUERY PARAMETERS***\n")
@@ -130,7 +129,7 @@ async def query(
         Query([Site])  # must be a list
         .filter(  # refine sites by
             Site.geom.ST_DWithin(  # PostGIS function
-                func.ST_GeogFromText(  # translatitudee query point to postgis geography object
+                func.ST_GeogFromText(  # translate query point to postgis geography object
                     query_point  # location searched
                 ),
                 radius,  # distance within which we're searching
@@ -139,29 +138,36 @@ async def query(
         )
         .options(  # this method chain allows us to specify eager loading behavior
             selectinload(  # since we're using async/session interface, loading needs to happen in query context
-                Site.reports  # remember our joined inheritance structure?  this loads all joined tables.  Neat!
-            )
+                Site.equipment),
+            selectinload(Site.amenities),
+            selectinload(Site.sports_facilities),
+            selectinload(Site.reviews),
+            selectinload(Site.reports)
         )
     )
 
     logging.debug("Query SQL: %s", str(query_sql))
 
     #  add filters based on optional query parameters
-    if carcinogen:
-        query_sql = query_sql.filter(Site.carcinogen == True)
+    if equipment:
+        for equip in equipment:
+            query_sql = query_sql.filter(Site.equipment.__getattribute__(equip) > 0)
 
         logging.info("Query flag: CARCINOGEN")
         logging.debug("Query SQL: %s", str(query_sql))
 
-    if sectors:
-        query_sql = query_sql.filter(Site.sector.in_(sectors))
+    if amenities:
+        for amenity in amenities:
+            query_sql = query_sql.filter(Site.amenities.__getattribute__(amenity) > 0)
 
-        logging.info("Query flag: SECTORS: %s", str(sectors))
+        # logging.info("Query flag: SECTORS: %s", str(sectors))
         logging.debug("Query SQL: %s", str(query_sql))
 
-    if release_type:
-        query_sql = query_sql.filter(Site.release_types.any(release_type))
-        logging.info("Query flag: RELEASE TYPE: %s", str(release_type))
+    if sports_facilities:
+        for facility in sports_facilities:
+            query_sql = query_sql.filter(Site.sports_facilities.__getattribute__(facility) > 0)
+
+        # logging.info("Query flag: RELEASE TYPE: %s", str(release_type))
         logging.debug("Query SQL: %s", str(query_sql))
 
     logging.info("\n\n**** TRANSACTION ****\n")
@@ -174,12 +180,39 @@ async def query(
             res = await s.execute(query_sql.with_session(s).statement)
             # context manager autocommits the query
             logging.info("QUERY: Submitted")
-            res = res.scalars().all()  # decode results)
+            res = res.scalars().all()  # decode results
 
-            sites = [
-                SiteSchema.from_orm(site) for site in res
-            ]  # unpack results to pydantic schema using list comprehension
-        logging.info("TRANSACTION: CLOSED")
+            sites = []
+
+            for site in res:
+                # alas the days when I could do this in a list comprehension
+                equipment_schema = EquipmentSchema.from_orm(site.equipment[0])
+                amenities_schema = AmenitiesSchema.from_orm(site.amenities[0])
+                sports_facilities_schema = SportsFacilitiesSchema.from_orm(site.sports_facilities[0])
+                geom = shape.to_shape(site.geom)
+                site_schema = SiteSchema(
+                    site_id=site.site_id,
+                    site_name=site.site_name,
+                    substrate_type=site.substrate_type,
+                    addr_street1=site.addr_street1,
+                    addr_city=site.addr_city,
+                    addr_state=site.addr_state,
+                    addr_zip=site.addr_zip,
+                    geom=geom.wkt,
+                    equipment=equipment_schema,
+                    amenities=amenities_schema,
+                    sports_facilities=sports_facilities_schema
+                )
+
+                if len(site.reviews) > 0:
+                    site_schema.review_schema = ReviewSchema.from_orm(site.reviews[0])
+
+                if len(site.reports) > 0:
+                    site_schema.report_schema = ReportSchema.from_orm(site.reports[0])
+
+                sites.append(site_schema)
+
+            logging.info("TRANSACTION: CLOSED")
 
     logging.info("SESSION: returned connection to the pool")
     logging.info("\n*** END TRANSACTION ***\n")
@@ -189,7 +222,7 @@ async def query(
 
     if len(sites) == 0:
         logging.info("QUERY: NO RESULTS -- Endpoint Service COMPLETE\n\n")
-
+    ic(sites)
     logging.info("QUERY: Results returned -- endpoint service COMPLETE\n\n")
     return sites
 
@@ -252,7 +285,7 @@ async def get_all_reports(
 
     response = [ReportSchema.from_orm(report) for report in reports]
 
-    return response'''
+    return response
 
 
 if __name__ == "__main__":

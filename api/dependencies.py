@@ -44,6 +44,7 @@ fake_users_db = {
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
     }
 }
+
 engine = create_async_engine(url=SpatialDB.url, echo=False, future=True)
 Session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
