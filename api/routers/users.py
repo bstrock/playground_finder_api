@@ -28,7 +28,7 @@ async def create_user(
 
     if presence_test:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="This user already exists"
         )
 

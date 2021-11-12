@@ -90,7 +90,7 @@ class PlaygroundLoader:
             class_to_use = Equipment
             key = 'equipment'
             random_data = np.random.randint(
-                0, 10, size=size
+                0, 5, size=size
             )  # creates an array of random ints 0-10
         elif sentinel == "amenities.csv":
             class_to_use = Amenities

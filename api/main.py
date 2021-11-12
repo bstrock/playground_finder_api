@@ -149,26 +149,10 @@ async def query(
     logging.debug("Query SQL: %s", str(query_sql))
 
     #  add filters based on optional query parameters
-    if equipment:
-        for equip in equipment:
-            query_sql = query_sql.filter(Site.equipment.__getattribute__(equip) > 0)
 
-        logging.info("Query flag: CARCINOGEN")
-        logging.debug("Query SQL: %s", str(query_sql))
-
-    if amenities:
-        for amenity in amenities:
-            query_sql = query_sql.filter(Site.amenities.__getattribute__(amenity) > 0)
-
-        # logging.info("Query flag: SECTORS: %s", str(sectors))
-        logging.debug("Query SQL: %s", str(query_sql))
-
-    if sports_facilities:
-        for facility in sports_facilities:
-            query_sql = query_sql.filter(Site.sports_facilities.__getattribute__(facility) > 0)
 
         # logging.info("Query flag: RELEASE TYPE: %s", str(release_type))
-        logging.debug("Query SQL: %s", str(query_sql))
+    logging.debug("Query SQL: %s", str(query_sql))
 
     logging.info("\n\n**** TRANSACTION ****\n")
 
@@ -185,32 +169,53 @@ async def query(
             sites = []
 
             for site in res:
-                # alas the days when I could do this in a list comprehension
-                equipment_schema = EquipmentSchema.from_orm(site.equipment[0])
-                amenities_schema = AmenitiesSchema.from_orm(site.amenities[0])
-                sports_facilities_schema = SportsFacilitiesSchema.from_orm(site.sports_facilities[0])
-                geom = shape.to_shape(site.geom)
-                site_schema = SiteSchema(
-                    site_id=site.site_id,
-                    site_name=site.site_name,
-                    substrate_type=site.substrate_type,
-                    addr_street1=site.addr_street1,
-                    addr_city=site.addr_city,
-                    addr_state=site.addr_state,
-                    addr_zip=site.addr_zip,
-                    geom=geom.wkt,
-                    equipment=equipment_schema,
-                    amenities=amenities_schema,
-                    sports_facilities=sports_facilities_schema
-                )
+                pass_flag = False
 
-                if len(site.reviews) > 0:
-                    site_schema.review_schema = ReviewSchema.from_orm(site.reviews[0])
+                if equipment:
+                    eq_dict = site.equipment[0].__dict__
+                    for eq in equipment:
+                        if eq_dict[eq] == 0:
+                            pass_flag = True
 
-                if len(site.reports) > 0:
-                    site_schema.report_schema = ReportSchema.from_orm(site.reports[0])
+                if amenities:
+                    amenities_dict = site.amenities[0].__dict__
+                    for amenity in amenities:
+                        if not amenities_dict[amenity]:
+                            pass_flag = True
 
-                sites.append(site_schema)
+                if sports_facilities:
+                    facilities_dict = site.sports_facilities[0].__dict__
+                    for facility in sports_facilities:
+                        if not facilities_dict[facility]:
+                            pass_flag = True
+
+                if not pass_flag:
+                    # alas the days when I could do this in a list comprehension
+                    equipment_schema = EquipmentSchema.from_orm(site.equipment[0])
+                    amenities_schema = AmenitiesSchema.from_orm(site.amenities[0])
+                    sports_facilities_schema = SportsFacilitiesSchema.from_orm(site.sports_facilities[0])
+                    geom = shape.to_shape(site.geom)
+                    site_schema = SiteSchema(
+                        site_id=site.site_id,
+                        site_name=site.site_name,
+                        substrate_type=site.substrate_type,
+                        addr_street1=site.addr_street1,
+                        addr_city=site.addr_city,
+                        addr_state=site.addr_state,
+                        addr_zip=site.addr_zip,
+                        geom=geom.wkt,
+                        equipment=equipment_schema,
+                        amenities=amenities_schema,
+                        sports_facilities=sports_facilities_schema
+                    )
+
+                    if len(site.reviews) > 0:
+                        site_schema.review_schema = ReviewSchema.from_orm(site.reviews[0])
+
+                    if len(site.reports) > 0:
+                        site_schema.report_schema = ReportSchema.from_orm(site.reports[0])
+
+                    sites.append(site_schema)
 
             logging.info("TRANSACTION: CLOSED")
 
