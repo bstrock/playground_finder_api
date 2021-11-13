@@ -140,7 +140,6 @@ class Review(Base):
     site_id = Column(String, ForeignKey("sites.site_id", name="site_reviews_key"))
     comment = Column(Text, nullable=True)
     stars = Column(Integer, nullable=False)
-    promoted = Column(Integer, nullable=True)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
     site = relationship("Site", backref="reviews", lazy=False)
@@ -164,7 +163,6 @@ class Report(Base):
     )  # enumeration creation from values in enum.py
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
     comment = Column(Text, nullable=True)
-    photo_location = Column(String(100), nullable=True)
     equipment = Column(String(20), nullable=True)
 
     site = relationship("Site", backref="reports", lazy=False)

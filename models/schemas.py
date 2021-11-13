@@ -1,17 +1,12 @@
 from fastapi import HTTPException, status
 from typing import Optional, List
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 import os
 
-
 class ReportSchema(BaseModel):
-    report_id: int
     site_id: str
-    user_id: int
     report_type: str
-    timestamp: str
     comment: Optional[str] = None
-    photo_location: Optional[str] = None
     equipment: Optional[str] = None
 
     class Config:
@@ -20,13 +15,9 @@ class ReportSchema(BaseModel):
 
 
 class ReviewSchema(BaseModel):
-    review_id: int
     site_id: str
-    user_id: int
     stars: int
-    timestamp: str
     comment: Optional[str] = None
-    promoted: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -117,7 +108,7 @@ class SiteSchema(BaseModel):
 
 
 class UserSchema(BaseModel):
-    email: str
+    email: EmailStr
     hashed_password: str
     first_name: str
     last_name: str

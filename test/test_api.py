@@ -17,7 +17,7 @@ def params():
     return {
         'latitude': 44.85,
         'longitude': -93.47,
-        'radius': 1000,
+        'radius': 100000,
     }
 
 
@@ -71,7 +71,7 @@ def test_create_new_user():
 def test_basic_query(params):
     response = client.get('/query', params=params)
     assert response.status_code == 200
-    assert len(response.json()) == 2
+    assert len(response.json()) == 29
 
 
 def test_single_equipment_query(params):
@@ -166,3 +166,63 @@ def test_multiple_compound_query(params):
         assert site['amenities']['picnic_tables'] > 0
         assert site['sports_facilities']['baseball_diamond'] > 0
         assert site['sports_facilities']['soccer_field'] > 0
+
+
+def test_submit_review_without_login():
+    review = {
+        'site_id': 'S001',
+        'user_email': 'steve@crochunter.com',
+        'stars': 4,
+        'comment': 'What a lovely playground!  We had the best time!',
+    }
+
+    response = client.post('/reviews/submit', json=review)
+    status = response.json()
+    assert response.status_code == 401
+    assert 'accepted' not in status.values()
+
+
+def test_submit_report_without_login():
+    report = {
+        'site_id': 'S002',
+        'user_email': 'steve@crochunter.com',
+        'report_type': 'HAZARD',
+        'comment': "There appears to be a giant pit in the ground next to the swings.  I feel like someone could fall in there."
+    }
+    response = client.post('reports/submit', json=report)
+    status = response.json()
+    assert response.status_code == 401
+    assert 'accepted' not in status.values()
+
+
+def test_submit_review_with_login():
+    review = {
+        'site_id': 'S001',
+        'user_email': 'steve@crochunter.com',
+        'stars': 4,
+        'comment': 'What a lovely playground!  We had the best time!',
+    }
+
+    token_data = test_login()
+    access_token = token_data['access_token']
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    response = client.post('/reviews/submit', json=review, headers=headers)
+    status = response.json()
+    assert response.status_code == 200
+    assert status['code'] == 'accepted'
+
+
+def test_submit_report_with_login():
+    report = {
+        'site_id': 'S002',
+        'report_type': 'HAZARD',
+        'comment': "There appears to be a giant pit in the ground next to the swings.  I feel like someone could fall in there."
+    }
+    token_data = test_login()
+    access_token = token_data['access_token']
+    headers = {'Authorization': f'Bearer {access_token}'}
+    response = client.post('reports/submit', json=report, headers=headers)
+    status = response.json()
+    assert response.status_code == 200
+    assert status['code'] == 'accepted'
