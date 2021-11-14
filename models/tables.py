@@ -126,7 +126,7 @@ class User(Base):
     hashed_password = Column(String(100), nullable=False)  # these will be hashed
     first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
-    favorite_parks = Column(ARRAY(String, dimensions=1))
+    favorite_parks = Column(ARRAY(String, dimensions=1), server_default='{}')
 
 
 class Review(Base):

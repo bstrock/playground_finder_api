@@ -4,12 +4,13 @@ from utils.playground_data_to_db import PlaygroundLoader
 import geopandas as gpd
 from api.main import app
 from icecream import ic
+from sqlalchemy.orm import Query
 
 client = TestClient(app)
 import pytest
 import asyncio
 from test.test_db_schema import Session
-from models.tables import Site, Equipment, Amenities, SportsFacilities, User
+from models.tables import Site, Equipment, Amenities, SportsFacilities, User, Report, Review
 
 
 @pytest.fixture()
@@ -184,11 +185,10 @@ def test_submit_review_without_login():
         'comment': 'What a lovely playground!  We had the best time!',
     }
 
-    response = client.post('/reviews/submit', json=review)
+    response = client.post('/submit/review', json=review)
     status = response.json()
 
     assert response.status_code == 401
-    assert 'accepted' not in status.values()
 
 
 def test_submit_report_without_login():
@@ -199,11 +199,10 @@ def test_submit_report_without_login():
         'comment': "There appears to be a giant pit in the ground next to the swings.  I feel like someone could fall in there."
     }
 
-    response = client.post('reports/submit', json=report)
+    response = client.post('submit/report', json=report)
     status = response.json()
 
     assert response.status_code == 401
-    assert 'accepted' not in status.values()
 
 
 def test_submit_review_with_login():
@@ -218,11 +217,19 @@ def test_submit_review_with_login():
     access_token = token_data['access_token']
     headers = {"Authorization": f"Bearer {access_token}"}
 
-    response = client.post('/reviews/submit', json=review, headers=headers)
+    response = client.post('/submit/review', json=review, headers=headers)
     status = response.json()
 
+    with Session() as s:
+        with s.begin():
+            query = Query([Review]).filter(Review.site_id == review['site_id'])
+            res = s.execute(query.with_session(s).statement)
+
+    for result in res.scalars().all():
+        assert result.comment == review['comment']
+
     assert response.status_code == 200
-    assert status['code'] == 'accepted'
+    assert status['site_id'] == review['site_id']
 
 
 def test_submit_report_with_login():
@@ -236,8 +243,86 @@ def test_submit_report_with_login():
     access_token = token_data['access_token']
     headers = {'Authorization': f'Bearer {access_token}'}
 
-    response = client.post('reports/submit', json=report, headers=headers)
+    response = client.post('submit/report', json=report, headers=headers)
     status = response.json()
 
+    with Session() as s:
+        with s.begin():
+            query = Query([Report]).where(Report.site_id == report['site_id'])
+            res = s.execute(query.with_session(s).statement)
+
+    for result in res.scalars().all():
+        assert result.comment == report['comment']
+
     assert response.status_code == 200
-    assert status['code'] == 'accepted'
+    assert status['site_id'] == report['site_id']
+
+
+def test_add_first_favorite_with_login():
+    params = {
+        'site_id': 'S001',
+        'operation': 'add'
+    }
+
+    token_data = test_login()
+    access_token = token_data['access_token']
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    response = client.post('users/me/favorites', params=params, headers=headers)
+    user = response.json()
+
+    with Session() as s:
+        with s.begin():
+            res = s.get(User, 'johndoe@example.com')
+            assert 'S001' in res.favorite_parks
+
+    assert response.status_code == 200
+    assert 'S001' in user['favorites']
+
+
+def test_add_second_favorite_with_login():
+    params = {
+        'site_id': 'S002',
+        'operation': 'add'
+    }
+
+    token_data = test_login()
+    access_token = token_data['access_token']
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    response = client.post('users/me/favorites', params=params, headers=headers)
+    user = response.json()
+
+    with Session() as s:
+        with s.begin():
+            res = s.get(User, 'johndoe@example.com')
+            assert 'S001' in res.favorite_parks
+            assert 'S002' in res.favorite_parks
+
+    assert response.status_code == 200
+    assert 'S001' in user['favorites']
+    assert 'S002' in user['favorites']
+
+
+def test_remove_favorite_with_login():
+    params = {
+        'site_id': 'S002',
+        'operation': 'remove'
+    }
+
+    token_data = test_login()
+    access_token = token_data['access_token']
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    response = client.post('users/me/favorites', params=params, headers=headers)
+    user = response.json()
+
+    with Session() as s:
+        with s.begin():
+            res = s.get(User, 'johndoe@example.com')
+            assert 'S001' in res.favorite_parks
+            assert 'S002' not in res.favorite_parks
+
+    assert response.status_code == 200
+    assert 'S001' in user['favorites']
+    assert 'S002' not in user['favorites']

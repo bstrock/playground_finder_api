@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, Query, selectinload
 from fastapi import FastAPI, Query as fastapi_Query, Depends, HTTPException, status
 from datetime import datetime, timedelta
-from api.dependencies import get_db
+from api.dependencies import get_db, make_site_schema_response
 from models.schemas import (
     SiteSchema,
     ReportSchema,
@@ -32,11 +32,10 @@ import os
 from api.dependencies import authenticate_user, create_access_token, get_current_user
 
 # initializations
-from api.routers import users
-
+from api.routers import users, submit
 app = FastAPI()
 app.include_router(users.router)
-
+app.include_router(submit.router)
 
 fake_users_db = {
     "johndoe@example.com": {
@@ -56,9 +55,9 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
+#  THIS ENDPOINT ISSUES AUTHENTICATION TOKENS FOR USERS IN THE DATABASE
 @app.post("/token", response_model=TokenSchema)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-
     # DEPENDENCY STRUCTURE TO GET USER:
     # 1. request received
     # 2. authenticate_user calls get_user to retrieve known-good credentials from user table in db
@@ -94,12 +93,15 @@ logging.basicConfig(
 )
 
 
+# THIS ENDPOINT IS USED IN TESTING TO ESTABLISH FUNCTIONALITY AND TRIGGER DB STARTUP/TEARDOWN PROCEDURE
+# PUBLIC ENDPOINT
 @app.get("/")
 async def liveness_check():
     return
 
-# ROUTES
 
+# THIS ENDPOINT IS USED TO QUERY PARKS NEAR THE USER
+# PUBLIC ENDPOINT
 @app.get("/query")
 async def query(
         latitude: float,
@@ -110,7 +112,6 @@ async def query(
         sports_facilities: Optional[List[str]] = fastapi_Query(None),
         Session: AsyncSession = Depends(get_db),
 ) -> List[SiteSchema]:
-
     logging.info("Query received")
     logging.info("\n\n***QUERY PARAMETERS***\n")
 
@@ -123,7 +124,7 @@ async def query(
     # note: we're using PostGIS Geography objects, which are in EPSG 4326 with meters as the unit of measure.
     query_sql = (
         Query([Site])  # must be a list
-        .filter(  # refine sites by
+            .filter(  # refine sites by
             Site.geom.ST_DWithin(  # PostGIS function
                 func.ST_GeogFromText(  # translate query point to postgis geography object
                     query_point  # location searched
@@ -132,7 +133,7 @@ async def query(
                 True,  # since we're using Geography objects, this flag enables spheroid-based calculatitudeions
             )
         )
-        .options(  # this method chain allows us to specify eager loading behavior
+            .options(  # this method chain allows us to specify eager loading behavior
             selectinload(  # since we're using async/session interface, loading needs to happen in query context
                 Site.equipment),
             selectinload(Site.amenities),
@@ -164,54 +165,36 @@ async def query(
 
                 sites = []
 
+                # now that we have our sites, we need to remove sites that don't meet the user's filter criteria
+                # the pattern commented in the loop below is followed for the following 2 loops- ommitting comments there
                 for site in res:
-                    pass_flag = False
+                    pass_flag = False  # this flag is triggered if a filter condition is not met
 
-                    if equipment:
+                    if equipment:  # if they have an equipment filter provided
                         eq_dict = site.equipment[0].__dict__
-                        for eq in equipment:
-                            if eq_dict[eq] == 0:
-                                pass_flag = True
+                        for eq in equipment:  # check the equipment in the filter
+                            if eq_dict[eq] == 0:  # if they don't have it
+                                pass_flag = True  # don't add this site to the response
 
-                    if amenities:
+                    if amenities:  # as above for amenities filter
                         amenities_dict = site.amenities[0].__dict__
                         for amenity in amenities:
                             if not amenities_dict[amenity]:
                                 pass_flag = True
 
-                    if sports_facilities:
+                    if sports_facilities:  # as above for sports facilities filter
                         facilities_dict = site.sports_facilities[0].__dict__
                         for facility in sports_facilities:
                             if not facilities_dict[facility]:
                                 pass_flag = True
 
-                    if not pass_flag:
-                        # alas the days when I could do this in a list comprehension
-                        equipment_schema = EquipmentSchema.from_orm(site.equipment[0])
-                        amenities_schema = AmenitiesSchema.from_orm(site.amenities[0])
-                        sports_facilities_schema = SportsFacilitiesSchema.from_orm(site.sports_facilities[0])
-                        geom = shape.to_shape(site.geom)
-                        site_schema = SiteSchema(
-                            site_id=site.site_id,
-                            site_name=site.site_name,
-                            substrate_type=site.substrate_type,
-                            addr_street1=site.addr_street1,
-                            addr_city=site.addr_city,
-                            addr_state=site.addr_state,
-                            addr_zip=site.addr_zip,
-                            geom=geom.wkt,
-                            equipment=equipment_schema,
-                            amenities=amenities_schema,
-                            sports_facilities=sports_facilities_schema
-                        )
+                    if not pass_flag:  # as long as the flag isn't triggered, add the site to the response
+                        # alas the days when I could do this in a list comprehension...
+                        # anyway, let's instantiate some schemas
 
-                        if len(site.reviews) > 0:
-                            site_schema.review_schema = ReviewSchema.from_orm(site.reviews[0])
+                        site_schema = await make_site_schema_response(site)
 
-                        if len(site.reports) > 0:
-                            site_schema.report_schema = ReportSchema.from_orm(site.reports[0])
-
-                        sites.append(site_schema)
+                        sites.append(site_schema)  # all matching sites are added to the response object
 
                 logging.info("TRANSACTION: CLOSED")
 
@@ -232,76 +215,7 @@ async def query(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Unable to retrieve query results from database",
-            headers={"WWW-Authenticate": "Bearer"},
         )
-
-
-@app.post('/reviews/submit')
-async def submit_review(
-        review_schema: ReviewSchema,
-        Session: AsyncSession = Depends(get_db),
-        user=Depends(get_current_user)
-):
-    try:
-        review = Review(**review_schema.dict())
-        review.user_email = user.email
-        async with Session as s:
-            async with s.begin():
-                s.add(review)
-
-        return {'code': 'accepted'}
-
-    except Exception as e:
-        logging.error(e)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Unable submit review",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-
-@app.post("/reports/submit")
-async def submit_report(
-        report_schema: ReportSchema,
-        Session: AsyncSession = Depends(get_db),
-        user=Depends(get_current_user)
-):
-    logging.info("Report Submission received")
-
-    try:
-
-        report = Report(**report_schema.dict())
-        report.user_email = user.email
-
-        async with Session as s:
-            async with s.begin():
-                s.add(report)
-
-        return {'code': 'accepted'}
-
-    except Exception as e:
-        logging.error(e)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Unable submit review",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-
-@app.get("/reports")
-async def get_all_reports(
-    access_token: str, Session=Depends(get_db)
-) -> List[ReportSchema]:
-    async with Session as s:
-        async with s.begin():
-            stmt = select(Report)
-            res = await s.execute(stmt)
-
-    reports = res.scalars().all()
-
-    response = [ReportSchema.from_orm(report) for report in reports]
-
-    return response
 
 
 if __name__ == "__main__":

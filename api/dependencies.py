@@ -15,6 +15,7 @@ from models.schemas import (
     TokenSchema,
     TokenDataSchema,
 )
+from geoalchemy2 import shape
 
 from icecream import ic
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -58,6 +59,7 @@ def verify_password(plain_password, hashed_password):
 
 
 def get_password_hash(password):
+    # hashes an incoming password for login or user creation
     return pwd_context.hash(password)
 
 
@@ -98,6 +100,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
+    # used to validate user credentials for authenticated endpoints
+    # when a valid token is provided, returns user ID
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -119,12 +124,64 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 
 def schema_to_row(schema, table):
+    # unpacks Pydantic schema into corresponding table schema
     return table(**schema.dict())
 
 
 async def get_db():
+    # dependency to provide db session
+    # note that the session is called here, so using it within an endpoint follows pattern: async with Session as s
+    # usually you'd see the session called in the context manager, ie: async with Session() as s
+    # don't be alarmed
+
     s = Session()
     try:
         yield s
     finally:
         await s.close()
+
+
+async def submit_and_retrieve_site(Session, item_to_submit):
+    async with Session as s:
+        s.add(item_to_submit)
+        site = await s.get(
+            entity=Site,
+            ident=item_to_submit.site_id,
+            options=[
+                selectinload(Site.equipment),
+                selectinload(Site.amenities),
+                selectinload(Site.sports_facilities),
+                selectinload(Site.reviews),
+                selectinload(Site.reports)
+            ]
+        )
+        await s.commit()
+    return site
+
+
+async def make_site_schema_response(site):
+    equipment_schema = EquipmentSchema.from_orm(site.equipment[0])
+    amenities_schema = AmenitiesSchema.from_orm(site.amenities[0])
+    sports_facilities_schema = SportsFacilitiesSchema.from_orm(site.sports_facilities[0])
+    # geometry objects are returned as a well-known binary- we need to convert to shapely objects
+    # in order to get the WKT which we can return in an http response
+    geom = shape.to_shape(site.geom)
+    site_schema = SiteSchema(
+        site_id=site.site_id,
+        site_name=site.site_name,
+        substrate_type=site.substrate_type,
+        addr_street1=site.addr_street1,
+        addr_city=site.addr_city,
+        addr_state=site.addr_state,
+        addr_zip=site.addr_zip,
+        geom=geom.wkt,  # gets the geometry object's WKT representation
+        equipment=equipment_schema,
+        amenities=amenities_schema,
+        sports_facilities=sports_facilities_schema
+    )
+    # sites may not have reviews or reports, so we skip these step if they don't
+    if len(site.reviews) > 0:
+        site_schema.reviews = ReviewSchema.from_orm(site.reviews[0])
+    if len(site.reports) > 0:
+        site_schema.reports = ReportSchema.from_orm(site.reports[0])
+    return site_schema
