@@ -54,7 +54,7 @@ def test_sites_content():
     for site in res:
         keys = list(vars(site))
         for key in keys:
-            if 'street_addr2' not in key:
+            if "street_addr2" not in key:
                 assert key
 
 
@@ -80,4 +80,3 @@ def test_table_content(test_table_list):
                 # not just falsy
 
                 assert type(val) == int if val == 0 else val
-

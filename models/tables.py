@@ -70,7 +70,6 @@ class Equipment(Base):
     site = relationship("Site", backref="equipment", lazy=False)
 
 
-
 class Amenities(Base):
     __tablename__ = "amenities"
     __mapper_args__ = {"eager_defaults": True}
@@ -126,7 +125,7 @@ class User(Base):
     hashed_password = Column(String(100), nullable=False)  # these will be hashed
     first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
-    favorite_parks = Column(ARRAY(String, dimensions=1), server_default='{}')
+    favorite_parks = Column(ARRAY(String, dimensions=1), server_default="{}")
 
 
 class Review(Base):

@@ -23,7 +23,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi.encoders import jsonable_encoder
 from utils.create_spatial_db import SpatialDB
-from models.tables import Site, Report
+from models.tables import Site, User
 from typing import Optional, List
 from sqlalchemy import select
 from geoalchemy2 import func
@@ -53,6 +53,23 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
+# INJECTED DEPENDENCIES
+
+# --CONNECTIVITY--
+async def get_db():
+    # dependency to provide db session
+    # note that the session is called here, so using it within an endpoint follows pattern: async with Session as s
+    # usually you'd see the session called in the context manager, ie: async with Session() as s
+    # don't be alarmed
+
+    s = Session()
+    try:
+        yield s
+    finally:
+        await s.close()
+
+
+# --AUTHENTICATION--
 def verify_password(plain_password, hashed_password):
     # the third thing that happens when we hit ./token
     return pwd_context.verify(plain_password, hashed_password)
@@ -63,17 +80,19 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def get_user(db: dict, username: str):
+async def get_user(username: str):
     # the second thing that happens after we hit ./token
     # TODO:  I think this is the call to user table in db
-    if username in db:
-        user_dict = db[username]
-        return UserInDBSchema(**user_dict)
+    async with Session() as s:
+        async with s.begin():
+            user = await s.get(User, username)
+            await s.close()
+            return UserInDBSchema(**user.__dict__)
 
 
-def authenticate_user(fake_db, username: str, password: str):
+async def authenticate_user(username: str, password: str):
     # the first thing that happens when we hit ./token
-    user = get_user(fake_db, username)
+    user = await get_user(username)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -116,29 +135,18 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         token_data = TokenDataSchema(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user(fake_users_db, username=token_data.username)
+    user = await get_user(username=token_data.username)
 
     if user is None:
         raise credentials_exception
     return user
 
 
+# FUNCTIONAL DEPENDENCIES
+# these are not injected
 def schema_to_row(schema, table):
     # unpacks Pydantic schema into corresponding table schema
     return table(**schema.dict())
-
-
-async def get_db():
-    # dependency to provide db session
-    # note that the session is called here, so using it within an endpoint follows pattern: async with Session as s
-    # usually you'd see the session called in the context manager, ie: async with Session() as s
-    # don't be alarmed
-
-    s = Session()
-    try:
-        yield s
-    finally:
-        await s.close()
 
 
 async def submit_and_retrieve_site(Session, item_to_submit):
@@ -152,8 +160,8 @@ async def submit_and_retrieve_site(Session, item_to_submit):
                 selectinload(Site.amenities),
                 selectinload(Site.sports_facilities),
                 selectinload(Site.reviews),
-                selectinload(Site.reports)
-            ]
+                selectinload(Site.reports),
+            ],
         )
         await s.commit()
     return site
@@ -162,7 +170,9 @@ async def submit_and_retrieve_site(Session, item_to_submit):
 async def make_site_schema_response(site):
     equipment_schema = EquipmentSchema.from_orm(site.equipment[0])
     amenities_schema = AmenitiesSchema.from_orm(site.amenities[0])
-    sports_facilities_schema = SportsFacilitiesSchema.from_orm(site.sports_facilities[0])
+    sports_facilities_schema = SportsFacilitiesSchema.from_orm(
+        site.sports_facilities[0]
+    )
     # geometry objects are returned as a well-known binary- we need to convert to shapely objects
     # in order to get the WKT which we can return in an http response
     geom = shape.to_shape(site.geom)
@@ -177,7 +187,7 @@ async def make_site_schema_response(site):
         geom=geom.wkt,  # gets the geometry object's WKT representation
         equipment=equipment_schema,
         amenities=amenities_schema,
-        sports_facilities=sports_facilities_schema
+        sports_facilities=sports_facilities_schema,
     )
     # sites may not have reviews or reports, so we skip these step if they don't
     if len(site.reviews) > 0:

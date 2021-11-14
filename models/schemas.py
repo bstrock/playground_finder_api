@@ -3,6 +3,7 @@ from typing import Optional, List
 from pydantic import BaseModel, EmailStr
 import os
 
+
 class ReportSchema(BaseModel):
     site_id: str
     report_type: str

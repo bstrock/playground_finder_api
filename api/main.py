@@ -33,6 +33,7 @@ from api.dependencies import authenticate_user, create_access_token, get_current
 
 # initializations
 from api.routers import users, submit
+
 app = FastAPI()
 app.include_router(users.router)
 app.include_router(submit.router)
@@ -63,7 +64,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     # 2. authenticate_user calls get_user to retrieve known-good credentials from user table in db
     # 3. authenticate_user calls verify_password to compare hashes
     # 4. then we have this user here
-    user = authenticate_user(fake_users_db, form_data.username, form_data.password)
+    user = await authenticate_user(form_data.username, form_data.password)
 
     # 4b. unless we don't...
     if not user:
@@ -104,13 +105,13 @@ async def liveness_check():
 # PUBLIC ENDPOINT
 @app.get("/query")
 async def query(
-        latitude: float,
-        longitude: float,
-        radius: float,
-        equipment: Optional[List[str]] = fastapi_Query(None),
-        amenities: Optional[List[str]] = fastapi_Query(None),
-        sports_facilities: Optional[List[str]] = fastapi_Query(None),
-        Session: AsyncSession = Depends(get_db),
+    latitude: float,
+    longitude: float,
+    radius: float,
+    equipment: Optional[List[str]] = fastapi_Query(None),
+    amenities: Optional[List[str]] = fastapi_Query(None),
+    sports_facilities: Optional[List[str]] = fastapi_Query(None),
+    Session: AsyncSession = Depends(get_db),
 ) -> List[SiteSchema]:
     logging.info("Query received")
     logging.info("\n\n***QUERY PARAMETERS***\n")
@@ -124,7 +125,7 @@ async def query(
     # note: we're using PostGIS Geography objects, which are in EPSG 4326 with meters as the unit of measure.
     query_sql = (
         Query([Site])  # must be a list
-            .filter(  # refine sites by
+        .filter(  # refine sites by
             Site.geom.ST_DWithin(  # PostGIS function
                 func.ST_GeogFromText(  # translate query point to postgis geography object
                     query_point  # location searched
@@ -133,13 +134,14 @@ async def query(
                 True,  # since we're using Geography objects, this flag enables spheroid-based calculatitudeions
             )
         )
-            .options(  # this method chain allows us to specify eager loading behavior
+        .options(  # this method chain allows us to specify eager loading behavior
             selectinload(  # since we're using async/session interface, loading needs to happen in query context
-                Site.equipment),
+                Site.equipment
+            ),
             selectinload(Site.amenities),
             selectinload(Site.sports_facilities),
             selectinload(Site.reviews),
-            selectinload(Site.reports)
+            selectinload(Site.reports),
         )
     )
 
@@ -168,7 +170,9 @@ async def query(
                 # now that we have our sites, we need to remove sites that don't meet the user's filter criteria
                 # the pattern commented in the loop below is followed for the following 2 loops- ommitting comments there
                 for site in res:
-                    pass_flag = False  # this flag is triggered if a filter condition is not met
+                    pass_flag = (
+                        False  # this flag is triggered if a filter condition is not met
+                    )
 
                     if equipment:  # if they have an equipment filter provided
                         eq_dict = site.equipment[0].__dict__
@@ -188,13 +192,17 @@ async def query(
                             if not facilities_dict[facility]:
                                 pass_flag = True
 
-                    if not pass_flag:  # as long as the flag isn't triggered, add the site to the response
+                    if (
+                        not pass_flag
+                    ):  # as long as the flag isn't triggered, add the site to the response
                         # alas the days when I could do this in a list comprehension...
                         # anyway, let's instantiate some schemas
 
                         site_schema = await make_site_schema_response(site)
 
-                        sites.append(site_schema)  # all matching sites are added to the response object
+                        sites.append(
+                            site_schema
+                        )  # all matching sites are added to the response object
 
                 logging.info("TRANSACTION: CLOSED")
 

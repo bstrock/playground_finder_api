@@ -46,11 +46,11 @@ class PlaygroundLoader:
         self.data = None
         self.sites = None
         self.inserts = {
-            'sites': [],
-            'equipment': [],
-            'amenities': [],
-            'sports_facilities': [],
-            'users': [],
+            "sites": [],
+            "equipment": [],
+            "amenities": [],
+            "sports_facilities": [],
+            "users": [],
         }
 
     def set_data(self, data: DataFrame):
@@ -88,16 +88,16 @@ class PlaygroundLoader:
 
         if sentinel == "equipment.csv":
             class_to_use = Equipment
-            key = 'equipment'
+            key = "equipment"
             random_data = np.random.randint(
                 0, 5, size=size
             )  # creates an array of random ints 0-10
         elif sentinel == "amenities.csv":
             class_to_use = Amenities
-            key = 'amenities'
+            key = "amenities"
         elif sentinel == "sports_facilities.csv":
             class_to_use = SportsFacilities
-            key = 'sports_facilities'
+            key = "sports_facilities"
 
         if sentinel != "equipment.csv":
             random_data = np.random.choice(a=[1, 0], size=size, p=[0.25, 0.75])
@@ -125,7 +125,7 @@ class PlaygroundLoader:
         # loop through the playgrounds and make objects out of them
         for pg in sites:
             df = self.data.loc[pg]
-            self.inserts['sites'].append(
+            self.inserts["sites"].append(
                 Site(
                     site_id=df.name,
                     site_name=df.SITE_NAME,
@@ -139,7 +139,7 @@ class PlaygroundLoader:
             )
 
     def import_test_users(self, path):
-        index_col = 'email'
+        index_col = "email"
         user_data_df = pd.read_csv(path, index_col=index_col)
 
         user_list = []
@@ -150,11 +150,10 @@ class PlaygroundLoader:
                 email=this_user.name,
                 hashed_password=self.pwd_context.hash(this_user.hashed_password),
                 first_name=this_user.first_name,
-                last_name=this_user.last_name
+                last_name=this_user.last_name,
             )
             user_list.append(user_object)
-        self.inserts['users'] = user_list
-
+        self.inserts["users"] = user_list
 
     # %%
     def main(self):
@@ -211,7 +210,6 @@ class PlaygroundLoader:
 
 if __name__ == "__main__":
     # set up some stuff
-
 
     # create the class object
     playground_loader = PlaygroundLoader()
