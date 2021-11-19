@@ -1,20 +1,10 @@
-from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from utils.playground_data_to_db import PlaygroundLoader
-import geopandas as gpd
-from api.main import app
-from icecream import ic
 from sqlalchemy.orm import Query
-
+from api.main import app
 client = TestClient(app)
 import pytest
-import asyncio
 from test.test_db_schema import Session
 from models.tables import (
-    Site,
-    Equipment,
-    Amenities,
-    SportsFacilities,
     User,
     Report,
     Review,
@@ -76,42 +66,43 @@ def test_login():
 
 def test_basic_query(params):
     response = client.get("/query", params=params)
+    geojson = response.json()
     assert response.status_code == 200
-    assert len(response.json()) == 29
+    assert len(geojson['features']) == 29
 
 
 def test_single_equipment_query(params):
     params["equipment"] = ["diggers"]
 
     response = client.get("/query", params=params)
-    inventory = response.json()
+    geojson = response.json()
 
     assert response.status_code == 200
-    for site in inventory:
-        assert site["equipment"]["diggers"] > 0
+    for feature in geojson['features']:
+        assert feature['properties']["equipment"]["diggers"] > 0
 
 
 def test_multiple_equipment_query(params):
     params["equipment"] = ["diggers", "musical"]
 
     response = client.get("/query", params=params)
-    inventory = response.json()
+    geojson = response.json()
 
     assert response.status_code == 200
-    for site in inventory:
-        assert site["equipment"]["diggers"] > 0
-        assert site["equipment"]["musical"] > 0
+    for feature in geojson['features']:
+        assert feature['properties']["equipment"]["diggers"] > 0
+        assert feature['properties']["equipment"]["musical"] > 0
 
 
 def test_single_amenity_query(params):
     params["amenities"] = ["splash_pad"]
 
     response = client.get("/query", params=params)
-    inventory = response.json()
+    geojson = response.json()
 
     assert response.status_code == 200
-    for site in inventory:
-        assert site["amenities"]["splash_pad"] > 0
+    for feature in geojson['features']:
+        assert feature['properties']["amenities"]["splash_pad"] > 0
 
 
 def test_multiple_amenities_query(params):
@@ -119,34 +110,34 @@ def test_multiple_amenities_query(params):
 
     response = client.get("/query", params=params)
     assert response.status_code == 200
-    inventory = response.json()
+    geojson = response.json()
 
-    for site in inventory:
-        assert site["amenities"]["splash_pad"] > 0
-        assert site["amenities"]["picnic_tables"] > 0
+    for feature in geojson['features']:
+        assert feature['properties']["amenities"]["splash_pad"] > 0
+        assert feature['properties']["amenities"]["picnic_tables"] > 0
 
 
 def test_single_sports_facility_query(params):
     params["sports_facilities"] = ["baseball_diamond"]
 
     response = client.get("/query", params=params)
-    inventory = response.json()
+    geojson = response.json()
 
     assert response.status_code == 200
-    for site in inventory:
-        assert site["sports_facilities"]["baseball_diamond"] > 0
+    for feature in geojson['features']:
+        assert feature['properties']["sports_facilities"]["baseball_diamond"] > 0
 
 
 def test_multiple_sports_facilities_query(params):
     params["sports_facilities"] = ["baseball_diamond", "soccer_field"]
 
     response = client.get("/query", params=params)
-    inventory = response.json()
+    geojson = response.json()
 
     assert response.status_code == 200
-    for site in inventory:
-        assert site["sports_facilities"]["baseball_diamond"] > 0
-        assert site["sports_facilities"]["soccer_field"] > 0
+    for feature in geojson['features']:
+        assert feature['properties']["sports_facilities"]["baseball_diamond"] > 0
+        assert feature['properties']["sports_facilities"]["soccer_field"] > 0
 
 
 def test_single_compound_query(params):
@@ -156,12 +147,12 @@ def test_single_compound_query(params):
 
     response = client.get("/query", params=params)
     assert response.status_code == 200
-    inventory = response.json()
+    geojson = response.json()
 
-    for site in inventory:
-        assert site["equipment"]["diggers"] > 0
-        assert site["amenities"]["splash_pad"] > 0
-        assert site["sports_facilities"]["baseball_diamond"] > 0
+    for feature in geojson['features']:
+        assert feature['properties']["equipment"]["diggers"] > 0
+        assert feature['properties']["amenities"]["splash_pad"] > 0
+        assert feature['properties']["sports_facilities"]["baseball_diamond"] > 0
 
 
 def test_multiple_compound_query(params):
@@ -170,16 +161,16 @@ def test_multiple_compound_query(params):
     params["sports_facilities"] = ["baseball_diamond", "soccer_field"]
 
     response = client.get("/query", params=params)
-    inventory = response.json()
+    geojson = response.json()
 
     assert response.status_code == 200
-    for site in inventory:
-        assert site["equipment"]["diggers"] > 0
-        assert site["equipment"]["musical"] > 0
-        assert site["amenities"]["splash_pad"] > 0
-        assert site["amenities"]["picnic_tables"] > 0
-        assert site["sports_facilities"]["baseball_diamond"] > 0
-        assert site["sports_facilities"]["soccer_field"] > 0
+    for feature in geojson['features']:
+        assert feature['properties']["equipment"]["diggers"] > 0
+        assert feature['properties']["equipment"]["musical"] > 0
+        assert feature['properties']["amenities"]["splash_pad"] > 0
+        assert feature['properties']["amenities"]["picnic_tables"] > 0
+        assert feature['properties']["sports_facilities"]["baseball_diamond"] > 0
+        assert feature['properties']["sports_facilities"]["soccer_field"] > 0
 
 
 def test_submit_review_without_login():
@@ -223,7 +214,7 @@ def test_submit_review_with_login():
     headers = {"Authorization": f"Bearer {access_token}"}
 
     response = client.post("/submit/review", json=review, headers=headers)
-    status = response.json()
+    geojson = response.json()
 
     with Session() as s:
         with s.begin():
@@ -234,7 +225,7 @@ def test_submit_review_with_login():
         assert result.comment == review["comment"]
 
     assert response.status_code == 200
-    assert status["site_id"] == review["site_id"]
+    assert geojson['properties']["site_id"] == review["site_id"]
 
 
 def test_submit_report_with_login():
@@ -249,7 +240,7 @@ def test_submit_report_with_login():
     headers = {"Authorization": f"Bearer {access_token}"}
 
     response = client.post("submit/report", json=report, headers=headers)
-    status = response.json()
+    geojson = response.json()
 
     with Session() as s:
         with s.begin():
@@ -260,7 +251,7 @@ def test_submit_report_with_login():
         assert result.comment == report["comment"]
 
     assert response.status_code == 200
-    assert status["site_id"] == report["site_id"]
+    assert geojson['properties']["site_id"] == report["site_id"]
 
 
 def test_add_first_favorite_with_login():

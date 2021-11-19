@@ -1,18 +1,15 @@
-from fastapi import Depends, APIRouter
-from models.tables import User, Review, Report
+from fastapi import APIRouter
+from fastapi import Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from models.schemas import ReviewSchema, ReportSchema
+from models.tables import Review, Report
 from ..dependencies import (
     get_current_user,
     get_db,
-    schema_to_row,
-    pwd_context,
     submit_and_retrieve_site,
-    make_site_schema_response,
+    make_site_geojson
 )
-from models.schemas import UserSchema, ReviewSchema, ReportSchema
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from icecream import ic
-from fastapi import FastAPI, Query as fastapi_Query, Depends, HTTPException, status
-from sqlalchemy.sql import Update
 
 router = APIRouter(
     prefix="/submit", tags=["users"], responses={404: {"description": "Not found"}},
@@ -30,8 +27,8 @@ async def submit_review(
 
     site = await submit_and_retrieve_site(Session, review)
 
-    site_schema = await make_site_schema_response(site)
-    return site_schema
+    site_geojson = await make_site_geojson(site)
+    return site_geojson
 
     """except Exception as e:
         raise HTTPException(
@@ -54,9 +51,9 @@ async def submit_report(
 
         site = await submit_and_retrieve_site(Session, report)
 
-        site_schema = await make_site_schema_response(site)
+        site_geojson = await make_site_geojson(site)
 
-        return site_schema
+        return site_geojson
 
     except Exception as e:
         raise HTTPException(

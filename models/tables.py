@@ -1,20 +1,18 @@
+from geoalchemy2 import Geometry
 from sqlalchemy import (
     String,
     BigInteger,
     Column,
-    Integer,
     ForeignKey,
     Integer,
     DateTime,
     ARRAY,
     Text,
 )
-
 from sqlalchemy.orm import declarative_base, relationship
-from geoalchemy2 import Geometry
 from sqlalchemy.sql import func
+
 from models.enums import enums
-from icecream import ic
 
 # TABLES DEFINED HERE
 
@@ -112,7 +110,6 @@ class SportsFacilities(Base):
     soccer_field = Column(Integer, nullable=True)
     basketball_court = Column(Integer, nullable=True)
     baseball_diamond = Column(Integer, nullable=True)
-    soccer_field = Column(Integer, nullable=True)
 
     site = relationship("Site", backref="sports_facilities", lazy=False)
 

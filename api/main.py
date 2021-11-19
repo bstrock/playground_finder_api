@@ -1,60 +1,30 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker, Query, selectinload
-from fastapi import FastAPI, Query as fastapi_Query, Depends, HTTPException, status
-from datetime import datetime, timedelta
-from api.dependencies import get_db, make_site_schema_response
-from models.schemas import (
-    SiteSchema,
-    ReportSchema,
-    ReviewSchema,
-    EquipmentSchema,
-    AmenitiesSchema,
-    SportsFacilitiesSchema,
-    UserSchema,
-    UserInDBSchema,
-    TokenSchema,
-    TokenDataSchema,
-)
-from models.tables import Review
-from icecream import ic
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import JWTError, jwt
-from passlib.context import CryptContext
-from fastapi.encoders import jsonable_encoder
-from utils.create_spatial_db import SpatialDB
-from models.tables import Site, Report
-from typing import Optional, List
-from sqlalchemy import select
-from geoalchemy2 import func, shape
 import logging
-import uvicorn
 import os
-from api.dependencies import authenticate_user, create_access_token, get_current_user
-
-# initializations
+from datetime import timedelta
+from typing import Optional, List
+import uvicorn
+from fastapi import FastAPI, Query as fastapi_Query, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from geoalchemy2 import func
+from passlib.context import CryptContext
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Query, selectinload
+from api.dependencies import authenticate_user, create_access_token
+from api.dependencies import get_db, make_site_geojson
 from api.routers import users, submit
+from models.schemas import TokenSchema
+from models.tables import Site
+from geojson import FeatureCollection
+from icecream import ic
 
 app = FastAPI()
 app.include_router(users.router)
 app.include_router(submit.router)
-
-fake_users_db = {
-    "johndoe@example.com": {
-        "email": "1",
-        "first_name": "John",
-        "last_name": "Doe",
-        "email": "johndoe@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-    }
-}
-
 SECRET_KEY = os.environ.get("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 20000  # like two weeks
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
 
 #  THIS ENDPOINT ISSUES AUTHENTICATION TOKENS FOR USERS IN THE DATABASE
 @app.post("/token", response_model=TokenSchema)
@@ -112,7 +82,7 @@ async def query(
     amenities: Optional[List[str]] = fastapi_Query(None),
     sports_facilities: Optional[List[str]] = fastapi_Query(None),
     Session: AsyncSession = Depends(get_db),
-) -> List[SiteSchema]:
+) -> FeatureCollection:
     logging.info("Query received")
     logging.info("\n\n***QUERY PARAMETERS***\n")
 
@@ -198,10 +168,10 @@ async def query(
                         # alas the days when I could do this in a list comprehension...
                         # anyway, let's instantiate some schemas
 
-                        site_schema = await make_site_schema_response(site)
+                        site_geojson = await make_site_geojson(site)
 
                         sites.append(
-                            site_schema
+                            site_geojson
                         )  # all matching sites are added to the response object
 
                 logging.info("TRANSACTION: CLOSED")
@@ -216,7 +186,8 @@ async def query(
             logging.info("QUERY: NO RESULTS -- Endpoint Service COMPLETE\n\n")
 
         logging.info("QUERY: Results returned -- endpoint service COMPLETE\n\n")
-        return sites
+        response_geojson = FeatureCollection(sites)
+        return response_geojson
 
     except Exception as e:
         logging.error(e)

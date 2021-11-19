@@ -1,9 +1,10 @@
+import os
+
+import pytest
 from sqlalchemy.engine import create_engine, URL
 from sqlalchemy.orm import sessionmaker
-import os
-from icecream import ic
+
 from models.tables import Site, Equipment, Amenities, SportsFacilities, User
-import pytest
 
 username = os.environ.get("USERNAME")
 password = os.environ.get("PASSWORD")

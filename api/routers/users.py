@@ -1,11 +1,10 @@
-from fastapi import Depends, APIRouter
+from fastapi import APIRouter
+from fastapi import Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from models.schemas import UserSchema
 from models.tables import User
 from ..dependencies import get_current_user, get_db, schema_to_row, pwd_context
-from models.schemas import UserSchema
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from icecream import ic
-from fastapi import FastAPI, Query as fastapi_Query, Depends, HTTPException, status
-from sqlalchemy.sql import Update
 
 router = APIRouter(
     prefix="/users", tags=["users"], responses={404: {"description": "Not found"}},

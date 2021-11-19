@@ -1,8 +1,7 @@
 from fastapi import HTTPException, status
 from typing import Optional, List
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 import os
-
 
 class ReportSchema(BaseModel):
     site_id: str
@@ -109,7 +108,7 @@ class SiteSchema(BaseModel):
 
 
 class UserSchema(BaseModel):
-    email: EmailStr
+    email: str
     hashed_password: str
     first_name: str
     last_name: str

@@ -1,8 +1,16 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker, Query, selectinload
-from fastapi import FastAPI, Query as fastapi_Query, Depends, HTTPException, status
+import os
 from datetime import datetime, timedelta
+from typing import Optional
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from geoalchemy2 import shape
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker, selectinload
 from icecream import ic
+from geojson import Feature, Polygon
+
 from models.schemas import (
     SiteSchema,
     ReportSchema,
@@ -10,26 +18,11 @@ from models.schemas import (
     EquipmentSchema,
     AmenitiesSchema,
     SportsFacilitiesSchema,
-    UserSchema,
     UserInDBSchema,
-    TokenSchema,
     TokenDataSchema,
 )
-from geoalchemy2 import shape
-
-from icecream import ic
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import JWTError, jwt
-from passlib.context import CryptContext
-from fastapi.encoders import jsonable_encoder
-from utils.create_spatial_db import SpatialDB
 from models.tables import Site, User
-from typing import Optional, List
-from sqlalchemy import select
-from geoalchemy2 import func
-import logging
-import uvicorn
-import os
+from utils.create_spatial_db import SpatialDB
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 ALGORITHM = "HS256"
@@ -167,7 +160,7 @@ async def submit_and_retrieve_site(Session, item_to_submit):
     return site
 
 
-async def make_site_schema_response(site):
+async def make_site_geojson(site):
     equipment_schema = EquipmentSchema.from_orm(site.equipment[0])
     amenities_schema = AmenitiesSchema.from_orm(site.amenities[0])
     sports_facilities_schema = SportsFacilitiesSchema.from_orm(
@@ -176,22 +169,36 @@ async def make_site_schema_response(site):
     # geometry objects are returned as a well-known binary- we need to convert to shapely objects
     # in order to get the WKT which we can return in an http response
     geom = shape.to_shape(site.geom)
-    site_schema = SiteSchema(
-        site_id=site.site_id,
-        site_name=site.site_name,
-        substrate_type=site.substrate_type,
-        addr_street1=site.addr_street1,
-        addr_city=site.addr_city,
-        addr_state=site.addr_state,
-        addr_zip=site.addr_zip,
-        geom=geom.wkt,  # gets the geometry object's WKT representation
-        equipment=equipment_schema,
-        amenities=amenities_schema,
-        sports_facilities=sports_facilities_schema,
-    )
+    wkt = geom.wkt
+    wkt = wkt.strip("POLYGON ((").strip("))").split(" ")
+    geom_tuples_list = []
+    for i, coord in enumerate(wkt):
+        if coord[-1] == ',':
+            lat = float(coord.strip(','))
+            lon = float(wkt[i-1])
+            geom_tuples_list.append((lon, lat))
+
+    geojson_properties = {
+        'site_id': site.site_id,
+        "site_name": site.site_name,
+        "substrate_type": site.substrate_type,
+        "addr_street1": site.addr_street1,
+        "addr_city": site.addr_city,
+        "addr_state": site.addr_state,
+        "addr_zip": site.addr_zip,
+        "equipment": equipment_schema.dict(),
+        "amenities": amenities_schema.dict(),
+        "sports_facilities": sports_facilities_schema.dict()
+    }
+
     # sites may not have reviews or reports, so we skip these step if they don't
     if len(site.reviews) > 0:
-        site_schema.reviews = ReviewSchema.from_orm(site.reviews[0])
+        reviews = ReviewSchema.from_orm(site.reviews[0])
+        geojson_properties['reviews'] = reviews.dict()
     if len(site.reports) > 0:
-        site_schema.reports = ReportSchema.from_orm(site.reports[0])
-    return site_schema
+        reports = ReportSchema.from_orm(site.reports[0])
+        geojson_properties['reports'] = reports.dict()
+
+    site_geojson_poly = Polygon(geom_tuples_list)
+    site_geojson = Feature(geometry=site_geojson_poly, properties=geojson_properties)
+    return site_geojson
