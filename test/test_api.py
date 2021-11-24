@@ -16,7 +16,7 @@ def params():
     return {
         "latitude": 44.85,
         "longitude": -93.47,
-        "radius": 100000,
+        "radius": 10,
     }
 
 

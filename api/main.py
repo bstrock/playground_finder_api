@@ -9,15 +9,32 @@ from geoalchemy2 import func
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Query, selectinload
-from api.dependencies import authenticate_user, create_access_token
+from api.dependencies import authenticate_user, create_access_token, miles_to_meters
 from api.dependencies import get_db, make_site_geojson
 from api.routers import users, submit
-from models.schemas import TokenSchema
+from models.schemas import TokenSchema, ReviewSchema
 from models.tables import Site
 from geojson import FeatureCollection
 from icecream import ic
 
 app = FastAPI()
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+# ENABLE CORS
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(users.router)
 app.include_router(submit.router)
 SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -77,10 +94,10 @@ async def liveness_check():
 async def query(
     latitude: float,
     longitude: float,
-    radius: float,
-    equipment: Optional[List[str]] = fastapi_Query(None),
-    amenities: Optional[List[str]] = fastapi_Query(None),
-    sports_facilities: Optional[List[str]] = fastapi_Query(None),
+    radius: float = Depends(miles_to_meters),
+    equipment: Optional[str] = fastapi_Query(None),
+    amenities: Optional[str] = fastapi_Query(None),
+    sports_facilities: Optional[str] = fastapi_Query(None),
     Session: AsyncSession = Depends(get_db),
 ) -> FeatureCollection:
     logging.info("Query received")
@@ -88,8 +105,22 @@ async def query(
 
     # prepare PostGIS geometry object
     query_point = f"POINT({longitude} {latitude})"
-
     logging.info("Query point: %s", query_point)
+
+    if equipment:
+        equipment = equipment.split(',')
+        if len(equipment) == 1:
+            equipment = list(equipment)
+
+    if amenities:
+        amenities = amenities.split(',')
+        if len(amenities) == 1:
+            amenities = list(amenities)
+
+    if sports_facilities:
+        sports_facilities = sports_facilities.split(',')
+        if len(sports_facilities) == 1:
+            sports_facilities = list(sports_facilities)
 
     # build spatial query
     # note: we're using PostGIS Geography objects, which are in EPSG 4326 with meters as the unit of measure.
@@ -187,6 +218,7 @@ async def query(
 
         logging.info("QUERY: Results returned -- endpoint service COMPLETE\n\n")
         response_geojson = FeatureCollection(sites)
+        ic(len(response_geojson['features']))
         return response_geojson
 
     except Exception as e:

@@ -134,6 +134,12 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         raise credentials_exception
     return user
 
+# -- CONVERSION --
+
+def miles_to_meters(radius: float):
+    # converts user int to meters (POSTGis Geography measurement unit)
+    return radius * 1609.34
+
 
 # FUNCTIONAL DEPENDENCIES
 # these are not injected
@@ -193,11 +199,11 @@ async def make_site_geojson(site):
 
     # sites may not have reviews or reports, so we skip these step if they don't
     if len(site.reviews) > 0:
-        reviews = ReviewSchema.from_orm(site.reviews[0])
-        geojson_properties['reviews'] = reviews.dict()
+        reviews = [ReviewSchema.from_orm(review).dict() for review in site.reviews]
+        geojson_properties['reviews'] = reviews
     if len(site.reports) > 0:
-        reports = ReportSchema.from_orm(site.reports[0])
-        geojson_properties['reports'] = reports.dict()
+        reports = [ReportSchema.from_orm(report).dict() for report in site.reports]
+        geojson_properties['reports'] = reports
 
     site_geojson_poly = Polygon(geom_tuples_list)
     site_geojson = Feature(geometry=site_geojson_poly, properties=geojson_properties)

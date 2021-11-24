@@ -1,10 +1,12 @@
 from fastapi import APIRouter
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from models.schemas import UserSchema
+from icecream import ic
+from models.schemas import UserSchema, UserResponseSchema
 from models.tables import User
 from ..dependencies import get_current_user, get_db, schema_to_row, pwd_context
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 
 router = APIRouter(
     prefix="/users", tags=["users"], responses={404: {"description": "Not found"}},
@@ -15,7 +17,7 @@ router = APIRouter(
 # PUBLIC ENDPOINT
 @router.post("/create")
 async def create_user(
-    incoming_user: UserSchema, Session: AsyncSession = Depends(get_db)
+        incoming_user: UserSchema, Session: AsyncSession = Depends(get_db)
 ):
     # check to see if user exists in db
     async with Session as s:
@@ -46,25 +48,31 @@ async def create_user(
 
 # THIS ENDPOINT GETS A USER'S FAVORITE PLAYGROUNDS
 # AUTHENTICATED ENDPOINT
-@router.get("/me/favorites")
+@router.get("/me/favorites", response_model=UserResponseSchema)
 async def get_favorites(
-    user=Depends(get_current_user), Session: AsyncSession = Depends(get_db)
+        user=Depends(get_current_user), Session: AsyncSession = Depends(get_db)
 ):
     async with Session as s:
         async with s.begin():
-            res = await s.get(User, user.email).first()
-
-    return {"favorites": res.favorite_parks}
+            res = await s.get(User, user.email)
+            user_response = UserResponseSchema(
+                first_name=res.first_name,
+                last_name=res.last_name,
+                favorite_parks=res.favorite_parks,
+                email=res.email
+            )
+            json_response = jsonable_encoder(user_response)
+            return JSONResponse(json_response)
 
 
 # THIS ENDPOINT ADDS OR REMOVES A FAVORITE FROM THE USER'S FAVORITES
 # AUTHENTICATED ENDPOINT
 @router.post("/me/favorites")
 async def modify_favorites(
-    operation: str,  # add/remove
-    site_id: str,
-    user=Depends(get_current_user),
-    Session: AsyncSession = Depends(get_db),
+        operation: str,  # add/remove
+        site_id: str,
+        user=Depends(get_current_user),
+        Session: AsyncSession = Depends(get_db),
 ):
     # get the existing favorites
     async with Session as s:
@@ -80,8 +88,8 @@ async def modify_favorites(
         # this update statement will apply changes to the database
         stmt = (
             User.__table__.update()
-            .where(User.email == user.email)
-            .values(favorite_parks=favorites)
+                .where(User.email == user.email)
+                .values(favorite_parks=favorites)
         )
 
         await s.execute(stmt)  # send update

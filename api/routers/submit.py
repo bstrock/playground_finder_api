@@ -18,11 +18,17 @@ router = APIRouter(
 
 @router.post("/review")
 async def submit_review(
-    review_schema: ReviewSchema,
+    stars: str,
+    comment: str,
+    site_id: str,
     Session: AsyncSession = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    review = Review(**review_schema.dict())
+    review = Review(
+        stars=int(stars),
+        comment=comment,
+        site_id=site_id
+    )
     review.user_email = user.email
 
     site = await submit_and_retrieve_site(Session, review)

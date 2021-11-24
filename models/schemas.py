@@ -17,6 +17,7 @@ class ReportSchema(BaseModel):
 class ReviewSchema(BaseModel):
     site_id: str
     stars: int
+    email: Optional[str] = None
     comment: Optional[str] = None
 
     class Config:
@@ -126,6 +127,16 @@ class UserInDBSchema(UserSchema):
     last_name: str
     favorite_parks: Optional[List[str]]
 
+
+class UserResponseSchema(BaseModel):
+    first_name: str
+    last_name: str
+    favorite_parks: Optional[List[str]]
+    email: str
+
+    class Config:
+        orm_mode = True
+        arbitrary_types_allowed = True
 
 class TokenSchema(BaseModel):
     access_token: str
