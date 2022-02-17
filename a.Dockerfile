@@ -6,6 +6,6 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 ENV PYTHONPATH /api
 copy . /
-WORKDIR .
+WORKDIR /api
 # CMD ["python3", "./utils/test.py"]
 # CMD ["uvicorn", "api.api:app", "--host", "0.0.0.0", "--port=${PORT:-5000}"]
