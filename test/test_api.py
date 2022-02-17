@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Query
-from api.main import app
+from api.api import app
 client = TestClient(app)
 import pytest
 from test.test_db_schema import Session
