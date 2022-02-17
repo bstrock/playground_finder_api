@@ -5,7 +5,7 @@ from pandas import DataFrame, read_csv
 from datetime import datetime as dt
 from httpx import AsyncClient
 from copy import deepcopy
-from api.api import app
+from api.main import app
 from icecream import ic
 import asyncio
 import os
