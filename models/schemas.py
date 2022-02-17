@@ -3,6 +3,7 @@ from typing import Optional, List
 from pydantic import BaseModel
 import os
 
+
 class ReportSchema(BaseModel):
     site_id: str
     report_type: str
@@ -137,6 +138,7 @@ class UserResponseSchema(BaseModel):
     class Config:
         orm_mode = True
         arbitrary_types_allowed = True
+
 
 class TokenSchema(BaseModel):
     access_token: str

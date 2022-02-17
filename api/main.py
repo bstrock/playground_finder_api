@@ -1,32 +1,29 @@
-import logging
-import os
-from datetime import timedelta
-from typing import Optional, List
-import uvicorn
+from api.dependencies import authenticate_user, create_access_token, miles_to_meters
 from fastapi import FastAPI, Query as fastapi_Query, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from geoalchemy2 import func
-from passlib.context import CryptContext
+from api.dependencies import get_db, make_site_geojson
+from models.schemas import TokenSchema, ReviewSchema
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Query, selectinload
-from api.dependencies import authenticate_user, create_access_token, miles_to_meters
-from api.dependencies import get_db, make_site_geojson
+from passlib.context import CryptContext
 from api.routers import users, submit
-from models.schemas import TokenSchema, ReviewSchema
-from models.tables import Site
 from geojson import FeatureCollection
+from typing import Optional, List
+from datetime import timedelta
+from models.tables import Site
+from geoalchemy2 import func
 from icecream import ic
-
-app = FastAPI()
-
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+import logging
+import os
 
 app = FastAPI()
 
 # ENABLE CORS
 origins = ["*"]
 
+# this is definitely important so that something works
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -35,13 +32,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# add routers
 app.include_router(users.router)
 app.include_router(submit.router)
+
+# get secret key for token signing and whatnot
 SECRET_KEY = os.environ.get("SECRET_KEY")
+
+# some security parameters
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 20000  # like two weeks
+
+# hashing context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# oauth 2 scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 #  THIS ENDPOINT ISSUES AUTHENTICATION TOKENS FOR USERS IN THE DATABASE
 @app.post("/token", response_model=TokenSchema)
@@ -227,7 +234,6 @@ async def query(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Unable to retrieve query results from database",
         )
-
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)
