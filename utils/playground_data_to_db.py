@@ -1,17 +1,18 @@
+from typing import Callable, AnyStr
+
 import geopandas as gpd
 import pandas as pd
 from pandas import DataFrame
 from models.tables import Site, Equipment, Amenities, SportsFacilities, User, Base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine import create_engine
-from utils.create_spatial_db import SpatialDB
 from passlib.context import CryptContext
 from sqlalchemy.engine import URL
 import os
 from icecream import ic
 import numpy as np
 import json
-from sqlalchemy import MetaData
+from sqlalchemy import MetaData, text
 from icecream import ic
 import asyncio
 from datetime import datetime as dt
@@ -25,19 +26,9 @@ class PlaygroundLoader:
     # connection parameters
     username = os.environ.get("USERNAME")
     password = os.environ.get("PASSWORD")
-    # url = os.environ.get("SECRET_URL")
+    url = os.environ.get("SECRET_URL")
 
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-    # points to localhost
-    url = URL.create(
-        drivername="postgresql+psycopg2",
-        username=username,
-        password=password,
-        host="localhost",
-        port=5432,
-        database="brianstrock",
-    )
 
     engine = create_engine(url=url, echo=False)
     Session = sessionmaker(engine)
@@ -60,17 +51,23 @@ class PlaygroundLoader:
         data = data.set_index("USER_SITE_")  # sorry for the janky columns
         self.data = data
 
-    def class_from_row(self, row, class_to_use, key, index_col):
+    def class_from_row(
+            self,
+            row: pd.Series,
+            class_to_use: Callable,
+            key: AnyStr, index_col:
+            AnyStr
+    ):
         #### EXTREMELY USEFUL
-        table_row = (
-            class_to_use()
-        )  # create class object for model: Site, Equipment, Amenity, etc.
+        # create class object for model: Site, Equipment, Amenity, etc. using abstract factory pattern
+        table_row = class_to_use()
 
         for col in row.index:  # grab the row columns
-            setattr(
-                table_row, col.lower(), int(row[col])
-            )  # give our model object these attributes
+            # give our model object these attributes
+            setattr(table_row, col.lower(), int(row[col]))
+
         setattr(table_row, index_col, row._name)  # set site id attribute
+
         # no you can't use a ternary operator for this
         self.inserts[key].append(table_row)
 
@@ -120,8 +117,7 @@ class PlaygroundLoader:
         # like why declare attributes explicitly, amirite
 
         sites = self.data.index.unique().tolist()  # keys
-
-        sites_to_db = []
+        self.data.set_crs(epsg=4326, inplace=True)
         # loop through the playgrounds and make objects out of them
         for pg in sites:
             df = self.data.loc[pg]
@@ -134,7 +130,7 @@ class PlaygroundLoader:
                     addr_city=df.ADDR_CITY,
                     addr_state=df.ADDR_STATE,
                     addr_zip=int(df.ADDR_ZIP),
-                    geom=df.geometry.wkt,
+                    geom=f'SRID=4326;{df.geometry.wkt}'
                 )
             )
 
@@ -213,6 +209,7 @@ if __name__ == "__main__":
 
     # create the class object
     playground_loader = PlaygroundLoader()
+
     playground_loader.main()
 
     # that's a wrap
