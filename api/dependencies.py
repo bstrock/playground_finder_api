@@ -22,7 +22,7 @@ from models.schemas import (
     TokenDataSchema,
 )
 from models.tables import Site, User
-from utils.create_spatial_db import SpatialDB
+
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 ALGORITHM = "HS256"
@@ -38,8 +38,9 @@ fake_users_db = {
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
     }
 }
-
-engine = create_async_engine(url=SpatialDB.url, echo=False, future=True)
+url = os.environ.get("SECRET_URL")
+ic(url)
+engine = create_async_engine(url=url, echo=False, future=True)
 Session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
