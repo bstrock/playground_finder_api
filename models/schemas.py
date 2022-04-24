@@ -85,7 +85,6 @@ class SportsFacilitiesSchema(BaseModel):
 class SiteSchema(BaseModel):
     site_id: str
     site_name: str
-    substrate_type: str
     addr_street1: str
     addr_street2: Optional[str]
     addr_city: str
