@@ -125,7 +125,6 @@ class PlaygroundLoader:
                 Site(
                     site_id=df.name,
                     site_name=df.SITE_NAME,
-                    substrate_type=df.SUBSTRATE_,
                     addr_street1=df.ADDR_STR_1,
                     addr_city=df.ADDR_CITY,
                     addr_state=df.ADDR_STATE,

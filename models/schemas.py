@@ -27,27 +27,21 @@ class ReviewSchema(BaseModel):
 
 
 class EquipmentSchema(BaseModel):
+    bouncers: int
+    bridges: int
+    climbers: int
     diggers: int
-    ladders: int
+    fire_poles: int
     toddler_swings: int
     standard_swings: int
-    tire_swings: int
     accessible_swings: int
     seesaws: int
-    climbers: int
     spinners: int
-    bridges: int
     tunnels: int
     slides: int
-    thematic: int
-    ropes: int
     fire_poles: int
     staircases: int
-    musical: int
     play_towers: int
-    telephones: int
-    binoculars: int
-    tactile: int
 
     class Config:
         orm_mode = True

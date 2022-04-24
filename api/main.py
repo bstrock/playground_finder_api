@@ -9,7 +9,7 @@ from sqlalchemy.orm import Query, selectinload
 from passlib.context import CryptContext
 from api.routers import users, submit
 from geojson import FeatureCollection
-from typing import Optional, List
+from typing import Optional
 from datetime import timedelta
 from models.tables import Site
 from geoalchemy2 import func
