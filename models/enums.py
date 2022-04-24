@@ -7,7 +7,6 @@ from dataclasses import dataclass
 
 @dataclass
 class EnumStorage:
-    substrate_types: tuple
     report_types: tuple
 
     def make(self, kind):
@@ -20,7 +19,6 @@ class EnumStorage:
 
 
 #  enum tuples
-substrate_types = ("WOOD_CHIPS", "SYNTHETIC", "GRAVEL")
 report_types = (
     "HAZARD",
     "LITTER",
@@ -32,4 +30,4 @@ report_types = (
 
 # instantiate- this object is imported in main script
 
-enums = EnumStorage(substrate_types=substrate_types, report_types=report_types)
+enums = EnumStorage(report_types=report_types)

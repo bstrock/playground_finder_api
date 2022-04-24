@@ -25,6 +25,7 @@ class Site(Base):
     __mapper_args__ = {"eager_defaults": True}
 
     site_id = Column(String, primary_key=True)
+    substrate_type = Column(String, nullable=True)
     site_name = Column(String(100), nullable=False)
     addr_street1 = Column(String(100), nullable=False)
     addr_city = Column(String(100), nullable=False)
