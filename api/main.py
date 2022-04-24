@@ -2,7 +2,7 @@ from api.dependencies import authenticate_user, create_access_token, miles_to_me
 from fastapi import FastAPI, Query as fastapi_Query, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from api.dependencies import get_db, make_site_geojson
-from models.schemas import TokenSchema, ReviewSchema
+from models.schemas import TokenSchema
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Query, selectinload
