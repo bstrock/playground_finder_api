@@ -49,20 +49,19 @@ class EquipmentSchema(BaseModel):
 
 
 class AmenitiesSchema(BaseModel):
-    splash_pad: Optional[bool]
-    beach: Optional[bool]
-    changing_rooms: Optional[bool]
-    waterfront: Optional[bool]
-    concessions: Optional[bool]
-    rentals: Optional[bool]
-    indoor_restroom: Optional[bool]
-    portable_restroom: Optional[bool]
-    trails: Optional[bool]
-    picnic_tables: Optional[bool]
-    benches: Optional[bool]
-    shelter: Optional[bool]
-    sun_shades: Optional[bool]
-    grills: Optional[bool]
+    splash_pad: Optional[int]
+    beach: Optional[int]
+    changing_rooms: Optional[int]
+    waterfront: Optional[int]
+    concessions: Optional[int]
+    rentals: Optional[int]
+    indoor_restroom: Optional[int]
+    portable_restroom: Optional[int]
+    picnic_tables: Optional[int]
+    benches: Optional[int]
+    shelter: Optional[int]
+    sun_shades: Optional[int]
+    grills: Optional[int]
 
     class Config:
         orm_mode = True
@@ -70,12 +69,17 @@ class AmenitiesSchema(BaseModel):
 
 
 class SportsFacilitiesSchema(BaseModel):
-    skate_park: Optional[bool]
-    tennis_court: Optional[bool]
-    hockey_rink: Optional[bool]
-    soccer_field: Optional[bool]
-    basketball_court: Optional[bool]
-    baseball_diamond: Optional[bool]
+    skate_park: Optional[int]
+    disc_golf: Optional[int]
+    foursquare: Optional[int]
+    badminton: Optional[int]
+    tennis_court: Optional[int]
+    hockey_rink: Optional[int]
+    soccer_field: Optional[int]
+    basketball_court: Optional[int]
+    baseball_diamond: Optional[int]
+    volleyball: Optional[int]
+    horseshoes: Optional[int]
 
     class Config:
         orm_mode = True

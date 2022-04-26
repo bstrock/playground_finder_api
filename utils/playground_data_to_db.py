@@ -55,8 +55,8 @@ class PlaygroundLoader:
             self,
             row: pd.Series,
             class_to_use: Callable,
-            key: AnyStr, index_col:
-            AnyStr
+            key: AnyStr,
+            index_col: AnyStr
     ):
         #### EXTREMELY USEFUL
         # create class object for model: Site, Equipment, Amenity, etc. using abstract factory pattern
@@ -71,14 +71,13 @@ class PlaygroundLoader:
         # no you can't use a ternary operator for this
         self.inserts[key].append(table_row)
 
-    def randomized_import(self, path: str):
+
+    def import_data(self, path: str):
         # copies CSV schema from path and uses it to fill with random numbers 1-10
         # uses this function to make a row in a dataframe into the corresponding model object
 
         # here we need to grab the table schema in order to generate fake data
         table_schema = pd.read_csv(path, index_col="SITE_ID")  # its columns
-        shape = table_schema.shape  # its dimensions
-        size = (29, shape[1])
         # here we check which class and method to use
         path_split = path.split("/")
         sentinel = path_split[-1]
@@ -86,9 +85,6 @@ class PlaygroundLoader:
         if sentinel == "equipment.csv":
             class_to_use = Equipment
             key = "equipment"
-            random_data = np.random.randint(
-                0, 5, size=size
-            )  # creates an array of random ints 0-10
         elif sentinel == "amenities.csv":
             class_to_use = Amenities
             key = "amenities"
@@ -96,16 +92,15 @@ class PlaygroundLoader:
             class_to_use = SportsFacilities
             key = "sports_facilities"
 
-        if sentinel != "equipment.csv":
-            random_data = np.random.choice(a=[1, 0], size=size, p=[0.25, 0.75])
         df = pd.DataFrame(
-            random_data, columns=table_schema.columns, index=self.data.index
+            f"{path}/{sentinel}", columns=table_schema.columns, index=self.data.index
         )  # the actual dataframe we're using
-
+        table_schema.columns = [col.lower() for col in table_schema.columns]
+        ic(table_schema)
         # remember our really useful function?  now we just apply it to the dataframe...zwoop, row objects!
-        df.apply(
-            lambda x: self.class_from_row(
-                row=x, class_to_use=class_to_use, key=key, index_col="site_id"
+        table_schema.apply(
+            lambda row: self.class_from_row(
+                row=row, class_to_use=class_to_use, key=key, index_col="site_id"
             ),
             axis=1,
         )
@@ -113,8 +108,6 @@ class PlaygroundLoader:
     # %% site processing
 
     def data_to_sites(self):
-        # this could get refactored into the randomized function style
-        # like why declare attributes explicitly, amirite
 
         sites = self.data.index.unique().tolist()  # keys
         self.data.set_crs(epsg=4326, inplace=True)
@@ -154,16 +147,16 @@ class PlaygroundLoader:
     def main(self):
         # let's do this
 
-        path_base = "~/Documents/777/playground_planner/data"
-        fake_csv_path = path_base + "/csv/fake"
+        path_base = "~/playground_planner/playground_planner/data"
+        csv_path = path_base + "/csv/real"
 
         json_path = path_base + "/json/playgrounds.json"
-        equipment_path = fake_csv_path + "/equipment.csv"
-        amenities_path = fake_csv_path + "/amenities.csv"
-        sports_facilities_path = fake_csv_path + "/sports_facilities.csv"
-        fake_users_path = fake_csv_path + "/users.csv"
+        equipment_path = csv_path + "/equipment.csv"
+        amenities_path = csv_path + "/amenities.csv"
+        sports_facilities_path = csv_path + "/sports_facilities.csv"
 
         data = gpd.read_file(json_path)
+        ic(data)
 
         keep_these_columns = [
             "USER_SITE_",
@@ -178,10 +171,10 @@ class PlaygroundLoader:
 
         self.set_data(data=data[keep_these_columns])  # set data
         self.data_to_sites()  # generate sites
-        self.randomized_import(equipment_path)  # import random data
-        self.randomized_import(amenities_path)  # and one more time
-        self.randomized_import(sports_facilities_path)
-        self.import_test_users(fake_users_path)
+        self.import_data(equipment_path)  # import random data
+        self.import_data(amenities_path)  # and one more time
+        self.import_data(sports_facilities_path)
+        # self.import_test_users(fake_users_path)
 
         # these are the lists of row objects we are inserting
         keys = list(self.inserts.keys())

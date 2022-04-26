@@ -97,11 +97,16 @@ class SportsFacilities(Base):
     )
 
     skate_park = Column(Integer, nullable=True)
+    disc_golf = Column(Integer, nullable=True)
+    foursquare = Column(Integer, nullable=True)
+    badminton = Column(Integer, nullable=True)
     tennis_court = Column(Integer, nullable=True)
     hockey_rink = Column(Integer, nullable=True)
     soccer_field = Column(Integer, nullable=True)
     basketball_court = Column(Integer, nullable=True)
     baseball_diamond = Column(Integer, nullable=True)
+    volleyball = Column(Integer, nullable=True)
+    horseshoes = Column(Integer, nullable=True)
 
     site = relationship("Site", backref="sports_facilities", lazy=False)
 
