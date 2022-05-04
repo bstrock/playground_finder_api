@@ -1,10 +1,13 @@
 <h1>Eden Prairie Playground Finder API</h1>
 This repo is for the backend component for my MS Capstone Project.  This API package is designed to serve data from the custom dataset gathered to inform the application experience, which catalogs all of the playgrounds in Eden Prairie.  Attributes include address, georeferenced playground polygons (spatial data), and inventories of equipment, amenities, and sports facilities available at each site.
 
-<h2>Link to project demo</h2>
+<h2>Link to live project:  [epplay.today](https://epplay.today)</h2>
 
-[View a 5 minute overview walkthrough here](https://youtu.be/jYbpUzD-KjI)
-[Check out the frontend Swift app repo here](https://github.com/bstrock/tri_nearby_swift_mapkit)
+[Watch short project overview walkthrough](https://youtu.be/EvkzLfWa2Ko)
+
+[Check out the frontend React app repo](https://github.com/bstrock/eden_prairie_playground_finder)
+
+[Use the interactive API documentation](https://eden-prairie-playgrounds.herokuapp.com/docs#/)
 
 <h2>Tech Stack</h2>
 
@@ -23,7 +26,7 @@ This repo is for the backend component for my MS Capstone Project.  This API pac
 
 <h2>Project Structure and Contents</h2>
 
-```playground_api/
+```playground_planner/
 ├── heroku.yml
 ├── Procfile
 ├── requirements.txt
