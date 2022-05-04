@@ -13,11 +13,12 @@ This repo is for the backend component for my MS Capstone Project.  This API pac
 
 [Use the interactive API documentation](https://eden-prairie-playgrounds.herokuapp.com/docs#/)
 
-[Document: Project Proposal](https://github.com/bstrock/playground_planner/blob/master/data/docs/Brian%20Strock%20-%20Project%20Proposal.docx)
+<h2> Supporting Documents</h2>
+[Project Proposal](https://github.com/bstrock/playground_planner/blob/master/data/docs/Brian%20Strock%20-%20Project%20Proposal.docx)
 
-[Document: Project Plan](https://github.com/bstrock/playground_planner/blob/master/data/docs/Brian%20Strock%20Project%20Plan.pdf)
+[Project Plan](https://github.com/bstrock/playground_planner/blob/master/data/docs/Brian%20Strock%20Project%20Plan.pdf)
 
-[Document: Project Executive Summary](https://github.com/bstrock/playground_planner/blob/master/data/docs/Brian%20Strock%20778%20Executive%20Summary.docx)
+[Project Executive Summary](https://github.com/bstrock/playground_planner/blob/master/data/docs/Brian%20Strock%20778%20Executive%20Summary.docx)
 
 
 <h2>Tech Stack</h2>
