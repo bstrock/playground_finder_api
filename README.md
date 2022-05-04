@@ -1,8 +1,10 @@
 <h1>Eden Prairie Playground Finder API</h1>
 This repo is for the backend component for my MS Capstone Project.  This API package is designed to serve data from the custom dataset gathered to inform the application experience, which catalogs all of the playgrounds in Eden Prairie.  Attributes include address, georeferenced playground polygons (spatial data), and inventories of equipment, amenities, and sports facilities available at each site.
 
-<h2>Link to live project:  [https://epplay.today](https://epplay.today)</h2>
+<h2>Link to live project</h2>
+[epplay.today](https://epplay.today)
 
+<h2>Project Materials</h2>
 [Watch short project overview walkthrough](https://youtu.be/EvkzLfWa2Ko)
 
 [Check out the frontend React app repo](https://github.com/bstrock/eden_prairie_playground_finder)
@@ -16,7 +18,7 @@ This repo is for the backend component for my MS Capstone Project.  This API pac
 * GeoAlchemy2
 * Heroku (deployment)
 
-<h2>Project Features</h2>
+<h2>API Features</h2>
 
 * Programatically generated spatial database using SQLAlchemy/GeoAlchemy2
 * Fully asynchronous operations using FastAPI and SQLAlchemy 2.0 style
