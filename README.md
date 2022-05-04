@@ -1,7 +1,7 @@
 <h1>Eden Prairie Playground Finder API</h1>
 This repo is for the backend component for my MS Capstone Project.  This API package is designed to serve data from the custom dataset gathered to inform the application experience, which catalogs all of the playgrounds in Eden Prairie.  Attributes include address, georeferenced playground polygons (spatial data), and inventories of equipment, amenities, and sports facilities available at each site.
 
-<h2>Link to live project:  [epplay.today](https://epplay.today)</h2>
+<h2>Link to live project:  [https://epplay.today](https://epplay.today)</h2>
 
 [Watch short project overview walkthrough](https://youtu.be/EvkzLfWa2Ko)
 
