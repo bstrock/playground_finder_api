@@ -9,7 +9,7 @@ This repo is for the backend component for my MS Capstone Project.  This API pac
 
 [Watch a short project overview walkthrough](https://youtu.be/EvkzLfWa2Ko)
 
-[Check out the frontend React app repo](https://github.com/bstrock/eden_prairie_playground_finder)
+[Check out the frontend React app repo](https://github.com/bstrock/playground_finder_app)
 
 [Use the interactive API documentation](https://eden-prairie-playgrounds.herokuapp.com/docs#/)
 
