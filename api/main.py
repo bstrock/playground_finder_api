@@ -1,22 +1,21 @@
-from api.dependencies import authenticate_user, create_access_token, miles_to_meters
+import logging
+from datetime import datetime
+from typing import Optional
+
+import pandas as pd
+import pytz
+import uvicorn
 from fastapi import FastAPI, Query as fastapi_Query, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from api.dependencies import get_db, make_site_geojson
-from models.schemas import TokenSchema
 from fastapi.middleware.cors import CORSMiddleware
+from geoalchemy2 import func
+from geojson import FeatureCollection
+from icecream import ic
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Query, selectinload
-from passlib.context import CryptContext
-from api.routers import users, submit
-from geojson import FeatureCollection
-from typing import Optional
-from datetime import timedelta
-from models.tables import Site
-from geoalchemy2 import func
-from icecream import ic
-import uvicorn
-import logging
-import os
+from sqlalchemy import select
+
+from playground_planner.api.dependencies import get_db, make_site_geojson, miles_to_meters
+from playground_planner.models.tables import Site, Episodes
 
 app = FastAPI()
 
@@ -31,56 +30,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# add routers
-app.include_router(users.router)
-app.include_router(submit.router)
-
-# get secret key for token signing and whatnot
-SECRET_KEY = os.environ.get("SECRET_KEY")
-
-# some security parameters
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 20000  # like two weeks
-
-# hashing context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# oauth 2 scheme
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-
-#  THIS ENDPOINT ISSUES AUTHENTICATION TOKENS FOR USERS IN THE DATABASE
-@app.post("/token", response_model=TokenSchema)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    # DEPENDENCY STRUCTURE TO GET USER:
-    # 1. request received
-    # 2. authenticate_user calls get_user to retrieve known-good credentials from user table in db
-    # 3. authenticate_user calls verify_password to compare hashes
-    # 4. then we have this user here
-    user = await authenticate_user(form_data.username, form_data.password)
-
-    # 4b. unless we don't...
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    # 5. but if we do...
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-
-    # 6. create a token
-    access_token = create_access_token(
-        data={
-            "sub": user.email
-        },  # FastAPI docs say to use sub when attaching user id to access token
-        expires_delta=access_token_expires,
-    )
-    # 7. return the token...user can access api functions!
-    return {"access_token": access_token, "token_type": "bearer"}
-
 
 # it's a basic logger
 logging.basicConfig(
@@ -234,6 +183,58 @@ async def query(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Unable to retrieve query results from database",
         )
+
+
+@app.get("/episodes")
+async def get_episodes(
+        Session: AsyncSession = Depends(get_db)
+) -> ...:
+    results = []
+    async with Session as s:
+        async with s.begin():
+            res = await s.execute(select(Episodes))
+            for r in res.scalars().all():
+                appended = r.__dict__
+                appended.pop('_sa_instance_state')
+                results.append(appended)
+    return results
+
+@app.post("/update")
+async def update_episodes(Session: AsyncSession = Depends(get_db)) -> ...:
+    import os
+    import requests
+    from icecream import ic
+
+    headers = {'Content-Type': 'application/json', 'charset': 'utf-8'}
+    podcast_id = 2009882
+    res = requests.get(
+        url=f'https://buzzsprout.com/api/{podcast_id}/episodes.json?api_token={os.environ.get("API_KEY")}',
+        headers=headers)
+
+    if res.ok:
+        episodes_data = res.json()
+        ic(episodes_data)
+        [
+            ep.update(
+                {
+                    'published_at': datetime.fromisoformat(ep.get('published_at'))
+                    .astimezone(pytz.UTC)
+                    .replace(tzinfo=None)})
+            for ep
+            in episodes_data
+        ]
+
+        eps_updates = [Episodes(**ep) for ep in episodes_data]
+        ic(eps_updates)
+
+        async with Session as s:
+            async with s.begin():
+                await s.execute("TRUNCATE TABLE episodes")
+                s.add_all(eps_updates)
+                await s.commit()
+    else:
+        # should raise error
+        ic(res.text)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)

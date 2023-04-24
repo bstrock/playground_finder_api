@@ -1,10 +1,12 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import text, MetaData, create_engine
-from models.tables import Base
-from sqlalchemy.engine import URL
 import asyncio
 import os
+
+from sqlalchemy import text, MetaData
+
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
+
+from playground_planner.models.tables import Base
 
 
 class SpatialDB:
@@ -14,7 +16,7 @@ class SpatialDB:
     password = os.environ.get("PASSWORD")
     url = os.environ.get("SECRET_URL")
 
-    engine = create_engine(url=url, echo=False, future=True)
+    engine = create_async_engine(url=url, echo=False, future=True)
 
     # configure engine
     @staticmethod
@@ -56,15 +58,12 @@ class SpatialDB:
 
 
 async def main():
-    # engine = SpatialDB.init()
-    # await SpatialDB.enable_PostGIS(engine)
+    engine = SpatialDB.init()
+    await SpatialDB.enable_PostGIS(engine)
     await SpatialDB.reset_db()
-
     await SpatialDB.make_db()
     # SpatialDB.count_tables(engine)
 
 
-# STUFF HAPPENS HERE
-# generate and execute sql to make all the tables and things
 if __name__ == "__main__":
     asyncio.run(main())

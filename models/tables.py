@@ -6,13 +6,9 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     DateTime,
-    ARRAY,
-    Text,
+    Boolean
 )
 from sqlalchemy.orm import declarative_base, relationship
-from sqlalchemy.sql import func
-
-from models.enums import enums
 
 # TABLES DEFINED HERE
 
@@ -111,52 +107,28 @@ class SportsFacilities(Base):
     site = relationship("Site", backref="sports_facilities", lazy=False)
 
 
-class User(Base):
-    __tablename__ = "users"
+class Episodes(Base):
+    __tablename__ = 'episodes'
     __mapper_args__ = {"eager_defaults": True}
 
-    email = Column(String(50), unique=True, primary_key=True)
-    hashed_password = Column(String(100), nullable=False)  # these will be hashed
-    first_name = Column(String(50), nullable=False)
-    last_name = Column(String(50), nullable=False)
-    favorite_parks = Column(ARRAY(String, dimensions=1), server_default="{}")
+    id = Column(BigInteger, primary_key=True)
+    title = Column(String, nullable=True)
+    audio_url = Column(String, nullable=True)
+    artwork_url = Column(String, nullable=True)
+    description = Column(String, nullable=True)
+    summary = Column(String, nullable=True)
+    artist = Column(String, nullable=True)
+    tags = Column(String, nullable=True)
+    published_at = Column(DateTime)
+    duration = Column(Integer, nullable=True)
+    hq = Column(Boolean)
+    guid = Column(String, nullable=True)
+    inactive_at = Column(DateTime, nullable=True)
+    episode_number = Column(Integer)
+    season_number = Column(Integer)
+    explicit = Column(Boolean)
+    private = Column(Boolean)
+    total_plays = Column(Integer)
+    magic_mastering = Column(Boolean)
+    custom_url = Column(String, nullable=True)
 
-
-class Review(Base):
-    __tablename__ = "reviews"
-    __mapper_args__ = {"eager_defaults": True}
-
-    review_id = Column(BigInteger, autoincrement=True, primary_key=True)
-    user_email = Column(
-        String, ForeignKey("users.email", name="reviews_key"), nullable=False
-    )
-    site_id = Column(String, ForeignKey("sites.site_id", name="site_reviews_key"))
-    comment = Column(Text, nullable=True)
-    stars = Column(Integer, nullable=False)
-    timestamp = Column(DateTime(timezone=True), server_default=func.now())
-
-    site = relationship("Site", backref="reviews", lazy=False)
-    user = relationship("User", backref="reviews", lazy=False)
-
-
-# report table
-class Report(Base):
-    __tablename__ = "reports"
-    __mapper_args__ = {"eager_defaults": True}
-
-    report_id = Column(BigInteger, autoincrement=True, primary_key=True)
-    site_id = Column(
-        String, ForeignKey("sites.site_id", name="reports_site_key"), nullable=False
-    )
-    user_email = Column(
-        String, ForeignKey("users.email", name="reports_user_key"), nullable=False
-    )
-    report_type = Column(
-        enums.make(kind="report_types"), nullable=False
-    )  # enumeration creation from values in enum.py
-    timestamp = Column(DateTime(timezone=True), server_default=func.now())
-    comment = Column(Text, nullable=True)
-    equipment = Column(String(20), nullable=True)
-
-    site = relationship("Site", backref="reports", lazy=False)
-    user = relationship("User", backref="reports", lazy=False)

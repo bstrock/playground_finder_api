@@ -1,22 +1,17 @@
+import os
 from typing import Callable, AnyStr
 
 import geopandas as gpd
-import pandas as pd
-from pandas import DataFrame
-from models.tables import Site, Equipment, Amenities, SportsFacilities, User, Base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.engine import create_engine
-from passlib.context import CryptContext
-from sqlalchemy.engine import URL
-import os
-from icecream import ic
 import numpy as np
-import json
-from sqlalchemy import MetaData, text
+import pandas as pd
+import requests
 from icecream import ic
-import asyncio
-from datetime import datetime as dt
+from pandas import DataFrame
+from passlib.context import CryptContext
+from sqlalchemy.engine import create_engine
+from sqlalchemy.orm import sessionmaker
 
+from playground_planner.models.tables import Site, Equipment, Amenities, SportsFacilities, Base, Episodes
 
 pd.set_option("display.max_rows", None)
 pd.set_option("display.max_columns", None)
@@ -42,6 +37,7 @@ class PlaygroundLoader:
             "amenities": [],
             "sports_facilities": [],
             "users": [],
+            'episodes': []
         }
 
     def set_data(self, data: DataFrame):
@@ -64,7 +60,10 @@ class PlaygroundLoader:
 
         for col in row.index:  # grab the row columns
             # give our model object these attributes
-            setattr(table_row, col.lower(), int(row[col]))
+            val = row[col]
+            if isinstance(val, np.int64):
+                val = int(val)
+            setattr(table_row, col.lower(), val)
 
         setattr(table_row, index_col, row._name)  # set site id attribute
 
@@ -76,37 +75,38 @@ class PlaygroundLoader:
         # copies CSV schema from path and uses it to fill with random numbers 1-10
         # uses this function to make a row in a dataframe into the corresponding model object
 
-        # here we need to grab the table schema in order to generate fake data
-        table_schema = pd.read_csv(path, index_col="SITE_ID")  # its columns
-        # here we check which class and method to use
-        path_split = path.split("/")
-        sentinel = path_split[-1]
-
-        if sentinel == "equipment.csv":
+        if path:
+            table_schema = pd.read_csv(path, index_col="SITE_ID")  # its columns
+            # here we check which class and method to use
+            path_split = path.split("/")
+            sentinel = path_split[-1]
+        elif not path:
+            sentinel = None
+        if not sentinel:
+            class_to_use  = Episodes
+            table_schema = self.import_podcast_episodes()
+            key = 'episodes'
+        elif sentinel and sentinel == "equipment.csv":
             class_to_use = Equipment
             key = "equipment"
-        elif sentinel == "amenities.csv":
+        elif sentinel and sentinel == "amenities.csv":
             class_to_use = Amenities
             key = "amenities"
-        elif sentinel == "sports_facilities.csv":
+        elif sentinel and sentinel == "sports_facilities.csv":
             class_to_use = SportsFacilities
             key = "sports_facilities"
 
-        df = pd.DataFrame(
-            f"{path}/{sentinel}", columns=table_schema.columns, index=self.data.index
-        )  # the actual dataframe we're using
         table_schema.columns = [col.lower() for col in table_schema.columns]
         ic(table_schema)
         # remember our really useful function?  now we just apply it to the dataframe...zwoop, row objects!
         table_schema.apply(
             lambda row: self.class_from_row(
-                row=row, class_to_use=class_to_use, key=key, index_col="site_id"
+                row=row, class_to_use=class_to_use, key=key, index_col="site_id" if sentinel else 'id'
             ),
             axis=1,
         )
 
     # %% site processing
-
     def data_to_sites(self):
 
         sites = self.data.index.unique().tolist()  # keys
@@ -126,24 +126,18 @@ class PlaygroundLoader:
                 )
             )
 
-    def import_test_users(self, path):
-        index_col = "email"
-        user_data_df = pd.read_csv(path, index_col=index_col)
+    def import_podcast_episodes(self) -> pd.DataFrame:
+        headers = {'Content-Type': 'application/json', 'charset': 'utf-8'}
+        podcast_id = 2009882
+        res = requests.get(
+            url=f'https://buzzsprout.com/api/{podcast_id}/episodes.json?api_token={os.environ.get("API_KEY")}',
+            headers=headers)
+        if res.ok:
+            episodes_data = res.json()
+            ic(episodes_data)
+            eps_df = pd.DataFrame(episodes_data)
+            return eps_df
 
-        user_list = []
-
-        for user in user_data_df.index.unique():
-            this_user = user_data_df.loc[user]
-            user_object = User(
-                email=this_user.name,
-                hashed_password=self.pwd_context.hash(this_user.hashed_password),
-                first_name=this_user.first_name,
-                last_name=this_user.last_name,
-            )
-            user_list.append(user_object)
-        self.inserts["users"] = user_list
-
-    # %%
     def main(self):
         # let's do this
 
@@ -174,7 +168,7 @@ class PlaygroundLoader:
         self.import_data(equipment_path)  # import random data
         self.import_data(amenities_path)  # and one more time
         self.import_data(sports_facilities_path)
-        # self.import_test_users(fake_users_path)
+        self.import_data(None)
 
         # these are the lists of row objects we are inserting
         keys = list(self.inserts.keys())
@@ -195,13 +189,11 @@ class PlaygroundLoader:
 
 
 # stuff runs here
-
 if __name__ == "__main__":
     # set up some stuff
 
     # create the class object
     playground_loader = PlaygroundLoader()
-
     playground_loader.main()
 
     # that's a wrap
