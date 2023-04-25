@@ -1,21 +1,18 @@
 import os
-from datetime import datetime, timedelta
-from typing import Optional
 
 from geoalchemy2 import shape
 from geojson import Feature, Polygon
-from jose import jwt
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, selectinload
 
-from .models.schemas import (
+from ..models.schemas import (
     ReportSchema,
     ReviewSchema,
     EquipmentSchema,
     AmenitiesSchema,
     SportsFacilitiesSchema,
 )
-from .models.tables import Site
+from ..models.tables import Site
 
 url = os.environ.get("SECRET_URL")
 engine = create_async_engine(url=url, echo=False, future=True)
@@ -35,24 +32,6 @@ async def get_db():
         yield s
     finally:
         await s.close()
-
-
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    # copy the data to local scope variable
-    to_encode = data.copy()
-
-    # attach expiration to token (default 15 min)
-    expire = (
-        datetime.utcnow() + expires_delta
-        if expires_delta
-        else datetime.utcnow() + timedelta(minutes=15)
-    )
-    to_encode.update({"exp": expire})
-
-    # encode the token using the secret key and the user credentials/expiration
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
-    return encoded_jwt
 
 
 # -- CONVERSION --
