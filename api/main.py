@@ -1,8 +1,7 @@
 import logging
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List, Dict
 
-import pandas as pd
 import pytz
 import uvicorn
 from fastapi import FastAPI, Query as fastapi_Query, Depends, HTTPException, status
@@ -10,9 +9,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from geoalchemy2 import func
 from geojson import FeatureCollection
 from icecream import ic
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Query, selectinload
-from sqlalchemy import select
 
 from playground_planner.api.dependencies import get_db, make_site_geojson, miles_to_meters
 from playground_planner.models.tables import Site, Episodes
@@ -184,26 +183,29 @@ async def query(
             detail="Unable to retrieve query results from database",
         )
 
+def retrieve_episodes(session: AsyncSession) -> List[Dict]:
+    results = []
+    async with session.begin():
+        res = await session.execute(select(Episodes))
+        for r in res.scalars().all():
+            appended = r.__dict__
+            appended.pop('_sa_instance_state')
+            results.append(appended)
+    return results
 
 @app.get("/episodes")
 async def get_episodes(
         Session: AsyncSession = Depends(get_db)
 ) -> ...:
-    results = []
     async with Session as s:
-        async with s.begin():
-            res = await s.execute(select(Episodes))
-            for r in res.scalars().all():
-                appended = r.__dict__
-                appended.pop('_sa_instance_state')
-                results.append(appended)
+        results = retrieve_episodes(session=s)
     return results
+
 
 @app.post("/update")
 async def update_episodes(Session: AsyncSession = Depends(get_db)) -> ...:
     import os
     import requests
-    from icecream import ic
 
     headers = {'Content-Type': 'application/json', 'charset': 'utf-8'}
     podcast_id = 2009882
@@ -213,7 +215,6 @@ async def update_episodes(Session: AsyncSession = Depends(get_db)) -> ...:
 
     if res.ok:
         episodes_data = res.json()
-        ic(episodes_data)
         [
             ep.update(
                 {
@@ -224,17 +225,19 @@ async def update_episodes(Session: AsyncSession = Depends(get_db)) -> ...:
             in episodes_data
         ]
 
-        eps_updates = [Episodes(**ep) for ep in episodes_data]
-        ic(eps_updates)
-
         async with Session as s:
             async with s.begin():
-                await s.execute("TRUNCATE TABLE episodes")
-                s.add_all(eps_updates)
-                await s.commit()
+                episodes_in_db = retrieve_episodes(s)
+                existing_episode_ids = [ep.get('id') for ep in episodes_in_db]
+                eps_updates = [Episodes(**ep) for ep in episodes_data if ep not in existing_episode_ids]
+                if eps_updates:
+                    s.add_all(eps_updates)
+                    await s.commit()
+
+        return status.HTTP_200_OK
     else:
         # should raise error
-        ic(res.text)
+        return status.HTTP_500_INTERNAL_SERVER_ERROR("An error occurred while retrieving from buzzsprout!")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)
