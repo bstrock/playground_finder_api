@@ -211,7 +211,7 @@ async def update_episodes(Session: AsyncSession = Depends(get_db)) -> ...:
     podcast_id = 2009882
     res = requests.get(
         url=f'https://buzzsprout.com/api/{podcast_id}/episodes.json?api_token={os.environ.get("API_KEY")}',
-        headers=headers)
+        headers=headers)#
 
     if res.ok:
         episodes_data = res.json()
