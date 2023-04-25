@@ -188,7 +188,7 @@ async def query(
         )
 
 
-def retrieve_episodes(session: AsyncSession) -> List[Dict]:
+async def retrieve_episodes(session: AsyncSession) -> List[Dict]:
     results = []
     async with session.begin():
         res = await session.execute(select(Episodes))
