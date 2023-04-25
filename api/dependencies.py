@@ -99,13 +99,13 @@ async def make_site_geojson(site):
     wkt = wkt.strip("POLYGON ((").strip("))").split(" ")
     geom_tuples_list = []
     for i, coord in enumerate(wkt):
-        if coord[-1] == ',':
-            lat = float(coord.strip(','))
-            lon = float(wkt[i-1])
+        if coord[-1] == ",":
+            lat = float(coord.strip(","))
+            lon = float(wkt[i - 1])
             geom_tuples_list.append((lon, lat))
 
     geojson_properties = {
-        'site_id': site.site_id,
+        "site_id": site.site_id,
         "site_name": site.site_name,
         "substrate_type": site.substrate_type,
         "addr_street1": site.addr_street1,
@@ -114,16 +114,16 @@ async def make_site_geojson(site):
         "addr_zip": site.addr_zip,
         "equipment": equipment_schema.dict(),
         "amenities": amenities_schema.dict(),
-        "sports_facilities": sports_facilities_schema.dict()
+        "sports_facilities": sports_facilities_schema.dict(),
     }
 
     # sites may not have reviews or reports, so we skip these step if they don't
     if len(site.reviews) > 0:
         reviews = [ReviewSchema.from_orm(review).dict() for review in site.reviews]
-        geojson_properties['reviews'] = reviews
+        geojson_properties["reviews"] = reviews
     if len(site.reports) > 0:
         reports = [ReportSchema.from_orm(report).dict() for report in site.reports]
-        geojson_properties['reports'] = reports
+        geojson_properties["reports"] = reports
 
     site_geojson_poly = Polygon(geom_tuples_list)
     site_geojson = Feature(geometry=site_geojson_poly, properties=geojson_properties)

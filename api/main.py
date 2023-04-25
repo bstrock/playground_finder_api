@@ -13,7 +13,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Query, selectinload
 
-from playground_planner.api.dependencies import get_db, make_site_geojson, miles_to_meters
+from playground_planner.api.dependencies import (
+    get_db,
+    make_site_geojson,
+    miles_to_meters,
+)
 from playground_planner.models.tables import Site, Episodes
 
 app = FastAPI()
@@ -63,17 +67,17 @@ async def query(
     logging.info("Query point: %s", query_point)
 
     if equipment:
-        equipment = equipment.split(',')
+        equipment = equipment.split(",")
         if len(equipment) == 1:
             equipment = list(equipment)
 
     if amenities:
-        amenities = amenities.split(',')
+        amenities = amenities.split(",")
         if len(amenities) == 1:
             amenities = list(amenities)
 
     if sports_facilities:
-        sports_facilities = sports_facilities.split(',')
+        sports_facilities = sports_facilities.split(",")
         if len(sports_facilities) == 1:
             sports_facilities = list(sports_facilities)
 
@@ -173,7 +177,7 @@ async def query(
 
         logging.info("QUERY: Results returned -- endpoint service COMPLETE\n\n")
         response_geojson = FeatureCollection(sites)
-        ic(len(response_geojson['features']))
+        ic(len(response_geojson["features"]))
         return response_geojson
 
     except Exception as e:
@@ -183,20 +187,20 @@ async def query(
             detail="Unable to retrieve query results from database",
         )
 
+
 def retrieve_episodes(session: AsyncSession) -> List[Dict]:
     results = []
     async with session.begin():
         res = await session.execute(select(Episodes))
         for r in res.scalars().all():
             appended = r.__dict__
-            appended.pop('_sa_instance_state')
+            appended.pop("_sa_instance_state")
             results.append(appended)
     return results
 
+
 @app.get("/episodes")
-async def get_episodes(
-        Session: AsyncSession = Depends(get_db)
-) -> ...:
+async def get_episodes(Session: AsyncSession = Depends(get_db)) -> ...:
     async with Session as s:
         results = retrieve_episodes(session=s)
     return results
@@ -207,29 +211,35 @@ async def update_episodes(Session: AsyncSession = Depends(get_db)) -> ...:
     import os
     import requests
 
-    headers = {'Content-Type': 'application/json', 'charset': 'utf-8'}
+    headers = {"Content-Type": "application/json", "charset": "utf-8"}
     podcast_id = 2009882
     res = requests.get(
         url=f'https://buzzsprout.com/api/{podcast_id}/episodes.json?api_token={os.environ.get("API_KEY")}',
-        headers=headers)#
+        headers=headers,
+    )
 
     if res.ok:
         episodes_data = res.json()
         [
             ep.update(
                 {
-                    'published_at': datetime.fromisoformat(ep.get('published_at'))
+                    "published_at": datetime.fromisoformat(ep.get("published_at"))
                     .astimezone(pytz.UTC)
-                    .replace(tzinfo=None)})
-            for ep
-            in episodes_data
+                    .replace(tzinfo=None)
+                }
+            )
+            for ep in episodes_data
         ]
 
         async with Session as s:
             async with s.begin():
                 episodes_in_db = retrieve_episodes(s)
-                existing_episode_ids = [ep.get('id') for ep in episodes_in_db]
-                eps_updates = [Episodes(**ep) for ep in episodes_data if ep not in existing_episode_ids]
+                existing_episode_ids = [ep.get("id") for ep in episodes_in_db]
+                eps_updates = [
+                    Episodes(**ep)
+                    for ep in episodes_data
+                    if ep not in existing_episode_ids
+                ]
                 if eps_updates:
                     s.add_all(eps_updates)
                     await s.commit()
@@ -237,7 +247,10 @@ async def update_episodes(Session: AsyncSession = Depends(get_db)) -> ...:
         return status.HTTP_200_OK
     else:
         # should raise error
-        return status.HTTP_500_INTERNAL_SERVER_ERROR("An error occurred while retrieving from buzzsprout!")
+        return status.HTTP_500_INTERNAL_SERVER_ERROR(
+            "An error occurred while retrieving from buzzsprout!"
+        )
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)

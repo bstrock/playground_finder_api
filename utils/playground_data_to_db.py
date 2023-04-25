@@ -11,7 +11,14 @@ from passlib.context import CryptContext
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from playground_planner.models.tables import Site, Equipment, Amenities, SportsFacilities, Base, Episodes
+from playground_planner.models.tables import (
+    Site,
+    Equipment,
+    Amenities,
+    SportsFacilities,
+    Base,
+    Episodes,
+)
 
 pd.set_option("display.max_rows", None)
 pd.set_option("display.max_columns", None)
@@ -37,7 +44,7 @@ class PlaygroundLoader:
             "amenities": [],
             "sports_facilities": [],
             "users": [],
-            'episodes': []
+            "episodes": [],
         }
 
     def set_data(self, data: DataFrame):
@@ -48,11 +55,7 @@ class PlaygroundLoader:
         self.data = data
 
     def class_from_row(
-            self,
-            row: pd.Series,
-            class_to_use: Callable,
-            key: AnyStr,
-            index_col: AnyStr
+        self, row: pd.Series, class_to_use: Callable, key: AnyStr, index_col: AnyStr
     ):
         #### EXTREMELY USEFUL
         # create class object for model: Site, Equipment, Amenity, etc. using abstract factory pattern
@@ -70,7 +73,6 @@ class PlaygroundLoader:
         # no you can't use a ternary operator for this
         self.inserts[key].append(table_row)
 
-
     def import_data(self, path: str):
         # copies CSV schema from path and uses it to fill with random numbers 1-10
         # uses this function to make a row in a dataframe into the corresponding model object
@@ -83,9 +85,9 @@ class PlaygroundLoader:
         elif not path:
             sentinel = None
         if not sentinel:
-            class_to_use  = Episodes
+            class_to_use = Episodes
             table_schema = self.import_podcast_episodes()
-            key = 'episodes'
+            key = "episodes"
         elif sentinel and sentinel == "equipment.csv":
             class_to_use = Equipment
             key = "equipment"
@@ -101,7 +103,10 @@ class PlaygroundLoader:
         # remember our really useful function?  now we just apply it to the dataframe...zwoop, row objects!
         table_schema.apply(
             lambda row: self.class_from_row(
-                row=row, class_to_use=class_to_use, key=key, index_col="site_id" if sentinel else 'id'
+                row=row,
+                class_to_use=class_to_use,
+                key=key,
+                index_col="site_id" if sentinel else "id",
             ),
             axis=1,
         )
@@ -122,16 +127,17 @@ class PlaygroundLoader:
                     addr_city=df.ADDR_CITY,
                     addr_state=df.ADDR_STATE,
                     addr_zip=int(df.ADDR_ZIP),
-                    geom=f'SRID=4326;{df.geometry.wkt}'
+                    geom=f"SRID=4326;{df.geometry.wkt}",
                 )
             )
 
     def import_podcast_episodes(self) -> pd.DataFrame:
-        headers = {'Content-Type': 'application/json', 'charset': 'utf-8'}
+        headers = {"Content-Type": "application/json", "charset": "utf-8"}
         podcast_id = 2009882
         res = requests.get(
             url=f'https://buzzsprout.com/api/{podcast_id}/episodes.json?api_token={os.environ.get("API_KEY")}',
-            headers=headers)
+            headers=headers,
+        )
         if res.ok:
             episodes_data = res.json()
             ic(episodes_data)

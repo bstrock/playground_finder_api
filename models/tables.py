@@ -6,7 +6,7 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     DateTime,
-    Boolean
+    Boolean,
 )
 from sqlalchemy.orm import declarative_base, relationship
 
@@ -108,7 +108,7 @@ class SportsFacilities(Base):
 
 
 class Episodes(Base):
-    __tablename__ = 'episodes'
+    __tablename__ = "episodes"
     __mapper_args__ = {"eager_defaults": True}
 
     id = Column(BigInteger, primary_key=True)
@@ -131,4 +131,3 @@ class Episodes(Base):
     total_plays = Column(Integer)
     magic_mastering = Column(Boolean)
     custom_url = Column(String, nullable=True)
-
