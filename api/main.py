@@ -18,7 +18,7 @@ from dependencies import (
     make_site_geojson,
     miles_to_meters,
 )
-from playground_planner.models.tables import Site, Episodes
+from ..models.tables import Site, Episodes
 
 app = FastAPI()
 
