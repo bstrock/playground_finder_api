@@ -8,14 +8,14 @@ from jose import jwt
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, selectinload
 
-from ..models.schemas import (
+from .models.schemas import (
     ReportSchema,
     ReviewSchema,
     EquipmentSchema,
     AmenitiesSchema,
     SportsFacilitiesSchema,
 )
-from ..models.tables import Site
+from .models.tables import Site
 
 url = os.environ.get("SECRET_URL")
 engine = create_async_engine(url=url, echo=False, future=True)
