@@ -13,7 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Query, selectinload
 
-from playground_planner.api.dependencies import (
+from dependencies import (
     get_db,
     make_site_geojson,
     miles_to_meters,
