@@ -128,9 +128,9 @@ async def query(
                             flag = 0 in attr_vals
                         return flag
 
-                    eq_flag = filter(site, 'equipment')
-                    amenities_flag = filter(site, 'amenities')
-                    sports_flag = filter(site, 'sports_facilities')
+                    eq_flag = filter(site, equipment)
+                    amenities_flag = filter(site, amenities)
+                    sports_flag = filter(site, sports_facilities)
 
                     if not any([eq_flag, amenities_flag, sports_flag]):
 
