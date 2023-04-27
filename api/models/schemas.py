@@ -1,29 +1,6 @@
-from fastapi import HTTPException, status
-from typing import Optional, List
+from typing import Optional, Any
+
 from pydantic import BaseModel
-import os
-
-
-class ReportSchema(BaseModel):
-    site_id: str
-    report_type: str
-    comment: Optional[str] = None
-    equipment: Optional[str] = None
-
-    class Config:
-        orm_mode = True
-        arbitrary_types_allowed = True
-
-
-class ReviewSchema(BaseModel):
-    site_id: str
-    stars: int
-    email: Optional[str] = None
-    comment: Optional[str] = None
-
-    class Config:
-        orm_mode = True
-        arbitrary_types_allowed = True
 
 
 class EquipmentSchema(BaseModel):
@@ -94,9 +71,7 @@ class SiteSchema(BaseModel):
     addr_city: str
     addr_state: str
     addr_zip: int
-    geom: object  # totally cheating here
-    reports: Optional[List[ReportSchema]]
-    reviews: Optional[List[ReviewSchema]]
+    geom: Any  # totally cheating here
     equipment: EquipmentSchema
     amenities: AmenitiesSchema
     sports_facilities: SportsFacilitiesSchema
@@ -104,55 +79,3 @@ class SiteSchema(BaseModel):
     class Config:
         orm_mode = True
         arbitrary_types_allowed = True
-
-
-class UserSchema(BaseModel):
-    email: str
-    hashed_password: str
-    first_name: str
-    last_name: str
-    favorite_parks: Optional[List[str]]
-
-    class Config:
-        orm_mode = True
-        arbitrary_types_allowed = True
-
-
-class UserInDBSchema(UserSchema):
-    email: str
-    hashed_password: str
-    first_name: str
-    last_name: str
-    favorite_parks: Optional[List[str]]
-
-
-class UserResponseSchema(BaseModel):
-    first_name: str
-    last_name: str
-    favorite_parks: Optional[List[str]]
-    email: str
-
-    class Config:
-        orm_mode = True
-        arbitrary_types_allowed = True
-
-
-class TokenSchema(BaseModel):
-    access_token: str
-    token_type: str
-
-
-class TokenDataSchema(BaseModel):
-    username: Optional[str] = None
-
-
-class Globals:
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "bearer"},
-    )
-    SECRET_KEY = os.environ.get("SECRET_KEY")
-    ALGORITHM = os.environ.get("ALGORITHM")
-    CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
-    MILES_TO_METERS = 1609.34
