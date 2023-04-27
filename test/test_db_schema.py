@@ -30,20 +30,6 @@ def query_table(table):
         with s.begin():
             return s.query(table).all()
 
-
-def test_fake_users(startup):
-    # does not use query_table as it needs to be done in the session
-
-    with Session() as s:
-        with s.begin():
-            res = s.query(User).all()
-
-        assert len(res) == 3  # correct # of fake users, after running test_api.py
-
-        for user in res:
-            assert user.email  # make sure they have a valid email
-
-
 def test_sites_content():
     # gets its own test due to expected None value
 

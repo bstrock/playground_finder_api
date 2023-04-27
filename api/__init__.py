@@ -99,8 +99,6 @@ async def query(
             ),
             selectinload(Site.amenities),
             selectinload(Site.sports_facilities),
-            selectinload(Site.reviews),
-            selectinload(Site.reports),
         )
     )
 
