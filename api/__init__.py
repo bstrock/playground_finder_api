@@ -121,19 +121,18 @@ async def query(
                 # the pattern commented in the loop below is followed for the following 2 loops- ommitting comments there
                 for site in res:
 
-                    def filter(site: Site, attr: str) -> bool:
+                    def filter(site: Site, attr: List[str], attr_name: str) -> bool:
                         flag = False
                         if attr:
-                            attr_vals = site.__getattribute__(attr.__name__)[0].__dict__.values()
+                            attr_vals = site.__getattribute__(attr_name)[0].__dict__.values()
                             flag = 0 in attr_vals
                         return flag
 
-                    eq_flag = filter(site, equipment)
-                    amenities_flag = filter(site, amenities)
-                    sports_flag = filter(site, sports_facilities)
+                    eq_flag = filter(site, equipment, 'equipment')
+                    amenities_flag = filter(site, amenities, 'amenities')
+                    sports_flag = filter(site, sports_facilities, 'sports_facilities')
 
                     if not any([eq_flag, amenities_flag, sports_flag]):
-
                         site_geojson = await make_site_geojson(site)
 
                         sites.append(
