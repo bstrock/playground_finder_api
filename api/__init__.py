@@ -120,21 +120,31 @@ async def query(
                 # now that we have our sites, we need to remove sites that don't meet the user's filter criteria
                 # the pattern commented in the loop below is followed for the following 2 loops- ommitting comments there
                 for site in res:
+                    # this flag is triggered if a filter condition is not met
+                    skip_flag = False
 
-                    def filter(site: Site, attr: List[str], attr_name: str) -> bool:
-                        flag = False
-                        if attr:
-                            attr_vals = site.__getattribute__(attr_name)[0].__dict__.values()
-                            flag = 0 in attr_vals
-                        return flag
+                    if equipment:  # if they have an equipment filter provided
+                        eq_dict = site.equipment[0].__dict__
+                        for eq in equipment:  # check the equipment in the filter
+                            if eq_dict[eq] == 0:  # if they don't have it
+                                skip_flag = True  # don't add this site to the response
 
-                    eq_flag = filter(site, equipment, 'equipment')
-                    amenities_flag = filter(site, amenities, 'amenities')
-                    sports_flag = filter(site, sports_facilities, 'sports_facilities')
+                    if amenities:  # as above for amenities filter
+                        amenities_dict = site.amenities[0].__dict__
+                        for amenity in amenities:
+                            if not amenities_dict[amenity]:
+                                skip_flag = True
 
-                    if not any([eq_flag, amenities_flag, sports_flag]):
+                    if sports_facilities:  # as above for sports facilities filter
+                        facilities_dict = site.sports_facilities[0].__dict__
+                        for facility in sports_facilities:
+                            if not facilities_dict[facility]:
+                                skip_flag = True
+
+                    # as long as the flag isn't triggered, add the site to the response
+
+                    if not skip_flag:
                         site_geojson = await make_site_geojson(site)
-
                         sites.append(
                             site_geojson
                         )  # all matching sites are added to the response object
