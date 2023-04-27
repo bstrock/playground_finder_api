@@ -11,7 +11,7 @@ from passlib.context import CryptContext
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from playground_planner.models.tables import (
+from playground_planner.api.models.tables import (
     Site,
     Equipment,
     Amenities,

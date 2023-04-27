@@ -6,7 +6,7 @@ from sqlalchemy import text, MetaData
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from playground_planner.models.tables import Base
+from playground_planner.api.models.tables import Base
 
 
 class SpatialDB:

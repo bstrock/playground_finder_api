@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy.engine import create_engine, URL
 from sqlalchemy.orm import sessionmaker
 
-from ..models.tables import Site, Equipment, Amenities, SportsFacilities, User
+from playground_planner.api.models import Site, Equipment, Amenities, SportsFacilities, User
 
 username = os.environ.get("USERNAME")
 password = os.environ.get("PASSWORD")
