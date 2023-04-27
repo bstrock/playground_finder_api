@@ -103,12 +103,6 @@ async def query(
     )
 
     logging.debug("Query SQL: %s", str(query_sql))
-
-    #  add filters based on optional query parameters
-
-    # logging.info("Query flag: RELEASE TYPE: %s", str(release_type))
-    logging.debug("Query SQL: %s", str(query_sql))
-
     logging.info("\n\n**** TRANSACTION ****\n")
 
     try:
@@ -118,7 +112,6 @@ async def query(
             async with s.begin():
                 logging.info("SESSION: Checked out a connection")
                 res = await s.execute(query_sql.with_session(s).statement)
-                # context manager autocommits the query
                 logging.info("QUERY: Submitted")
                 res = res.scalars().all()  # decode results
 
@@ -127,33 +120,19 @@ async def query(
                 # now that we have our sites, we need to remove sites that don't meet the user's filter criteria
                 # the pattern commented in the loop below is followed for the following 2 loops- ommitting comments there
                 for site in res:
-                    pass_flag = (
-                        False  # this flag is triggered if a filter condition is not met
-                    )
 
-                    if equipment:  # if they have an equipment filter provided
-                        eq_dict = site.equipment[0].__dict__
-                        for eq in equipment:  # check the equipment in the filter
-                            if eq_dict[eq] == 0:  # if they don't have it
-                                pass_flag = True  # don't add this site to the response
+                    def filter(site: Site, attr: str) -> bool:
+                        flag = False
+                        if attr:
+                            attr_vals = site.__getattribute__(attr.__name__)[0].__dict__.values()
+                            flag = 0 in attr_vals
+                        return flag
 
-                    if amenities:  # as above for amenities filter
-                        amenities_dict = site.amenities[0].__dict__
-                        for amenity in amenities:
-                            if not amenities_dict[amenity]:
-                                pass_flag = True
+                    eq_flag = filter(site, 'equipment')
+                    amenities_flag = filter(site, 'amenities')
+                    sports_flag = filter(site, 'sports_facilities')
 
-                    if sports_facilities:  # as above for sports facilities filter
-                        facilities_dict = site.sports_facilities[0].__dict__
-                        for facility in sports_facilities:
-                            if not facilities_dict[facility]:
-                                pass_flag = True
-
-                    if (
-                        not pass_flag
-                    ):  # as long as the flag isn't triggered, add the site to the response
-                        # alas the days when I could do this in a list comprehension...
-                        # anyway, let's instantiate some schemas
+                    if not any([eq_flag, amenities_flag, sports_flag]):
 
                         site_geojson = await make_site_geojson(site)
 

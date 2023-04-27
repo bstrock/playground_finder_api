@@ -6,8 +6,6 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, selectinload
 
 from .models.schemas import (
-    ReportSchema,
-    ReviewSchema,
     EquipmentSchema,
     AmenitiesSchema,
     SportsFacilitiesSchema,
@@ -95,14 +93,6 @@ async def make_site_geojson(site):
         "amenities": amenities_schema.dict(),
         "sports_facilities": sports_facilities_schema.dict(),
     }
-
-    # sites may not have reviews or reports, so we skip these step if they don't
-    if len(site.reviews) > 0:
-        reviews = [ReviewSchema.from_orm(review).dict() for review in site.reviews]
-        geojson_properties["reviews"] = reviews
-    if len(site.reports) > 0:
-        reports = [ReportSchema.from_orm(report).dict() for report in site.reports]
-        geojson_properties["reports"] = reports
 
     site_geojson_poly = Polygon(geom_tuples_list)
     site_geojson = Feature(geometry=site_geojson_poly, properties=geojson_properties)
